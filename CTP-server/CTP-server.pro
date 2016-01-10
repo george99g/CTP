@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,11 +16,17 @@ SOURCES += main.cpp\
         dialog.cpp \
     tcp/tcpconnection.cpp \
     tcp/tcpconnections.cpp \
-    tcp/tcpserver.cpp
+    tcp/tcpserver.cpp \
+    irc/ircserver.cpp \
+    irc/ircconnection.cpp \
+    maindatabase.cpp
 
 HEADERS  += dialog.hpp \
     tcp/tcpconnection.hpp \
     tcp/tcpconnections.hpp \
-    tcp/tcpserver.hpp
+    tcp/tcpserver.hpp \
+    irc/ircserver.hpp \
+    irc/ircconnection.hpp \
+    maindatabase.hpp
 
 FORMS    += dialog.ui
