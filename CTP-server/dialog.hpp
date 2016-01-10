@@ -20,7 +20,7 @@ private slots:
     void tickBoxToggled(bool state);
 private:
     Ui::Dialog *ui;
-    TcpServer _server;
+    IrcServer _server;
 };
 
 #endif // DIALOG_HPP

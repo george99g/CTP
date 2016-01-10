@@ -19,17 +19,17 @@ public:
 
 protected:
     QMap<QTcpSocket*, TcpConnection*> _connections; //Holds a map of sockets and connections. Useful for looking up connections by sockets.
-    void removeSocket(QTcpSocket* socket); //Remvoes a socket.
+    virtual void removeSocket(QTcpSocket* socket); //Remvoes a socket.
 signals:
     void quitting(); //Emitted when the class is quitting
     void finished(); //Emitted when the class is finished  quitting
 public slots:
     void start(); //Called when the class is started
     void quit(); //Called when the class needs to quit
-    void accept(qintptr handle, TcpConnection* connection); //Constructs a socket from the socket descriptor and connection sent by TcpServer
+    virtual void accept(qintptr handle, TcpConnection* connection); //Constructs a socket from the socket descriptor and connection sent by TcpServer
 protected slots:
-    void disconnected(); //Handles a socket disonnection
-    void error(QAbstractSocket::SocketError socketError); //Handles a socket error
+    virtual void disconnected(); //Handles a socket disonnection
+    virtual void error(QAbstractSocket::SocketError socketError); //Handles a socket error
 private:
 
 };

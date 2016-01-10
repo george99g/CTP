@@ -14,10 +14,9 @@ public:
     explicit TcpConnection(QObject *parent = 0);
     ~TcpConnection();
     virtual void setSocket(QTcpSocket* socket); //Sets the socket and creates the connections
-
+    QTcpSocket* getSocket(); //Returns the socket
 protected:
     QTcpSocket* _socket;
-    QTcpSocket* getSocket(); //Returns the socket
 signals:
 
 public slots:

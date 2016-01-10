@@ -25,7 +25,7 @@ signals:
     void finished();
 
 public slots:
-    void complete();
+    virtual void complete();
 
 private:
 

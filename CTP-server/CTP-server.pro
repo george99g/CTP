@@ -19,7 +19,7 @@ SOURCES += main.cpp\
     tcp/tcpserver.cpp \
     irc/ircserver.cpp \
     irc/ircconnection.cpp \
-    maindatabase.cpp
+    irc/ircconnections.cpp
 
 HEADERS  += dialog.hpp \
     tcp/tcpconnection.hpp \
@@ -27,6 +27,6 @@ HEADERS  += dialog.hpp \
     tcp/tcpserver.hpp \
     irc/ircserver.hpp \
     irc/ircconnection.hpp \
-    maindatabase.hpp
+    irc/ircconnections.hpp
 
 FORMS    += dialog.ui

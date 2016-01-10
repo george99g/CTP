@@ -46,9 +46,6 @@ void TcpConnection::readyRead()
 {
     if(!sender()) return;
     qDebug()<<this<<" is ready to read "<<getSocket();
-    _socket->readAll();
-    _socket->write("HTTP/1.0 404 Not Found\n\n");
-    _socket->close();
     return;
 }
 
