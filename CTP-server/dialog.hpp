@@ -2,7 +2,8 @@
 #define DIALOG_HPP
 
 #include <QDialog>
-#include "tcp/tcpserver.hpp"
+#include "irc/ircserver.hpp"
+#include "maindatabase.hpp"
 
 namespace Ui {
 class Dialog;

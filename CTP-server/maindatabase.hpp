@@ -2,6 +2,7 @@
 #define MAINDATABASE_HPP
 
 #include <QObject>
+#include <QSqlDatabase>
 
 class MainDatabase : public QObject
 {
@@ -12,6 +13,7 @@ public:
 signals:
 
 public slots:
+
 };
 
 #endif // MAINDATABASE_HPP

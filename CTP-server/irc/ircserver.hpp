@@ -2,8 +2,10 @@
 #define IRCSERVER_HPP
 
 #include <QObject>
+#include "../tcp/tcpserver.hpp"
+#include "ircconnection.hpp"
 
-class IrcServer : public QObject
+class IrcServer : public TcpServer
 {
     Q_OBJECT
 public:
