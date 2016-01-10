@@ -16,8 +16,7 @@ public:
     ~IrcServer();
     virtual bool listen(const QHostAddress &address, quint16 port);
 protected:
-    virtual void incomingConnection(qintptr/*Can be qint64, qHandle, qintptr or uint, depending on platform*/
-                                            handle);
+
 signals:
 
 public slots:

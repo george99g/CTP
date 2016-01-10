@@ -2,7 +2,6 @@
 #define IRCCONNECTIONS_HPP
 
 #include <QObject>
-#include "ircconnection.hpp"
 #include "../tcp/tcpconnections.hpp"
 
 class IrcConnections : public TcpConnections

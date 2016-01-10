@@ -27,15 +27,6 @@ bool IrcServer::listen(const QHostAddress &address, quint16 port)
     return true;
 }
 
-void IrcServer::incomingConnection(qintptr handle)
-{
-    qDebug()<<this<<" incoming connection "<<handle;
-    IrcConnection* connection = new IrcConnection();
-    connection->moveToThread(_thread);
-    emit accepting(handle, connection);
-    return;
-}
-
 void IrcServer::complete()
 {
     if(!_thread)
