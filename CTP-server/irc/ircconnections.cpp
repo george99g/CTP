@@ -21,6 +21,7 @@ void IrcConnections::accept(qintptr handle, TcpConnection *connection)
     }
     connect(socket, &QTcpSocket::disconnected, this, &IrcConnections::disconnected);
     connect(socket, &QTcpSocket::readyRead, this, &IrcConnections::readyRead);
+    connect(socket, &QTcpSocket::connected, this, &IrcConnections::connected);
     connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &IrcConnections::error); //More magic. Don't touch.
     connection->moveToThread(QThread::currentThread());
     connection->setSocket(socket);
@@ -40,6 +41,14 @@ void IrcConnections::disconnected()
     }
     TcpConnections::disconnected();
     return;
+}
+
+void IrcConnections::connected()
+{
+    if(!sender()) return;
+    QTcpSocket* socket = (QTcpSocket*)sender();
+    if(!socket) return;
+    qDebug()<<socket<<"connected in"<<this;
 }
 
 void IrcConnections::readyRead()

@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include "irc/ircserver.hpp"
-#include "maindatabase.hpp"
 
 namespace Ui {
 class Dialog;

@@ -16,6 +16,7 @@ signals:
 public slots:
     virtual void accept(qintptr handle, TcpConnection *connection);
     virtual void disconnected();
+    virtual void connected();
 protected slots:
     void readyRead();
 protected:
