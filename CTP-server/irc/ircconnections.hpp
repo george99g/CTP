@@ -2,7 +2,9 @@
 #define IRCCONNECTIONS_HPP
 
 #include <QObject>
+#include "ircmanager.hpp"
 #include "../tcp/tcpconnections.hpp"
+
 
 class IrcConnections : public TcpConnections
 {
@@ -21,7 +23,7 @@ protected slots:
 protected:
 
 private:
-
+    IrcManager* _manager;
 };
 
 #endif // IRCCONNECTIONS_HPP

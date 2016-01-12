@@ -2,12 +2,12 @@
 
 IrcConnections::IrcConnections(QObject *parent) : TcpConnections(parent)
 {
-
+    _manager = new IrcManager();
 }
 
 IrcConnections::~IrcConnections()
 {
-
+    _manager->deleteLater();
 }
 
 void IrcConnections::accept(qintptr handle, TcpConnection *connection)
@@ -33,12 +33,11 @@ void IrcConnections::accept(qintptr handle, TcpConnection *connection)
 
 void IrcConnections::disconnected()
 {
-    if(sender())
-    {
-        QTcpSocket* socket = (QTcpSocket*)sender();
-        if(socket)
-            qDebug()<<socket<<"disconnected in"<<this;
-    }
+    if(!sender()) return;
+    QTcpSocket* socket = (QTcpSocket*)sender();
+    if(!socket) return;
+    qDebug()<<socket<<"disconnected in"<<this;
+    _manager->handleDisconnection(socket);
     TcpConnections::disconnected();
     return;
 }
@@ -49,6 +48,8 @@ void IrcConnections::connected()
     QTcpSocket* socket = (QTcpSocket*)sender();
     if(!socket) return;
     qDebug()<<socket<<"connected in"<<this;
+    _manager->handleConnection(socket);
+    return;
 }
 
 void IrcConnections::readyRead()
@@ -57,8 +58,14 @@ void IrcConnections::readyRead()
     QTcpSocket* socket = (QTcpSocket*)sender();
     if(!socket) return;
     qDebug()<<this<<"is ready to read"<<socket;
-    qDebug()<<this<<"read:"<<socket->readAll();
-    socket->write("Test\n");
-    socket->flush();
-    socket->close();
+    while(socket->canReadLine())
+    {
+        QString line = QString::fromUtf8(socket->readLine().trimmed());
+        qDebug()<<this<<"read: "<<line;
+        if(line.mid(0, 5) == "LOGIN")
+            _manager->handleLogin(socket, line);
+        else if(line.mid(0, 6) == "LOGOUT")
+            _manager->handleLogout(socket);
+    }
+    return;
 }

@@ -18,13 +18,15 @@ SOURCES += main.cpp\
     tcp/tcpconnections.cpp \
     tcp/tcpserver.cpp \
     irc/ircserver.cpp \
-    irc/ircconnections.cpp
+    irc/ircconnections.cpp \
+    irc/ircmanager.cpp
 
 HEADERS  += dialog.hpp \
     tcp/tcpconnection.hpp \
     tcp/tcpconnections.hpp \
     tcp/tcpserver.hpp \
     irc/ircserver.hpp \
-    irc/ircconnections.hpp
+    irc/ircconnections.hpp \
+    irc/ircmanager.hpp
 
 FORMS    += dialog.ui
