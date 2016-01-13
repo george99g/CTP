@@ -35,7 +35,8 @@ void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
                 QString receiverUsername = messageParameters.at(1);
                 if(isLoggedIn(receiverUsername))
                 {
-                    QString sendMessage = message.mid(message.indexOf(" ", 8));
+                    QString sendMessage = getUsername(socket) + " PRIVMSG " + receiverUsername + " ";
+                    sendMessage += message.mid(message.indexOf(" ", 8) + 1);
                     sendMessage += "\r\n";
                     sendMessageToUsername(receiverUsername, sendMessage);
                     socket->write("SENT\r\n");
