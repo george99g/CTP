@@ -28,10 +28,35 @@ void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
             socket->write(output.toUtf8());
             socket->flush();
         }
+        else if(messageParameters.at(0) == "PRIVMSG")
+        {
+            if(messageParameters.count() > 2)
+            {
+                QString receiverUsername = messageParameters.at(1);
+                if(isLoggedIn(receiverUsername))
+                {
+                    QString sendMessage = message.mid(message.indexOf(" ", 8));
+                    sendMessage += "\r\n";
+                    sendMessageToUsername(receiverUsername, sendMessage);
+                    socket->write("SENT\r\n");
+                    socket->flush();
+                }
+                else
+                {
+                    socket->write("USER_IS_NOT_LOGGED_IN\r\n");
+                    socket->flush();
+                }
+            }
+            else
+            {
+                socket->write("WRONG_ARGUMENTS\r\n");
+                socket->flush();
+            }
+        }
     }
     else
     {
-        socket->write("NOT_LOGGED_IN");
+        socket->write("NOT_LOGGED_IN\r\n");
         socket->flush();
     }
     return;
@@ -102,6 +127,19 @@ void IrcManager::handleDisconnection(QTcpSocket* socket)
         handleLogout(socket);
     qDebug()<<socket<<"disconnected without login.";
     return;
+}
+
+void IrcManager::sendMessageToUsername(const QString &username, const QString &message)
+{
+    QTcpSocket* socket = getSocket(username);
+    socket->write(message.toUtf8());
+    socket->flush();
+    return;
+}
+
+QTcpSocket* IrcManager::getSocket(const QString &username)
+{
+    return _usernames.key(username);
 }
 
 QString IrcManager::getUsername(QTcpSocket *socket)

@@ -21,6 +21,8 @@ signals:
 public slots:
 
 private:
+    void sendMessageToUsername(const QString &username, const QString &message);
+    QTcpSocket* getSocket(const QString &username);
     QString getUsername(QTcpSocket* socket);
     bool isLoggedIn(const QString &username);
     void broadcast(const QString &message);
