@@ -10,6 +10,33 @@ IrcManager::~IrcManager()
 
 }
 
+void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
+{
+    qDebug()<<this<<"handling message "<<message<<" from"<<socket;
+    if(isLoggedIn(getUsername(socket)))
+    {
+        QStringList messageParameters = message.split(" ", QString::SkipEmptyParts);
+        if(messageParameters.at(0) == "GET_USERLIST" && messageParameters.count() == 1)
+        {
+            qDebug()<<this<<"sending userlist to"<<socket;
+            QString output = "USERLIST";
+            for(unsigned i = 0; i < (unsigned)_usernames.values().count(); i++)
+            {
+                output += " " + _usernames.values().at(i);
+            }
+            output += "\r\n";
+            socket->write(output.toUtf8());
+            socket->flush();
+        }
+    }
+    else
+    {
+        socket->write("NOT_LOGGED_IN");
+        socket->flush();
+    }
+    return;
+}
+
 void IrcManager::handleLogin(QTcpSocket* socket, const QString &message) // LOGIN <username> <password>
 {
     qDebug()<<this<<"handling login from"<<socket;
@@ -75,6 +102,17 @@ void IrcManager::handleDisconnection(QTcpSocket* socket)
         handleLogout(socket);
     qDebug()<<socket<<"disconnected without login.";
     return;
+}
+
+QString IrcManager::getUsername(QTcpSocket *socket)
+{
+    return _usernames.value(socket, "");
+}
+
+bool IrcManager::isLoggedIn(const QString &username)
+{
+    if(_usernames.values().contains(username)) return true;
+    else return false;
 }
 
 void IrcManager::broadcast(const QString &message)

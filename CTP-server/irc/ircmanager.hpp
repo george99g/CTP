@@ -11,6 +11,7 @@ class IrcManager : public QObject
 public:
     explicit IrcManager(QObject *parent = 0);
     ~IrcManager();
+    void handleMessage(QTcpSocket* socket, const QString & message);
     void handleLogin(QTcpSocket* socket, const QString &message);
     void handleLogout(QTcpSocket* socket);
     void handleConnection(QTcpSocket* socket);
@@ -20,6 +21,8 @@ signals:
 public slots:
 
 private:
+    QString getUsername(QTcpSocket* socket);
+    bool isLoggedIn(const QString &username);
     void broadcast(const QString &message);
     QMap<QTcpSocket*, QString> _usernames;
 };
