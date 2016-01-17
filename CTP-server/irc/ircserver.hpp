@@ -5,7 +5,7 @@
 #include "../tcp/tcpserver.hpp"
 #include "ircconnections.hpp"
 
-//Despite its name, these classes do not conform to the IRC protocol
+//Despite their name, these classes do not conform to the IRC protocol
 //TODO: Rename these classes when re-writing, possibly implement them with .pri instead of a subfolder
 
 class IrcServer : public TcpServer

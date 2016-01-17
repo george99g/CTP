@@ -200,8 +200,8 @@ bool IrcManager::checkDatabaseForUsername(const QString &username)
         }
     }
     QSqlQuery query(_db);
-    query.prepare("SELECT EXISTS(SELECT users.username FROM users WHERE users.username=:uname LIMIT 1)");
-    query.bindValue(":uname", username);
+    query.prepare("SELECT EXISTS(SELECT users.username FROM users WHERE users.username=:username LIMIT 1)");
+    query.bindValue(":username", username);
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
@@ -224,9 +224,9 @@ bool IrcManager::checkDatabaseForLogin(const QString &username, const QString &p
         }
     }
     QSqlQuery query(_db);
-    query.prepare("SELECT EXISTS(SELECT users.id FROM users WHERE users.username=:uname AND users.password=:passwd LIMIT 1)");
-    query.bindValue(":uname", username);
-    query.bindValue(":passwd", password);
+    query.prepare("SELECT EXISTS(SELECT users.id FROM users WHERE users.username=:username AND users.password=:password LIMIT 1)");
+    query.bindValue(":username", username);
+    query.bindValue(":password", password);
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
@@ -250,9 +250,9 @@ bool IrcManager::registerDatabaseLogin(const QString &username, const QString &p
     }
     if(checkDatabaseForUsername(username)) return false;
     QSqlQuery query(_db);
-    query.prepare("INSERT INTO users(username, password) VALUES(:uname, :passwd)");
-    query.bindValue(":uname", username);
-    query.bindValue(":passwd", password);
+    query.prepare("INSERT INTO users(username, password) VALUES(:username, :password)");
+    query.bindValue(":username", username);
+    query.bindValue(":password", password);
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
