@@ -64,6 +64,8 @@ void IrcConnections::readyRead()
         qDebug()<<this<<"read: "<<line;
         if(line.mid(0, 5) == "LOGIN")
             _manager->handleLogin(socket, line);
+        else if(line.mid(0, 8) == "REGISTER")
+            _manager->handleRegister(socket, line);
         else if(line.mid(0, 6) == "LOGOUT")
             _manager->handleLogout(socket);
         else _manager->handleMessage(socket, line);
