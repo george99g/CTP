@@ -16,11 +16,13 @@ IrcManager::IrcManager(QObject *parent) : QObject(parent)
             qDebug()<<this<<"error with table creation query: "<<query.lastError().text();
         }
     }
+    _channels = new IrcChannels(&_db);
 }
 
 IrcManager::~IrcManager()
 {
     _db.close();
+    _channels->deleteLater();
 }
 
 void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
@@ -41,23 +43,116 @@ void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
             socket->write(output.toUtf8());
             socket->flush();
         }
+        else if(messageParameters.at(0) == "GET_CHANNELLIST" && messageParameters.count() == 1)
+        {
+            qDebug()<<this<<"sending channel list to"<<socket;
+            QString output = "CHANELLIST";
+            output += " " + _channels->generateChannelList();
+            output += "\r\n";
+            socket->write(output.toUtf8());
+            socket->flush();
+        }
         else if(messageParameters.at(0) == "PRIVMSG")
         {
             if(messageParameters.count() > 2)
             {
                 QString receiverUsername = messageParameters.at(1);
-                if(isLoggedIn(receiverUsername))
+                if(!receiverUsername.startsWith('#'))
                 {
-                    QString sendMessage = getUsername(socket) + " PRIVMSG " + receiverUsername + " ";
-                    sendMessage += message.mid(message.indexOf(" ", 8) + 1);
-                    sendMessage += "\r\n";
-                    sendMessageToUsername(receiverUsername, sendMessage);
-                    socket->write("SENT\r\n");
+                    if(isLoggedIn(receiverUsername))
+                    {
+                        QString sendMessage = getUsername(socket) + " PRIVMSG " + receiverUsername + " ";
+                        sendMessage += message.mid(message.indexOf(" ", 8) + 1);
+                        sendMessage += "\r\n";
+                        sendMessageToUsername(receiverUsername, sendMessage);
+                        socket->write("SENT\r\n");
+                        socket->flush();
+                    }
+                    else
+                    {
+                        socket->write(QString("USER_IS_NOT_LOGGED_IN "+receiverUsername+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                }
+                else
+                {
+                    if(_channels->hasUser(receiverUsername, getUsername(socket)))
+                    {
+                        QString sendMessage = message.mid(message.indexOf(" ", 8) + 1);
+                        _channels->sendMessage(receiverUsername, sendMessage, getUsername(socket));
+                    }
+                    else
+                    {
+                        socket->write(QString("NOT_IN_CHANNEL "+receiverUsername+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                }
+            }
+            else
+            {
+                socket->write("WRONG_ARGUMENTS\r\n");
+                socket->flush();
+            }
+        }
+        else if(messageParameters.at(0) == "JOIN")
+        {
+            if(messageParameters.count() == 2)
+            {
+                QString joinChannelName = messageParameters.at(1);
+                if(!joinChannelName.startsWith('#'))
+                    joinChannelName.prepend('#');
+                if(!_channels->channelExists(joinChannelName))
+                {
+                    _channels->createChannel(joinChannelName);
+                    _channels->joinChannel(joinChannelName, getUsername(socket), socket);
+                    socket->write(QString("CHANNEL_CREATED "+joinChannelName+"\r\n").toUtf8());
                     socket->flush();
                 }
                 else
                 {
-                    socket->write("USER_IS_NOT_LOGGED_IN\r\n");
+                    if(!_channels->hasUser(joinChannelName, getUsername(socket)))
+                        _channels->joinChannel(joinChannelName, getUsername(socket), socket);
+                    else
+                    {
+                        socket->write(QString("ALREADY_JOINED "+joinChannelName+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                }
+            }
+            else
+            {
+                socket->write("WRONG_ARGUMENTS\r\n");
+                socket->flush();
+            }
+        }
+        else if(messageParameters.at(0) == "PART")
+        {
+            if(messageParameters.count() == 2)
+            {
+                QString partChannelName = messageParameters.at(1);
+                if(!partChannelName.startsWith('#'))
+                    partChannelName.prepend('#');
+                if(_channels->channelExists(partChannelName))
+                {
+                    if(_channels->hasUser(partChannelName, getUsername(socket)))
+                    {
+                        if(_channels->isOnlyUser(partChannelName, getUsername(socket)))
+                        {
+                            _channels->partChannel(partChannelName, getUsername(socket));
+                            _channels->removeChannel(partChannelName);
+                        }
+                        else
+                            _channels->partChannel(partChannelName, getUsername(socket));
+                    }
+                    else
+                    {
+                        socket->write(QString("NOT_IN_CHANNEL "+partChannelName+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                }
+                else
+                {
+                    socket->write(QString("NOT_IN_CHANNEL "+partChannelName+"\r\n").toUtf8());
                     socket->flush();
                 }
             }
@@ -90,21 +185,21 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
             {
                 qDebug()<<this<<"successfully logged in"<<socket<<" as"<<username;
                 broadcast("CONNECT "+username+"\r\n");
-                socket->write("AUTH\r\n");
+                socket->write(QString("AUTH "+username+"\r\n").toUtf8());
                 socket->flush();
                 _usernames.insert(socket, username);
             }
             else
             {
                 qDebug()<<socket<<"tried logging in with a username in use";
-                socket->write("IN_USE\r\n");
+                socket->write(QString("IN_USE "+username+"\r\n").toUtf8());
                 socket->flush();
             }
         }
         else
         {
             qDebug()<<socket<<"tried logging in with invalid login information";
-            socket->write("LOGIN_FAIL\r\n");
+            socket->write(QString("LOGIN_FAIL "+username+"\r\n").toUtf8());
             socket->flush();
         }
     }
@@ -128,13 +223,13 @@ void IrcManager::handleRegister(QTcpSocket *socket, const QString &message)
         if(registerDatabaseLogin(username, password))
         {
             qDebug()<<this<<"successfully registered "<<username;
-            socket->write("REGISTERED\r\n");
+            socket->write(QString("REGISTERED "+username+"\r\n").toUtf8());
             socket->flush();
         }
         else
         {
             qDebug()<<this<<"failed registration";
-            socket->write("REGISTRATION_FAILED\r\n");
+            socket->write(QString("REGISTRATION_FAILED "+username+"\r\n").toUtf8());
             socket->flush();
         }
     }

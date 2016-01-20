@@ -8,6 +8,7 @@
 #include <QSqlDriver>
 #include <QSqlQuery>
 #include <QSqlError>
+#include "ircchannels.hpp"
 
 class IrcManager : public QObject
 {
@@ -36,6 +37,7 @@ private:
     void broadcast(const QString &message);
     QMap<QTcpSocket*, QString> _usernames;
     QSqlDatabase _db;
+    IrcChannels* _channels;
 };
 
 #endif // IRCMANAGER_HPP
