@@ -17,10 +17,14 @@ public:
     void sendMessage(const QString &channel, const QString &message, const QString &sender);
     void joinChannel(const QString &channel, const QString &username, QTcpSocket* socket);
     bool hasUser(const QString &channel, const QString &username);
+    bool hasOfflineUser(const QString &channel, const QString &username);
     void removeChannel(const QString &channel);
+    void clearChannel(const QString &channel);
+    void clearUser(const QString &username);
     void partChannel(const QString &channel, const QString &username);
     bool isOnlyUser(const QString &channel, const QString &username);
     QString generateChannelList();
+    QString generateUserList(const QString &channel);
 signals:
 
 public slots:

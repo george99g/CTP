@@ -43,6 +43,35 @@ void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
             socket->write(output.toUtf8());
             socket->flush();
         }
+        else if(messageParameters.at(0) == "GET_USERLIST")
+        {
+            if(messageParameters.count() == 2)
+            {
+                QString channel = messageParameters.at(1);
+                if(!channel.startsWith('#'))
+                    channel.prepend('#');
+                if(_channels->channelExists(channel))
+                {
+                    QString output = "CHANNEL_USERLIST ";
+                    output += channel;
+                    output += ' ';
+                    output += _channels->generateUserList(channel);
+                    output += "\r\n";
+                    socket->write(output.toUtf8());
+                    socket->flush();
+                }
+                else
+                {
+                    socket->write("CHANNEL_DOES_NOT_EXIST\r\n");
+                    socket->flush();
+                }
+            }
+            else
+            {
+                socket->write("WRONG_ARGUMENTS\r\n");
+                socket->flush();
+            }
+        }
         else if(messageParameters.at(0) == "GET_CHANNELLIST" && messageParameters.count() == 1)
         {
             qDebug()<<this<<"sending channel list to"<<socket;
@@ -110,7 +139,7 @@ void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
                 }
                 else
                 {
-                    if(!_channels->hasUser(joinChannelName, getUsername(socket)))
+                    if(!_channels->hasOfflineUser(joinChannelName, getUsername(socket)))
                         _channels->joinChannel(joinChannelName, getUsername(socket), socket);
                     else
                     {
@@ -253,6 +282,7 @@ void IrcManager::handleLogout(QTcpSocket *socket)
     else
     {
         QString disconnectingUsername = _usernames.value(socket);
+        _channels->clearUser(disconnectingUsername);
         _usernames.remove(socket);
         broadcast("DISCONNECT "+disconnectingUsername+"\r\n");
         socket->close();

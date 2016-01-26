@@ -8,7 +8,7 @@ IrcChannels::IrcChannels(QSqlDatabase *db, QObject *parent) : QObject(parent)
 IrcChannels::~IrcChannels()
 {
     for(unsigned i = 0; i < (unsigned)_channels.keys().count(); i++)
-        removeChannel(_channels.keys().at(i));
+        clearChannel(_channels.keys().at(i));
 }
 
 bool IrcChannels::channelExists(const QString &channel)
@@ -52,12 +52,39 @@ bool IrcChannels::hasUser(const QString &channel, const QString &username)
     else return false;
 }
 
+bool IrcChannels::hasOfflineUser(const QString &channel, const QString &username)
+{
+    if(channelExists(channel))
+    {
+        if(_channels.value(channel)->hasOfflineUser(username)) return true;
+        else return false;
+    }
+    else return false;
+}
+
 void IrcChannels::removeChannel(const QString &channel)
+{
+    IrcChannel* channelToRemove = _channels.value(channel);
+    channelToRemove->removeAllUsers();
+    channelToRemove->deleteLater();
+    _channels.remove(channel);
+    qDebug()<<this<<"removed channel "<<channel;
+    return;
+}
+
+void IrcChannels::clearChannel(const QString &channel)
 {
     IrcChannel* channelToRemove = _channels.value(channel);
     channelToRemove->deleteLater();
     _channels.remove(channel);
-    qDebug()<<this<<"removed channel "<<channel;
+    qDebug()<<this<<"cleared channel "<<channel;
+    return;
+}
+
+void IrcChannels::clearUser(const QString &username)
+{
+    for(unsigned i = 0; i < (unsigned)_channels.values().count(); i++)
+        _channels.values().at(i)->clearUser(username);
     return;
 }
 
@@ -82,6 +109,19 @@ QString IrcChannels::generateChannelList()
         if(i != 0)
             list += " ";
         list += _channels.keys().at(i);
+    }
+    return list;
+}
+
+QString IrcChannels::generateUserList(const QString &channel)
+{
+    QString list = "";
+    QStringList* userlist = _channels.value(channel)->offlineUserlist();
+    for(unsigned i = 0; i < (unsigned)userlist->count(); i++)
+    {
+        if(i != 0)
+            list += " ";
+        list += userlist->at(i);
     }
     return list;
 }
