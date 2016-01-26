@@ -16,6 +16,7 @@ public:
     void createChannel(const QString &channel);
     void sendMessage(const QString &channel, const QString &message, const QString &sender);
     void joinChannel(const QString &channel, const QString &username, QTcpSocket* socket);
+    void rejoinChannels(const QString &username, QTcpSocket* socket);
     bool hasUser(const QString &channel, const QString &username);
     bool hasOfflineUser(const QString &channel, const QString &username);
     void removeChannel(const QString &channel);

@@ -11,6 +11,7 @@ public:
     explicit IrcChannel(QString name, QObject *parent = 0);
     ~IrcChannel();
     void addUser(const QString &username, QTcpSocket* socket);
+    void rejoinUser(const QString &username, QTcpSocket* socket);
     void sendJoinMessage(const QString &sender);
     void sendPartMessage(const QString &sender);
     void sendMessage(const QString &sender, const QString &message);

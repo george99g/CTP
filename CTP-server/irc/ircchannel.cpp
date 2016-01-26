@@ -23,6 +23,13 @@ void IrcChannel::addUser(const QString &username, QTcpSocket* socket)
     return;
 }
 
+void IrcChannel::rejoinUser(const QString &username, QTcpSocket* socket)
+{
+    if(!_userlist.values().contains(username))
+        _userlist.insert(socket, username);
+    return;
+}
+
 void IrcChannel::sendJoinMessage(const QString &sender)
 {
     for(unsigned i = 0; i < (unsigned)_userlist.keys().count(); i++)

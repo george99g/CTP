@@ -42,6 +42,17 @@ void IrcChannels::joinChannel(const QString &channel, const QString &username, Q
     return;
 }
 
+void IrcChannels::rejoinChannels(const QString &username, QTcpSocket *socket)
+{
+    for(unsigned i = 0; i < (unsigned)_channels.values().count(); i++)
+    {
+        IrcChannel* channel = _channels.values().at(i);
+        if(channel->hasOfflineUser(username) && !channel->hasUser(username))
+            channel->rejoinUser(username, socket);
+    }
+    return;
+}
+
 bool IrcChannels::hasUser(const QString &channel, const QString &username)
 {
     if(channelExists(channel))

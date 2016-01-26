@@ -217,6 +217,7 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 socket->write(QString("AUTH "+username+"\r\n").toUtf8());
                 socket->flush();
                 _usernames.insert(socket, username);
+                _channels->rejoinChannels(username, socket);
             }
             else
             {
