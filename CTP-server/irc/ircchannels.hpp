@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QMap>
 #include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 #include "ircchannel.hpp"
 
 class IrcChannels : public QObject
@@ -26,6 +28,11 @@ public:
     bool isOnlyUser(const QString &channel, const QString &username);
     QString generateChannelList();
     QString generateUserList(const QString &channel);
+    void loadChannelsFromDatabase();
+    void insertChannelIntoDatabase(const QString &channel);
+    void insertUserIntoChannelDatabase(const QString &channel, const QString &user);
+    void removeChannelFromDatabase(const QString &channel);
+    void removeUserFromChannelDatabase(const QString &channel, const QString &user);
 signals:
 
 public slots:
