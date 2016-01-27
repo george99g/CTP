@@ -28,16 +28,18 @@ public:
     bool isOnlyUser(const QString &channel, const QString &username);
     QString generateChannelList();
     QString generateUserList(const QString &channel);
-    void loadChannelsFromDatabase();
-    void insertChannelIntoDatabase(const QString &channel);
-    void insertUserIntoChannelDatabase(const QString &channel, const QString &user);
-    void removeChannelFromDatabase(const QString &channel);
-    void removeUserFromChannelDatabase(const QString &channel, const QString &user);
+
 signals:
 
 public slots:
 
 private:
+    void loadChannelsFromDatabase();
+    void loadChannelFromDatabase(const QString &channel);
+    void insertChannelIntoDatabase(const QString &channel);
+    void insertUserIntoChannelDatabase(const QString &channel, const QString &user);
+    void removeChannelFromDatabase(const QString &channel);
+    void removeUserFromChannelDatabase(const QString &channel, const QString &user);
     QMap<QString, IrcChannel*> _channels;
     QSqlDatabase* _db;
 };

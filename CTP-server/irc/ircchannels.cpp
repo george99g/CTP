@@ -167,6 +167,15 @@ void IrcChannels::loadChannelsFromDatabase()
             return;
         }
     }
+    QSqlQuery query(*_db);
+    query.prepare("SELECT channels.name FROM channels");
+
+    return;
+}
+
+void IrcChannels::loadChannelFromDatabase(const QString &channel)
+{
+
     return;
 }
 
@@ -202,7 +211,7 @@ void IrcChannels::insertUserIntoChannelDatabase(const QString &channel, const QS
         }
     }
     QSqlQuery query(*_db);
-    query.prepare("INSERT INTO userlists(id, user) VALUES((SELECT channels.id FROM channels WHERE channels.name = :channelname), :username)");
+    query.prepare("INSERT INTO userlists(id, user) VALUES((SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1), :username)");
     query.bindValue(":channelname", channel);
     query.bindValue(":username", user);
     if(!query.exec())
@@ -221,6 +230,14 @@ void IrcChannels::removeChannelFromDatabase(const QString &channel)
             return;
         }
     }
+    QStringList* users = _channels.value(channel)->offlineUserlist();
+    for(unsigned i = 0; i < (unsigned)users->count(); i++)
+        removeUserFromChannelDatabase(channel, users->at(i));
+    QSqlQuery query(*_db);
+    query.prepare("DELETE FROM channels WHERE channels.name = :channelname");
+    query.bindValue(":channelname", channel);
+    if(!query.exec())
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
     return;
 }
 
@@ -235,5 +252,11 @@ void IrcChannels::removeUserFromChannelDatabase(const QString &channel, const QS
             return;
         }
     }
+    QSqlQuery query(*_db);
+    query.prepare("DELETE FROM userlists WHERE userlists.id = (SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1) AND userlists.user = :username");
+    query.bindValue(":channelname", channel);
+    query.bindValue(":username", user);
+    if(!query.exec())
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
     return;
 }
