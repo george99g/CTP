@@ -16,6 +16,7 @@ IrcChannels::IrcChannels(QSqlDatabase *db, QObject *parent) : QObject(parent)
             qDebug()<<this<<"error with channels table creation query: "<<query.lastError().text();
         if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user INTEGER)"))
             qDebug()<<this<<"error with userlists table creating query: "<<query.lastError().text();
+        qDebug()<<this<<"loading channels from database";
         loadChannelsFromDatabase();
     }
 }
@@ -168,14 +169,52 @@ void IrcChannels::loadChannelsFromDatabase()
         }
     }
     QSqlQuery query(*_db);
-    query.prepare("SELECT channels.name FROM channels");
-
+    if(!query.exec("SELECT channels.name FROM channels"))
+        qDebug()<<this<<"error with query: "<<query.lastError().text();
+    if(query.first())
+    {
+        do
+        {
+            qDebug()<<this<<"loading channel";
+            loadChannelFromDatabase(query.value(0).toString());
+        }
+        while(query.next());
+    }
+    else
+        qDebug()<<this<<"error with query: "<<query.lastError().text()<<" This is probably due to a lack of saved channels";
     return;
 }
 
 void IrcChannels::loadChannelFromDatabase(const QString &channel)
 {
-
+    if(!channelExists(channel))
+    {
+        IrcChannel* channelptr = new IrcChannel(channel);
+        _channels.insert(channel, channelptr);
+        qDebug()<<this<<"created channel "<<channel;
+        if(!_db->isOpen())
+        {
+            qDebug()<<this<<"database is not open, opening";
+            if(!_db->open())
+            {
+                qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
+                return;
+            }
+        }
+        QSqlQuery query(*_db);
+        query.prepare("SELECT userlists.user FROM channels, userlists WHERE userlists.id = (SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1)");
+        query.bindValue(":channelname", channel);
+        if(!query.exec())
+            qDebug()<<this<<"error with query: "<<query.lastError().text();
+        if(query.first())
+        {
+            do
+                channelptr->offlineUserlist()->append(query.value(0).toString());
+            while(query.next());
+        }
+        else
+            qDebug()<<this<<"error with query: "<<query.lastError().text();
+    }
     return;
 }
 
