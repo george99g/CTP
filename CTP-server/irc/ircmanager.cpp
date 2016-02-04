@@ -1,17 +1,13 @@
 #include "ircmanager.hpp"
 
-IrcManager::IrcManager(QObject *parent) : QObject(parent)
+IrcManager::IrcManager(QObject* parent) : QObject(parent)
 {
     _db = QSqlDatabase::addDatabase("QSQLITE");
     _db.setDatabaseName("database.db3");
-    if(!_db.open())
-    {
-        qDebug()<<this<<"failed opening database file: "<<_db.lastError().text();
-    }
-    else
+    if(openDatabase())
     {
         QSqlQuery query(_db);
-        if(!query.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT, mode TEXT DEFAULT \"s\")"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT, mode TEXT DEFAULT \"S\")"))
         {
             qDebug()<<this<<"error with table creation query: "<<query.lastError().text();
         }
@@ -26,7 +22,7 @@ IrcManager::~IrcManager()
     _clients.removeAllClients();
 }
 
-void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
+void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
 {
     qDebug()<<this<<"handling message "<<message<<" from"<<socket;
     if(isLoggedIn(getUsername(socket)))
@@ -214,7 +210,8 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 broadcast("CONNECT "+username+"\r\n");
                 socket->write(QString("AUTH "+username+"\r\n").toUtf8());
                 socket->flush();
-                _clients.addClient(username, socket);
+                IrcClient* client = _clients.addClient(username, socket);
+                client->mode()->fromString(getClientModeFromDatabase(username));
                 _channels->rejoinChannels(username, socket);
             }
             else
@@ -240,7 +237,7 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
     return;
 }
 
-void IrcManager::handleRegister(QTcpSocket *socket, const QString &message)
+void IrcManager::handleRegister(QTcpSocket* socket, const QString &message)
 {
     qDebug()<<this<<"handling login from"<<socket;
     QStringList messageParameters = message.split(" ", QString::SkipEmptyParts);
@@ -304,6 +301,23 @@ void IrcManager::handleDisconnection(QTcpSocket* socket)
     return;
 }
 
+QString IrcManager::getClientModeFromDatabase(const QString &username)
+{
+    if(!openDatabase())
+        return "";
+    QSqlQuery query(_db);
+    query.prepare("SELECT users.mode FROM users WHERE users.username = :username");
+    query.bindValue(":username", username);
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return "";
+    }
+    if(query.first())
+        return query.value(0).toString();
+    return "";
+}
+
 void IrcManager::sendMessageToUsername(const QString &username, const QString &message)
 {
     QTcpSocket* socket = getSocket(username);
@@ -314,15 +328,8 @@ void IrcManager::sendMessageToUsername(const QString &username, const QString &m
 
 bool IrcManager::checkDatabaseForUsername(const QString &username)
 {
-    if(!_db.isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db.open())
-        {
-            qDebug()<<this<<"database failed to open: "<<_db.lastError().text();
-            return false;
-        }
-    }
+    if(!openDatabase())
+        return false;
     QSqlQuery query(_db);
     query.prepare("SELECT EXISTS(SELECT users.username FROM users WHERE users.username=:username LIMIT 1)");
     query.bindValue(":username", username);
@@ -338,15 +345,8 @@ bool IrcManager::checkDatabaseForUsername(const QString &username)
 
 bool IrcManager::checkDatabaseForLogin(const QString &username, const QString &password)
 {
-    if(!_db.isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db.open())
-        {
-            qDebug()<<this<<"database failed to open: "<<_db.lastError().text();
-            return false;
-        }
-    }
+    if(!openDatabase())
+        return false;
     QSqlQuery query(_db);
     query.prepare("SELECT EXISTS(SELECT users.id FROM users WHERE users.username=:username AND users.password=:password LIMIT 1)");
     query.bindValue(":username", username);
@@ -363,15 +363,8 @@ bool IrcManager::checkDatabaseForLogin(const QString &username, const QString &p
 
 bool IrcManager::registerDatabaseLogin(const QString &username, const QString &password)
 {
-    if(!_db.isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db.open())
-        {
-            qDebug()<<this<<"database failed to open: "<<_db.lastError().text();
-            return false;
-        }
-    }
+    if(!openDatabase())
+        return false;
     if(checkDatabaseForUsername(username)) return false;
     QSqlQuery query(_db);
     query.prepare("INSERT INTO users(username, password) VALUES(:username, :password)");
@@ -385,12 +378,26 @@ bool IrcManager::registerDatabaseLogin(const QString &username, const QString &p
     return true;
 }
 
+bool IrcManager::openDatabase()
+{
+    if(!_db.isOpen())
+    {
+        qDebug()<<this<<"database is not open, opening";
+        if(!_db.open())
+        {
+            qDebug()<<this<<"database failed to open: "<<_db.lastError().text();
+            return false;
+        }
+    }
+    return true;
+}
+
 QTcpSocket* IrcManager::getSocket(const QString &username)
 {
     return _clients.client(username)->socket();
 }
 
-QString IrcManager::getUsername(QTcpSocket *socket)
+QString IrcManager::getUsername(QTcpSocket* socket)
 {
     return _clients.client(socket)->username();
 }

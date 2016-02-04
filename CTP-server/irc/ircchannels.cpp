@@ -1,18 +1,13 @@
 #include "ircchannels.hpp"
 
-IrcChannels::IrcChannels(QSqlDatabase *db, QObject *parent) : QObject(parent)
+IrcChannels::IrcChannels(QSqlDatabase* db, QObject* parent) : QObject(parent)
 {
     _db = db;
-    if(!_db->isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db->open())
-            qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
-    }
+    openDatabase();
     if(_db->isOpen())
     {
         QSqlQuery query(*_db);
-        if(!query.exec("CREATE TABLE IF NOT EXISTS channels(id INTEGER PRIMARY KEY, name TEXT, mode TEXT)"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS channels(id INTEGER PRIMARY KEY, name TEXT, mode TEXT DEFAULT \"ST\")"))
             qDebug()<<this<<"error with channels table creation query: "<<query.lastError().text();
         if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user INTEGER)"))
             qDebug()<<this<<"error with userlists table creating query: "<<query.lastError().text();
@@ -60,7 +55,7 @@ void IrcChannels::joinChannel(const QString &channel, const QString &username, Q
     return;
 }
 
-void IrcChannels::rejoinChannels(const QString &username, QTcpSocket *socket)
+void IrcChannels::rejoinChannels(const QString &username, QTcpSocket* socket)
 {
     for(unsigned i = 0; i < (unsigned)_channels.values().count(); i++)
     {
@@ -157,7 +152,7 @@ QString IrcChannels::generateUserList(const QString &channel)
     return list;
 }
 
-void IrcChannels::loadChannelsFromDatabase()
+bool IrcChannels::openDatabase()
 {
     if(!_db->isOpen())
     {
@@ -165,9 +160,16 @@ void IrcChannels::loadChannelsFromDatabase()
         if(!_db->open())
         {
             qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
-            return;
+            return false;
         }
     }
+    return true;
+}
+
+void IrcChannels::loadChannelsFromDatabase()
+{
+    if(!openDatabase())
+        return;
     QSqlQuery query(*_db);
     if(!query.exec("SELECT channels.name FROM channels"))
         qDebug()<<this<<"error with query: "<<query.lastError().text();
@@ -192,15 +194,8 @@ void IrcChannels::loadChannelFromDatabase(const QString &channel)
         IrcChannel* channelptr = new IrcChannel(channel);
         _channels.insert(channel, channelptr);
         qDebug()<<this<<"created channel "<<channel;
-        if(!_db->isOpen())
-        {
-            qDebug()<<this<<"database is not open, opening";
-            if(!_db->open())
-            {
-                qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
-                return;
-            }
-        }
+        if(!openDatabase())
+            return;
         QSqlQuery query(*_db);
         query.prepare("SELECT userlists.user FROM channels, userlists WHERE userlists.id = (SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1)");
         query.bindValue(":channelname", channel);
@@ -220,15 +215,8 @@ void IrcChannels::loadChannelFromDatabase(const QString &channel)
 
 void IrcChannels::insertChannelIntoDatabase(const QString &channel)
 {
-    if(!_db->isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db->open())
-        {
-            qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
-            return;
-        }
-    }
+    if(!openDatabase())
+        return;
     QSqlQuery query(*_db);
     query.prepare("INSERT INTO channels(name, mode) VALUES(:channelname, :mode)");
     query.bindValue(":channelname", channel);
@@ -240,15 +228,8 @@ void IrcChannels::insertChannelIntoDatabase(const QString &channel)
 
 void IrcChannels::insertUserIntoChannelDatabase(const QString &channel, const QString &user)
 {
-    if(!_db->isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db->open())
-        {
-            qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
-            return;
-        }
-    }
+    if(!openDatabase())
+        return;
     QSqlQuery query(*_db);
     query.prepare("INSERT INTO userlists(id, user) VALUES((SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1), :username)");
     query.bindValue(":channelname", channel);
@@ -260,15 +241,8 @@ void IrcChannels::insertUserIntoChannelDatabase(const QString &channel, const QS
 
 void IrcChannels::removeChannelFromDatabase(const QString &channel)
 {
-    if(!_db->isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db->open())
-        {
-            qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
-            return;
-        }
-    }
+    if(!openDatabase())
+        return;
     QStringList* users = _channels.value(channel)->offlineUserlist();
     for(unsigned i = 0; i < (unsigned)users->count(); i++)
         removeUserFromChannelDatabase(channel, users->at(i));
@@ -282,15 +256,8 @@ void IrcChannels::removeChannelFromDatabase(const QString &channel)
 
 void IrcChannels::removeUserFromChannelDatabase(const QString &channel, const QString &user)
 {
-    if(!_db->isOpen())
-    {
-        qDebug()<<this<<"database is not open, opening";
-        if(!_db->open())
-        {
-            qDebug()<<this<<"database failed to open: "<<_db->lastError().text();
-            return;
-        }
-    }
+    if(!openDatabase())
+        return;
     QSqlQuery query(*_db);
     query.prepare("DELETE FROM userlists WHERE userlists.id = (SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1) AND userlists.user = :username");
     query.bindValue(":channelname", channel);

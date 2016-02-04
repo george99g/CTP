@@ -2,9 +2,9 @@
 #define TCPSERVER_HPP
 
 #include <QObject>
-#include "tcpconnections.hpp"
 #include <QTcpServer>
 #include <QThread>
+#include "tcpconnections.hpp"
 
 class TcpServer : public QTcpServer
 {
@@ -23,12 +23,8 @@ protected:
 signals:
     void accepting(qintptr handle, TcpConnection* connection);
     void finished();
-
 public slots:
     virtual void complete();
-
-private:
-
 };
 
 #endif // TCPSERVER_HPP

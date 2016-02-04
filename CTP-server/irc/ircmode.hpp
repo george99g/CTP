@@ -7,7 +7,7 @@ class IrcMode : public QObject
 {
     Q_OBJECT
 public:
-    explicit IrcMode(QString mode = "", QObject *parent = 0);
+    explicit IrcMode(QString mode = "", QObject* parent = 0);
     ~IrcMode();
     QString toString();
     void fromString(const QString &string);
@@ -17,10 +17,6 @@ public:
     bool teacher();
     void setAdministrator(bool mode);
     bool administrator();
-signals:
-
-public slots:
-
 private:
     bool _student;
     bool _teacher;

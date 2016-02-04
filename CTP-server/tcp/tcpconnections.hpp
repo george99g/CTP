@@ -2,12 +2,10 @@
 #define TCPCONNECTIONS_HPP
 
 #include <QObject>
-#include "tcpconnection.hpp"
 #include <QThread>
 #include <QMap>
 #include <QReadWriteLock>
-
-//Contains and manages TcpConnection objects after being started by TcpServer.
+#include "tcpconnection.hpp"
 
 class TcpConnections : public QObject
 {
@@ -15,23 +13,20 @@ class TcpConnections : public QObject
 public:
     explicit TcpConnections(QObject* parent = 0);
     ~TcpConnections();
-    virtual int count(); //Returns the connection count.
-
+    virtual int count();
 protected:
-    QMap<QTcpSocket*, TcpConnection*> _connections; //Holds a map of sockets and connections. Useful for looking up connections by sockets.
-    virtual void removeSocket(QTcpSocket* socket); //Remvoes a socket.
+    QMap<QTcpSocket*, TcpConnection*> _connections;
+    virtual void removeSocket(QTcpSocket* socket);
 signals:
-    void quitting(); //Emitted when the class is quitting
-    void finished(); //Emitted when the class is finished  quitting
+    void quitting();
+    void finished();
 public slots:
-    void start(); //Called when the class is started
-    void quit(); //Called when the class needs to quit
-    virtual void accept(qintptr handle, TcpConnection* connection); //Constructs a socket from the socket descriptor and connection sent by TcpServer
+    void start();
+    void quit();
+    virtual void accept(qintptr handle, TcpConnection* connection);
 protected slots:
-    virtual void disconnected(); //Handles a socket disonnection
-    virtual void error(QAbstractSocket::SocketError socketError); //Handles a socket error
-private:
-
+    virtual void disconnected();
+    virtual void error(QAbstractSocket::SocketError socketError);
 };
 
 #endif // TCPCONNECTIONS_HPP

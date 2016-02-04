@@ -9,9 +9,9 @@ class IrcClients : public QObject
 {
     Q_OBJECT
 public:
-    explicit IrcClients(QObject *parent = 0);
+    explicit IrcClients(QObject* parent = 0);
     ~IrcClients();
-    void addClient(const QString &username, QTcpSocket *socket);
+    IrcClient* addClient(const QString &username, QTcpSocket* socket);
     void removeClient(const QString &username);
     void removeClient(IrcClient* client);
     void removeAllClients();
@@ -21,10 +21,6 @@ public:
     bool hasClient(QTcpSocket* socket);
     void broadcast(const QString &message);
     QString generateClientList();
-signals:
-
-public slots:
-
 private:
     QMap<QString, IrcClient*> _clients;
 };

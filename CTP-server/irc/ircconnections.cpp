@@ -1,6 +1,6 @@
 #include "ircconnections.hpp"
 
-IrcConnections::IrcConnections(QObject *parent) : TcpConnections(parent)
+IrcConnections::IrcConnections(QObject* parent) : TcpConnections(parent)
 {
     _manager = new IrcManager();
 }
@@ -10,7 +10,7 @@ IrcConnections::~IrcConnections()
     _manager->deleteLater();
 }
 
-void IrcConnections::accept(qintptr handle, TcpConnection *connection)
+void IrcConnections::accept(qintptr handle, TcpConnection* connection)
 {
     QTcpSocket* socket = new QTcpSocket(this);
     if(!socket->setSocketDescriptor(handle))

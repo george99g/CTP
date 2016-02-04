@@ -1,6 +1,6 @@
 #include "ircclients.hpp"
 
-IrcClients::IrcClients(QObject *parent) : QObject(parent)
+IrcClients::IrcClients(QObject* parent) : QObject(parent)
 {
 
 }
@@ -10,10 +10,11 @@ IrcClients::~IrcClients()
     removeAllClients();
 }
 
-void IrcClients::addClient(const QString &username, QTcpSocket* socket)
+IrcClient* IrcClients::addClient(const QString &username, QTcpSocket* socket)
 {
-    _clients.insert(username, new IrcClient(username, socket));
-    return;
+    IrcClient* client = new IrcClient(username, socket);
+    _clients.insert(username, client);
+    return client;
 }
 
 void IrcClients::removeClient(const QString &username)
@@ -23,7 +24,7 @@ void IrcClients::removeClient(const QString &username)
     return;
 }
 
-void IrcClients::removeClient(IrcClient *client)
+void IrcClients::removeClient(IrcClient* client)
 {
     client->deleteLater();
     _clients.remove(client->username());
@@ -43,7 +44,7 @@ IrcClient* IrcClients::client(const QString &username)
     return _clients.value(username);
 }
 
-IrcClient* IrcClients::client(QTcpSocket *socket)
+IrcClient* IrcClients::client(QTcpSocket* socket)
 {
     for(unsigned i = 0; i < (unsigned)_clients.values().count(); i++)
     {
@@ -60,7 +61,7 @@ bool IrcClients::hasClient(const QString &username)
     else return false;
 }
 
-bool IrcClients::hasClient(QTcpSocket *socket)
+bool IrcClients::hasClient(QTcpSocket* socket)
 {
     for(unsigned i = 0; i < (unsigned)_clients.values().count(); i++)
         if(_clients.values().at(i)->socket() == socket)

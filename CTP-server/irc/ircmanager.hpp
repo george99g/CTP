@@ -15,7 +15,7 @@ class IrcManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit IrcManager(QObject *parent = 0);
+    explicit IrcManager(QObject* parent = 0);
     ~IrcManager();
     void handleMessage(QTcpSocket* socket, const QString &message);
     void handleLogin(QTcpSocket* socket, const QString &message);
@@ -23,15 +23,13 @@ public:
     void handleLogout(QTcpSocket* socket);
     void handleConnection(QTcpSocket* socket);
     void handleDisconnection(QTcpSocket* socket);
-signals:
-
-public slots:
-
 private:
+    QString getClientModeFromDatabase(const QString &username);
     void sendMessageToUsername(const QString &username, const QString &message);
     bool checkDatabaseForUsername(const QString &username);
     bool checkDatabaseForLogin(const QString &username, const QString &password);
     bool registerDatabaseLogin(const QString &username, const QString &password);
+    bool openDatabase();
     QTcpSocket* getSocket(const QString &username);
     QString getUsername(QTcpSocket* socket);
     bool isLoggedIn(const QString &username);

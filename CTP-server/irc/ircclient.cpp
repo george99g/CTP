@@ -1,15 +1,14 @@
 #include "ircclient.hpp"
 
-IrcClient::IrcClient(QString username, QTcpSocket *socket, QObject *parent) : QObject(parent)
+IrcClient::IrcClient(QString username, QTcpSocket* socket, QObject* parent) : QObject(parent)
 {
     _username = username;
     _socket = socket;
-    _mode = new IrcMode();
 }
 
 IrcClient::~IrcClient()
 {
-    _mode->deleteLater();
+
 }
 
 QString IrcClient::username()
@@ -28,7 +27,7 @@ QTcpSocket* IrcClient::socket()
     return _socket;
 }
 
-void IrcClient::setSocket(QTcpSocket *socket)
+void IrcClient::setSocket(QTcpSocket* socket)
 {
     _socket = socket;
     return;
@@ -36,12 +35,11 @@ void IrcClient::setSocket(QTcpSocket *socket)
 
 IrcMode* IrcClient::mode()
 {
-    return _mode;
+    return &_mode;
 }
 
-void IrcClient::setMode(IrcMode *mode)
+void IrcClient::setMode(const QString &mode)
 {
-    _mode->deleteLater();
-    _mode = mode;
+    _mode.fromString(mode);
     return;
 }

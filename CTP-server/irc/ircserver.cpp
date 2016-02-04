@@ -1,6 +1,6 @@
 #include "ircserver.hpp"
 
-IrcServer::IrcServer(QObject *parent) : TcpServer(parent)
+IrcServer::IrcServer(QObject* parent) : TcpServer(parent)
 {
     qDebug()<<this<<"constructed";
     _thread = (QThread*)0;

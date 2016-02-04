@@ -12,7 +12,7 @@ class IrcChannels : public QObject
 {
     Q_OBJECT
 public:
-    explicit IrcChannels(QSqlDatabase* db, QObject *parent = 0);
+    explicit IrcChannels(QSqlDatabase* db, QObject* parent = 0);
     ~IrcChannels();
     bool channelExists(const QString &channel);
     void createChannel(const QString &channel);
@@ -34,6 +34,7 @@ signals:
 public slots:
 
 private:
+    bool openDatabase();
     void loadChannelsFromDatabase();
     void loadChannelFromDatabase(const QString &channel);
     void insertChannelIntoDatabase(const QString &channel);

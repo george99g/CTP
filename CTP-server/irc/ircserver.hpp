@@ -6,19 +6,14 @@
 #include "ircconnections.hpp"
 
 //Despite their name, these classes do not conform to the IRC protocol
-//TODO: Rename these classes when re-writing, possibly implement them with .pri instead of a subfolder
 
 class IrcServer : public TcpServer
 {
     Q_OBJECT
 public:
-    explicit IrcServer(QObject *parent = 0);
+    explicit IrcServer(QObject* parent = 0);
     ~IrcServer();
     virtual bool listen(const QHostAddress &address, quint16 port);
-protected:
-
-signals:
-
 public slots:
     virtual void complete();
 private:
