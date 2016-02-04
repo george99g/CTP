@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include "ircmode.hpp"
 
 class IrcChannel : public QObject
 {
@@ -22,16 +23,14 @@ public:
     bool hasUser(const QString &username);
     bool hasOfflineUser(const QString &username);
     bool isOnlyUser(const QString &username);
+    IrcMode* mode();
     QMap<QTcpSocket*, QString>* userlist();
     QStringList* offlineUserlist();
-signals:
-
-public slots:
-
 private:
     QString _name;
     QMap<QTcpSocket*, QString> _userlist;
     QStringList _offlineUserlist;
+    IrcMode _mode;
 };
 
 #endif // IRCCHANNEL_HPP

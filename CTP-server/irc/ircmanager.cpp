@@ -11,7 +11,7 @@ IrcManager::IrcManager(QObject *parent) : QObject(parent)
     else
     {
         QSqlQuery query(_db);
-        if(!query.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT)"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT, mode TEXT DEFAULT \"s\")"))
         {
             qDebug()<<this<<"error with table creation query: "<<query.lastError().text();
         }
@@ -23,6 +23,7 @@ IrcManager::~IrcManager()
 {
     _db.close();
     _channels->deleteLater();
+    _clients.removeAllClients();
 }
 
 void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
@@ -34,11 +35,8 @@ void IrcManager::handleMessage(QTcpSocket *socket, const QString &message)
         if(messageParameters.at(0) == "GET_USERLIST" && messageParameters.count() == 1)
         {
             qDebug()<<this<<"sending userlist to"<<socket;
-            QString output = "USERLIST";
-            for(unsigned i = 0; i < (unsigned)_usernames.values().count(); i++)
-            {
-                output += " " + _usernames.values().at(i);
-            }
+            QString output = "USERLIST ";
+            output += _clients.generateClientList();
             output += "\r\n";
             socket->write(output.toUtf8());
             socket->flush();
@@ -210,13 +208,13 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
         QString password = messageParameters.at(2);
         if(checkDatabaseForLogin(username, password))
         {
-            if(!_usernames.values().contains(username))
+            if(!_clients.hasClient(username))
             {
                 qDebug()<<this<<"successfully logged in"<<socket<<" as"<<username;
                 broadcast("CONNECT "+username+"\r\n");
                 socket->write(QString("AUTH "+username+"\r\n").toUtf8());
                 socket->flush();
-                _usernames.insert(socket, username);
+                _clients.addClient(username, socket);
                 _channels->rejoinChannels(username, socket);
             }
             else
@@ -275,17 +273,17 @@ void IrcManager::handleRegister(QTcpSocket *socket, const QString &message)
 void IrcManager::handleLogout(QTcpSocket *socket)
 {
     qDebug()<<this<<"handling logout from "<<socket;
-    if(!_usernames.contains(socket))
+    if(!_clients.hasClient(socket))
     {
         qDebug()<<socket<<"logged out without login";
         socket->close();
     }
     else
     {
-        QString disconnectingUsername = _usernames.value(socket);
-        _channels->clearUser(disconnectingUsername);
-        _usernames.remove(socket);
-        broadcast("DISCONNECT "+disconnectingUsername+"\r\n");
+        IrcClient* disconnectingClient = _clients.client(socket);
+        _channels->clearUser(disconnectingClient->username());
+        _clients.removeClient(disconnectingClient);
+        broadcast("DISCONNECT "+disconnectingClient->username()+"\r\n");
         socket->close();
     }
     return;
@@ -300,7 +298,7 @@ void IrcManager::handleConnection(QTcpSocket* socket)
 void IrcManager::handleDisconnection(QTcpSocket* socket)
 {
     qDebug()<<this<<"handling disconnection from"<<socket;
-    if(_usernames.contains(socket))
+    if(_clients.hasClient(socket))
         handleLogout(socket);
     qDebug()<<socket<<"disconnected without login.";
     return;
@@ -389,28 +387,22 @@ bool IrcManager::registerDatabaseLogin(const QString &username, const QString &p
 
 QTcpSocket* IrcManager::getSocket(const QString &username)
 {
-    return _usernames.key(username);
+    return _clients.client(username)->socket();
 }
 
 QString IrcManager::getUsername(QTcpSocket *socket)
 {
-    return _usernames.value(socket, "");
+    return _clients.client(socket)->username();
 }
 
 bool IrcManager::isLoggedIn(const QString &username)
 {
-    if(_usernames.values().contains(username)) return true;
+    if(_clients.hasClient(username)) return true;
     else return false;
 }
 
 void IrcManager::broadcast(const QString &message)
 {
-    QTcpSocket* socket;
-    for(unsigned i = 0; i < (unsigned)_usernames.keys().count(); i++)
-    {
-        socket = _usernames.keys().at(i);
-        socket->write(message.toUtf8());
-        socket->flush();
-    }
+    _clients.broadcast(message);
     return;
 }

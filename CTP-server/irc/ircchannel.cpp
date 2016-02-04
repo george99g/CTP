@@ -137,6 +137,11 @@ bool IrcChannel::isOnlyUser(const QString &username)
     else return false;
 }
 
+IrcMode *IrcChannel::mode()
+{
+    return &_mode;
+}
+
 QMap<QTcpSocket*, QString>* IrcChannel::userlist()
 {
     return &_userlist;
