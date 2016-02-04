@@ -68,7 +68,8 @@ void IrcConnections::readyRead()
             _manager->handleRegister(socket, line);
         else if(line.mid(0, 6) == "LOGOUT")
             _manager->handleLogout(socket);
-        else _manager->handleMessage(socket, line);
+        else if(line.length() >= 1)
+            _manager->handleMessage(socket, line);
     }
     return;
 }

@@ -2,6 +2,9 @@
 
 IrcMode::IrcMode(QString mode, QObject* parent) : QObject(parent)
 {
+    _student = false;
+    _teacher = false;
+    _administrator = false;
     fromString(mode);
 }
 
@@ -13,9 +16,12 @@ IrcMode::~IrcMode()
 QString IrcMode::toString()
 {
     QString string = "";
-    if(_student) string += 'S';
-    if(_teacher) string += 'T';
-    if(_administrator) string += 'A';
+    if(_student)
+        string += 'S';
+    if(_teacher)
+        string += 'T';
+    if(_administrator)
+        string += 'A';
     return string;
 }
 
@@ -61,4 +67,26 @@ void IrcMode::setAdministrator(bool mode)
 bool IrcMode::administrator()
 {
     return _administrator;
+}
+
+void IrcMode::addMode(QChar mode)
+{
+    if(mode == 'S')
+        _student = true;
+    else if(mode == 'T')
+        _teacher = true;
+    else if(mode == 'A')
+        _administrator = true;
+    return;
+}
+
+void IrcMode::removeMode(QChar mode)
+{
+    if(mode == 'S')
+        _student = false;
+    else if(mode == 'T')
+        _teacher = false;
+    else if(mode == 'A')
+        _administrator = false;
+    return;
 }

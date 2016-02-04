@@ -17,6 +17,8 @@ public:
     bool teacher();
     void setAdministrator(bool mode);
     bool administrator();
+    void addMode(QChar mode);
+    void removeMode(QChar mode);
 private:
     bool _student;
     bool _teacher;

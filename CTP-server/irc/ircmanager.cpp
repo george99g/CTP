@@ -185,6 +185,78 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 socket->flush();
             }
         }
+        else if(messageParameters.at(0) == "MODE")
+        {
+            if(messageParameters.count() == 1)
+            {
+                QString sendMessage = "MODE ";
+                IrcClient* client = _clients.client(socket);
+                sendMessage += client->username();
+                sendMessage += ' ';
+                sendMessage += client->mode()->toString();
+                sendMessage += "\r\n";
+                socket->write(sendMessage.toUtf8());
+                socket->flush();
+            }
+            else if(messageParameters.count() == 2)
+            {
+                if(checkDatabaseForUsername(messageParameters.at(1)))
+                {
+                    QString sendMessage = "MODE ";
+                    sendMessage += messageParameters.at(1);
+                    sendMessage += ' ';
+                    sendMessage += getClientModeFromDatabase(messageParameters.at(1));
+                    sendMessage += "\r\n";
+                    socket->write(sendMessage.toUtf8());
+                    socket->flush();
+                }
+                else
+                {
+                    socket->write("USER_DOES_NOT_EXIST\r\n");
+                    socket->flush();
+                }
+            }
+            else if(messageParameters.count() == 3)
+            {
+                if(checkDatabaseForUsername(messageParameters.at(1)))
+                {
+                    if(_clients.client(socket)->mode()->administrator())
+                    {
+                        QString modifyingUsername = messageParameters.at(1);
+                        QString modifyingMode = messageParameters.at(2);
+                        if(modifyingMode.length() == 1)
+                            modifyingMode.prepend('+');
+                        else if(modifyingMode.startsWith('+') && modifyingMode.length() == 2)
+                        {
+                            IrcClient* client = _clients.client(modifyingUsername);
+                            client->mode()->addMode(modifyingMode.at(1));
+                            setClientModeInDatabase(client->username(), client->mode());
+                        }
+                        else if(modifyingMode.startsWith('-') && modifyingMode.length() == 2)
+                        {
+                            IrcClient* client = _clients.client(modifyingUsername);
+                            client->mode()->removeMode(modifyingMode.at(1));
+                            setClientModeInDatabase(client->username(), client->mode());
+                        }
+                        else
+                        {
+                            socket->write("WRONG_ARGUMENTS\r\n");
+                            socket->flush();
+                        }
+                    }
+                    else
+                    {
+                        socket->write("NOT_ADMINISTRATOR\r\n");
+                        socket->flush();
+                    }
+                }
+                else
+                {
+                    socket->write("USER_DOES_NOT_EXIST\r\n");
+                    socket->flush();
+                }
+            }
+        }
     }
     else
     {
@@ -298,6 +370,22 @@ void IrcManager::handleDisconnection(QTcpSocket* socket)
     if(_clients.hasClient(socket))
         handleLogout(socket);
     qDebug()<<socket<<"disconnected without login.";
+    return;
+}
+
+void IrcManager::setClientModeInDatabase(const QString &username, IrcMode *mode)
+{
+    if(!openDatabase())
+        return;
+    QSqlQuery query(_db);
+    query.prepare("UPDATE users SET mode = :mode WHERE username = :username");
+    query.bindValue(":mode", mode->toString());
+    query.bindValue(":username", username);
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return;
+    }
     return;
 }
 

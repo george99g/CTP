@@ -24,6 +24,7 @@ public:
     void handleConnection(QTcpSocket* socket);
     void handleDisconnection(QTcpSocket* socket);
 private:
+    void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);
     void sendMessageToUsername(const QString &username, const QString &message);
     bool checkDatabaseForUsername(const QString &username);
