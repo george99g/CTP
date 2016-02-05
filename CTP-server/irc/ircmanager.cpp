@@ -200,20 +200,42 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
             }
             else if(messageParameters.count() == 2)
             {
-                if(checkDatabaseForUsername(messageParameters.at(1)))
+                QString targetUsername = messageParameters.at(1);
+                if(targetUsername.startsWith('#'))
                 {
-                    QString sendMessage = "MODE ";
-                    sendMessage += messageParameters.at(1);
-                    sendMessage += ' ';
-                    sendMessage += getClientModeFromDatabase(messageParameters.at(1));
-                    sendMessage += "\r\n";
-                    socket->write(sendMessage.toUtf8());
-                    socket->flush();
+                    if(_channels->channelExists(targetUsername))
+                    {
+                        QString sendMessage = "MODE ";
+                        sendMessage += targetUsername;
+                        sendMessage += ' ';
+                        sendMessage += _channels->getChannelModeFromDatabase(targetUsername);
+                        sendMessage += "\r\n";
+                        socket->write(sendMessage.toUtf8());
+                        socket->flush();
+                    }
+                    else
+                    {
+                        socket->write("CHANNEL_DOES_NOT_EXIST\r\n");
+                        socket->flush();
+                    }
                 }
                 else
                 {
-                    socket->write("USER_DOES_NOT_EXIST\r\n");
-                    socket->flush();
+                    if(checkDatabaseForUsername(targetUsername))
+                    {
+                        QString sendMessage = "MODE ";
+                        sendMessage += targetUsername;
+                        sendMessage += ' ';
+                        sendMessage += getClientModeFromDatabase(targetUsername);
+                        sendMessage += "\r\n";
+                        socket->write(sendMessage.toUtf8());
+                        socket->flush();
+                    }
+                    else
+                    {
+                        socket->write("USER_DOES_NOT_EXIST\r\n");
+                        socket->flush();
+                    }
                 }
             }
             else if(messageParameters.count() == 3)
@@ -222,20 +244,20 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 {
                     if(_clients.client(socket)->mode()->administrator())
                     {
-                        QString modifyingUsername = messageParameters.at(1);
-                        QString modifyingMode = messageParameters.at(2);
-                        if(modifyingMode.length() == 1)
-                            modifyingMode.prepend('+');
-                        else if(modifyingMode.startsWith('+') && modifyingMode.length() == 2)
+                        QString targetUsername = messageParameters.at(1);
+                        QString targetMode = messageParameters.at(2);
+                        if(targetMode.length() == 1)
+                            targetMode.prepend('+');
+                        else if(targetMode.startsWith('+') && targetMode.length() == 2)
                         {
-                            IrcClient* client = _clients.client(modifyingUsername);
-                            client->mode()->addMode(modifyingMode.at(1));
+                            IrcClient* client = _clients.client(targetUsername);
+                            client->mode()->addMode(targetMode.at(1));
                             setClientModeInDatabase(client->username(), client->mode());
                         }
-                        else if(modifyingMode.startsWith('-') && modifyingMode.length() == 2)
+                        else if(targetMode.startsWith('-') && targetMode.length() == 2)
                         {
-                            IrcClient* client = _clients.client(modifyingUsername);
-                            client->mode()->removeMode(modifyingMode.at(1));
+                            IrcClient* client = _clients.client(targetUsername);
+                            client->mode()->removeMode(targetMode.at(1));
                             setClientModeInDatabase(client->username(), client->mode());
                         }
                         else
@@ -487,7 +509,10 @@ QTcpSocket* IrcManager::getSocket(const QString &username)
 
 QString IrcManager::getUsername(QTcpSocket* socket)
 {
-    return _clients.client(socket)->username();
+    IrcClient* client = _clients.client(socket);
+    if(client == (IrcClient*)0)
+        return "";
+    return client->username();
 }
 
 bool IrcManager::isLoggedIn(const QString &username)

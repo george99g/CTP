@@ -52,6 +52,20 @@ void IrcConnections::connected()
     return;
 }
 
+void IrcConnections::error(QAbstractSocket::SocketError socketError)
+{
+    if(socketError == QAbstractSocket::RemoteHostClosedError)
+    {
+        if(!sender()) return;
+        QTcpSocket* socket = (QTcpSocket*)sender();
+        if(!socket) return;
+        qDebug()<<socket<<"closed from remote host in"<<this;
+        _manager->handleDisconnection(socket);
+    }
+    TcpConnections::error(socketError);
+    return;
+}
+
 void IrcConnections::readyRead()
 {
     if(!sender()) return;

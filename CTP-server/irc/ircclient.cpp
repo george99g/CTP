@@ -13,7 +13,9 @@ IrcClient::~IrcClient()
 
 QString IrcClient::username()
 {
-    return _username;
+    if(_username.length()>=1)
+        return _username;
+    else return "";
 }
 
 void IrcClient::setUsername(const QString username)

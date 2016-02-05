@@ -166,6 +166,39 @@ bool IrcChannels::openDatabase()
     return true;
 }
 
+void IrcChannels::setChannelModeInDatabase(const QString &channel, IrcMode* mode)
+{
+    if(!openDatabase())
+        return;
+    QSqlQuery query(*_db);
+    query.prepare("UPDATE channels SET mode = :mode WHERE name = :channelname");
+    query.bindValue(":mode", mode->toString());
+    query.bindValue(":channelname", channel);
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return;
+    }
+    return;
+}
+
+QString IrcChannels::getChannelModeFromDatabase(const QString &channel)
+{
+    if(!openDatabase())
+        return "";
+    QSqlQuery query(*_db);
+    query.prepare("SELECT channels.mode FROM channels WHERE channels.name = :channelname");
+    query.bindValue(":channelname", channel);
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return "";
+    }
+    if(query.first())
+        return query.value(0).toString();
+    return "";
+}
+
 void IrcChannels::loadChannelsFromDatabase()
 {
     if(!openDatabase())
@@ -218,9 +251,8 @@ void IrcChannels::insertChannelIntoDatabase(const QString &channel)
     if(!openDatabase())
         return;
     QSqlQuery query(*_db);
-    query.prepare("INSERT INTO channels(name, mode) VALUES(:channelname, :mode)");
+    query.prepare("INSERT INTO channels(name) VALUES(:channelname)");
     query.bindValue(":channelname", channel);
-    query.bindValue(":mode", "");
     if(!query.exec())
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
     return;

@@ -28,11 +28,8 @@ public:
     bool isOnlyUser(const QString &channel, const QString &username);
     QString generateChannelList();
     QString generateUserList(const QString &channel);
-
-signals:
-
-public slots:
-
+    void setChannelModeInDatabase(const QString &channel, IrcMode* mode);
+    QString getChannelModeFromDatabase(const QString &channel);
 private:
     bool openDatabase();
     void loadChannelsFromDatabase();

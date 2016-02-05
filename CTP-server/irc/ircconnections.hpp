@@ -16,6 +16,7 @@ public slots:
     virtual void accept(qintptr handle, TcpConnection* connection);
     virtual void disconnected();
     virtual void connected();
+    virtual void error(QAbstractSocket::SocketError socketError);
 protected slots:
     void readyRead();
 private:
