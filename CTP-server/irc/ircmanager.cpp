@@ -133,12 +133,24 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 }
                 else
                 {
-                    if(!_channels->hasOfflineUser(joinChannelName, getUsername(socket)))
-                        _channels->joinChannel(joinChannelName, getUsername(socket), socket);
-                    else
+                    if(_channels->hasOfflineUser(joinChannelName, getUsername(socket)))
                     {
                         socket->write(QString("ALREADY_JOINED "+joinChannelName+"\r\n").toUtf8());
                         socket->flush();
+                    }
+                    else
+                    {
+                        QString username = getUsername(socket);
+                        IrcClient* client = _clients.client(socket);
+                        IrcMode* clientMode = client->mode();
+                        IrcMode* channelMode = _channels->channel(joinChannelName)->mode();
+                        if((clientMode->student()&&channelMode->student())||(clientMode->teacher()&&channelMode->teacher())||(clientMode->administrator()))
+                            _channels->joinChannel(joinChannelName, username, socket);
+                        else
+                        {
+                            socket->write("CHANNEL_MODE_DOES_NOT_ALLOW_ACCESS\r\n");
+                            socket->flush();
+                        }
                     }
                 }
             }
@@ -240,41 +252,74 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
             }
             else if(messageParameters.count() == 3)
             {
-                if(checkDatabaseForUsername(messageParameters.at(1)))
+                QString targetUsername = messageParameters.at(1);
+                QString targetMode = messageParameters.at(2);
+                if(_clients.client(socket)->mode()->administrator())
                 {
-                    if(_clients.client(socket)->mode()->administrator())
+                    if(targetUsername.startsWith('#'))
                     {
-                        QString targetUsername = messageParameters.at(1);
-                        QString targetMode = messageParameters.at(2);
-                        if(targetMode.length() == 1)
-                            targetMode.prepend('+');
-                        else if(targetMode.startsWith('+') && targetMode.length() == 2)
+                        if(_channels->channelExists(targetUsername))
                         {
-                            IrcClient* client = _clients.client(targetUsername);
-                            client->mode()->addMode(targetMode.at(1));
-                            setClientModeInDatabase(client->username(), client->mode());
-                        }
-                        else if(targetMode.startsWith('-') && targetMode.length() == 2)
-                        {
-                            IrcClient* client = _clients.client(targetUsername);
-                            client->mode()->removeMode(targetMode.at(1));
-                            setClientModeInDatabase(client->username(), client->mode());
+                            if(targetMode.length() == 1)
+                                targetMode.prepend('+');
+                            if(targetMode.startsWith('+') && targetMode.length() == 2)
+                            {
+                                IrcChannel* channel = _channels->channel(targetUsername);
+                                channel->mode()->addMode(targetMode.at(1));
+                                _channels->setChannelModeInDatabase(targetUsername, channel->mode());
+                            }
+                            else if(targetMode.startsWith('-') && targetMode.length() == 2)
+                            {
+                                IrcChannel* channel = _channels->channel(targetUsername);
+                                channel->mode()->removeMode(targetMode.at(1));
+                                _channels->setChannelModeInDatabase(targetUsername, channel->mode());
+                            }
+                            else
+                            {
+                                socket->write("WRONG_ARGUMENTS\r\n");
+                                socket->flush();
+                            }
                         }
                         else
                         {
-                            socket->write("WRONG_ARGUMENTS\r\n");
+                            socket->write("CHANNEL_DOES_NOT_EXIST\r\n");
                             socket->flush();
                         }
                     }
                     else
                     {
-                        socket->write("NOT_ADMINISTRATOR\r\n");
-                        socket->flush();
+                        if(checkDatabaseForUsername(targetUsername))
+                        {
+                            if(targetMode.length() == 1)
+                                targetMode.prepend('+');
+                            if(targetMode.startsWith('+') && targetMode.length() == 2)
+                            {
+                                IrcClient* client = _clients.client(targetUsername);
+                                client->mode()->addMode(targetMode.at(1));
+                                setClientModeInDatabase(client->username(), client->mode());
+                            }
+                            else if(targetMode.startsWith('-') && targetMode.length() == 2)
+                            {
+                                IrcClient* client = _clients.client(targetUsername);
+                                client->mode()->removeMode(targetMode.at(1));
+                                setClientModeInDatabase(client->username(), client->mode());
+                            }
+                            else
+                            {
+                                socket->write("WRONG_ARGUMENTS\r\n");
+                                socket->flush();
+                            }
+                        }
+                        else
+                        {
+                            socket->write("USER_DOES_NOT_EXIST\r\n");
+                            socket->flush();
+                        }
                     }
                 }
                 else
                 {
-                    socket->write("USER_DOES_NOT_EXIST\r\n");
+                    socket->write("NOT_ADMINISTRATOR\r\n");
                     socket->flush();
                 }
             }

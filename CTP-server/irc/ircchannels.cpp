@@ -33,8 +33,10 @@ void IrcChannels::createChannel(const QString &channel)
 {
     if(!channelExists(channel))
     {
-        _channels.insert(channel, new IrcChannel(channel));
+        IrcChannel* channelptr = new IrcChannel(channel);
+        _channels.insert(channel, channelptr);
         insertChannelIntoDatabase(channel);
+        channelptr->mode()->fromString(getChannelModeFromDatabase(channel));
         qDebug()<<this<<"created channel "<<channel;
     }
     return;
@@ -125,6 +127,14 @@ bool IrcChannels::isOnlyUser(const QString &channel, const QString &username)
     if(_channels.value(channel)->isOnlyUser(username))
         return true;
     else return false;
+}
+
+IrcChannel* IrcChannels::channel(const QString &channel)
+{
+    if(channelExists(channel))
+        return _channels.value(channel);
+    else
+        return (IrcChannel*)0;
 }
 
 QString IrcChannels::generateChannelList()
@@ -226,6 +236,7 @@ void IrcChannels::loadChannelFromDatabase(const QString &channel)
     {
         IrcChannel* channelptr = new IrcChannel(channel);
         _channels.insert(channel, channelptr);
+        channelptr->mode()->fromString(getChannelModeFromDatabase(channel));
         qDebug()<<this<<"created channel "<<channel;
         if(!openDatabase())
             return;

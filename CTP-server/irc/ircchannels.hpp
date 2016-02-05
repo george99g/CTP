@@ -26,6 +26,7 @@ public:
     void clearUser(const QString &username);
     void partChannel(const QString &channel, const QString &username);
     bool isOnlyUser(const QString &channel, const QString &username);
+    IrcChannel* channel(const QString &channel);
     QString generateChannelList();
     QString generateUserList(const QString &channel);
     void setChannelModeInDatabase(const QString &channel, IrcMode* mode);
