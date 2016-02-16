@@ -2,6 +2,7 @@
 #define DIALOG_HPP
 
 #include <QDialog>
+#include "config.hpp"
 #include "irc/ircserver.hpp"
 
 namespace Ui

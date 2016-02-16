@@ -2,6 +2,7 @@
 #define IRCCONNECTIONS_HPP
 
 #include <QObject>
+#include "../config.hpp"
 #include "ircmanager.hpp"
 #include "../tcp/tcpconnections.hpp"
 

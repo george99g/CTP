@@ -37,6 +37,7 @@ HEADERS  += dialog.hpp \
     irc/ircchannels.hpp \
     irc/ircmode.hpp \
     irc/ircclient.hpp \
-    irc/ircclients.hpp
+    irc/ircclients.hpp \
+    config.hpp
 
 FORMS    += dialog.ui

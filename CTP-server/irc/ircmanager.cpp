@@ -8,9 +8,9 @@ IrcManager::IrcManager(QObject* parent) : QObject(parent)
     {
         QSqlQuery query(_db);
         if(!query.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT, mode TEXT DEFAULT \"S\")"))
-        {
-            qDebug()<<this<<"error with table creation query: "<<query.lastError().text();
-        }
+            qDebug()<<this<<"error with users table creation query: "<<query.lastError().text();
+        if(!query.exec("CREATE TABLE IF NOT EXISTS offline_messages(id INTEGER PRIMARY KEY, receiver INTEGER, sender INTEGER, message TEXT, time TEXT)"))
+            qDebug()<<this<<"error with offline messages table creation query: "<<query.lastError().text();
     }
     _channels = new IrcChannels(&_db);
 }
@@ -89,6 +89,13 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                         sendMessage += "\r\n";
                         sendMessageToUsername(receiverUsername, sendMessage);
                         socket->write("SENT\r\n");
+                        socket->flush();
+                    }
+                    else if(checkDatabaseForUsername(receiverUsername))
+                    {
+                        QString sendMessage = message.mid(message.indexOf(" ", 8) + 1);
+                        sendOfflineMessageToUsername(receiverUsername, getUsername(socket), sendMessage);
+                        socket->write("OFFLINE_SENT\r\n");
                         socket->flush();
                     }
                     else
@@ -352,6 +359,8 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 IrcClient* client = _clients.addClient(username, socket);
                 client->mode()->fromString(getClientModeFromDatabase(username));
                 _channels->rejoinChannels(username, socket);
+                if(hasMissedMessages(socket))
+                    sendMissedMessages(socket);
             }
             else
             {
@@ -479,6 +488,96 @@ void IrcManager::sendMessageToUsername(const QString &username, const QString &m
     socket->write(message.toUtf8());
     socket->flush();
     return;
+}
+
+void IrcManager::sendOfflineMessageToUsername(const QString &username, const QString &senderUsername, const QString &message)
+{
+    if(!openDatabase())
+        return;
+    QSqlQuery query(_db);
+    query.prepare("INSERT INTO offline_messages(receiver, sender, message, time) "
+                  "VALUES((SELECT users.id FROM users WHERE users.username = :username LIMIT 1), "
+                  "(SELECT users.id FROM users WHERE users.username = :senderUsername LIMIT 1), "
+                  ":message, "
+                  ":time)");
+    query.bindValue(":username", username);
+    query.bindValue(":senderUsername", senderUsername);
+    query.bindValue(":message", message);
+    query.bindValue(":time", QString::number(QDateTime::currentDateTime().toTime_t()));
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return;
+    }
+    return;
+}
+
+void IrcManager::sendMissedMessages(QTcpSocket *socket)
+{
+    if(!openDatabase())
+        return;
+    QSqlQuery query(_db);
+    query.prepare("SELECT offline_messages.id, offline_messages.sender, offline_messages.message, offline_messages.time "
+                  "FROM offline_messages WHERE offline_messages.receiver = (SELECT users.id FROM users WHERE users.username = :receiverUsername LIMIT 1)");
+    query.bindValue(":receiverUsername", getUsername(socket));
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return;
+    }
+    if(query.first())
+    {
+        do
+        {
+            QString senderUsername = "?"; //Can't get the query to return the username instead of an ID, so I'll just use this hacky method for now
+            {
+                QSqlQuery usernameQuery(_db);
+                usernameQuery.prepare("SELECT users.username FROM users WHERE users.id = :id LIMIT 1");
+                usernameQuery.bindValue(":id", query.value(1).toString());
+                if(!usernameQuery.exec())
+                    qDebug()<<this<<"error with query: "<<usernameQuery.lastError().text();
+                if(usernameQuery.first())
+                    senderUsername = usernameQuery.value(0).toString();
+                else
+                    qDebug()<<this<<"error with query: "<<usernameQuery.lastError().text();
+            }
+            QString sendMessage = "OFFLINE_MESSAGE ";
+            sendMessage += senderUsername;
+            sendMessage += ' ';
+            sendMessage += query.value(3).toString();
+            sendMessage += ' ';
+            sendMessage += query.value(2).toString();
+            sendMessage += "\r\n";
+            socket->write(sendMessage.toUtf8());
+            socket->flush();
+            QSqlQuery deleteQuery(_db);
+            deleteQuery.prepare("DELETE FROM offline_messages WHERE id = :id");
+            deleteQuery.bindValue(":id", query.value(0));
+            if(!deleteQuery.exec())
+                qDebug()<<this<<"error with query: "<<deleteQuery.lastError().text();
+        }
+        while(query.next());
+    }
+    else
+        qDebug()<<this<<"error with query: "<<query.lastError().text();
+    return;
+}
+
+bool IrcManager::hasMissedMessages(QTcpSocket *socket)
+{
+    if(!openDatabase())
+        return false;
+    QSqlQuery query(_db);
+    query.prepare("SELECT EXISTS(SELECT offline_messages.id FROM offline_messages, users WHERE offline_messages.receiver = (SELECT users.id FROM users WHERE users.username = :username LIMIT 1) LIMIT 1)");
+    query.bindValue(":username", getUsername(socket));
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return false;
+    }
+    if(query.first())
+        if(query.value(0).toBool()) return true;
+    return false;
 }
 
 bool IrcManager::checkDatabaseForUsername(const QString &username)

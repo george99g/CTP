@@ -8,6 +8,7 @@
 #include <QSqlDriver>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QDateTime>
 #include "ircclients.hpp"
 #include "ircchannels.hpp"
 
@@ -27,6 +28,9 @@ private:
     void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);
     void sendMessageToUsername(const QString &username, const QString &message);
+    void sendOfflineMessageToUsername(const QString &username, const QString &senderUsername, const QString &message);
+    void sendMissedMessages(QTcpSocket* socket);
+    bool hasMissedMessages(QTcpSocket* socket);
     bool checkDatabaseForUsername(const QString &username);
     bool checkDatabaseForLogin(const QString &username, const QString &password);
     bool registerDatabaseLogin(const QString &username, const QString &password);

@@ -75,11 +75,13 @@ void IrcConnections::readyRead()
     while(socket->canReadLine())
     {
         QString line = QString::fromUtf8(socket->readLine().trimmed());
-        qDebug()<<this<<"read: "<<line;
         if(line.mid(0, 5) == "LOGIN")
             _manager->handleLogin(socket, line);
         else if(line.mid(0, 8) == "REGISTER")
-            _manager->handleRegister(socket, line);
+        {
+            if(!ADMIN_ONLY_REGISTRATION)
+                _manager->handleRegister(socket, line);
+        }
         else if(line.mid(0, 6) == "LOGOUT")
             _manager->handleLogout(socket);
         else if(line.length() >= 1)

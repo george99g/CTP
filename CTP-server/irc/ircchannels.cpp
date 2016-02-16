@@ -9,8 +9,10 @@ IrcChannels::IrcChannels(QSqlDatabase* db, QObject* parent) : QObject(parent)
         QSqlQuery query(*_db);
         if(!query.exec("CREATE TABLE IF NOT EXISTS channels(id INTEGER PRIMARY KEY, name TEXT, mode TEXT DEFAULT \"ST\")"))
             qDebug()<<this<<"error with channels table creation query: "<<query.lastError().text();
-        if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user INTEGER)"))
-            qDebug()<<this<<"error with userlists table creating query: "<<query.lastError().text();
+        if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user INTEGER, last_message INTEGER)"))
+            qDebug()<<this<<"error with userlists table creation query: "<<query.lastError().text();
+        if(!query.exec("CREATE TABLE IF NOT EXISTS offline_channel_messages(id INTEGER PRIMARY KEY, channel INTEGER, sender TEXT, message TEXT)"))
+            qDebug()<<this<<"error with offline channel messages table creation query: "<<query.lastError().text();
         qDebug()<<this<<"loading channels from database";
         loadChannelsFromDatabase();
     }
