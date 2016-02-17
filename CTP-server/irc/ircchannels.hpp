@@ -6,6 +6,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QDateTime>
 #include "ircchannel.hpp"
 
 class IrcChannels : public QObject

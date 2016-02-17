@@ -11,7 +11,7 @@ IrcChannels::IrcChannels(QSqlDatabase* db, QObject* parent) : QObject(parent)
             qDebug()<<this<<"error with channels table creation query: "<<query.lastError().text();
         if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user INTEGER, last_message INTEGER)"))
             qDebug()<<this<<"error with userlists table creation query: "<<query.lastError().text();
-        if(!query.exec("CREATE TABLE IF NOT EXISTS offline_channel_messages(id INTEGER PRIMARY KEY, channel INTEGER, sender TEXT, message TEXT)"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS offline_channel_messages(id INTEGER PRIMARY KEY, channel TEXT, sender TEXT, message TEXT, time TEXT)"))
             qDebug()<<this<<"error with offline channel messages table creation query: "<<query.lastError().text();
         qDebug()<<this<<"loading channels from database";
         loadChannelsFromDatabase();
@@ -47,7 +47,17 @@ void IrcChannels::createChannel(const QString &channel)
 void IrcChannels::sendMessage(const QString &channel, const QString &message, const QString &sender)
 {
     if(_channels.value(channel)->hasUser(sender))
+    {
         _channels.value(channel)->sendMessage(sender, message);
+        QSqlQuery query(*_db);
+        query.prepare("INSERT INTO offline_channel_messages(channel, sender, message, time) VALUES(:channel, :sender, :message, :time)");
+        query.bindValue(":channel", channel);
+        query.bindValue(":sender", sender);
+        query.bindValue(":message", message);
+        query.bindValue(":time", QString::number(QDateTime::currentDateTime().toTime_t()));
+        if(!query.exec())
+            qDebug()<<this<<"error with query: "<<query.lastError().text();
+    }
     return;
 }
 
