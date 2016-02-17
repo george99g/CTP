@@ -123,7 +123,7 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 socket->flush();
             }
         }
-        else if(messageParameters.at(0) == "JOIN")
+        else if(messageParameters.at(0) == "JOIN" && (USERS_CAN_CHANGE_CHANNELS || _clients.client(socket)->mode()->administrator()))
         {
             if(messageParameters.count() == 2)
             {
@@ -132,10 +132,18 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                     joinChannelName.prepend('#');
                 if(!_channels->channelExists(joinChannelName))
                 {
-                    _channels->createChannel(joinChannelName);
-                    _channels->joinChannel(joinChannelName, getUsername(socket), socket);
-                    socket->write(QString("CHANNEL_CREATED "+joinChannelName+"\r\n").toUtf8());
-                    socket->flush();
+                    if(USERS_CAN_CREATE_CHANNELS || _clients.client(socket)->mode()->administrator())
+                    {
+                        _channels->createChannel(joinChannelName);
+                        _channels->joinChannel(joinChannelName, getUsername(socket), socket);
+                        socket->write(QString("CHANNEL_CREATED "+joinChannelName+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                    else
+                    {
+                        socket->write("NOT_ADMINISTRATOR\r\n");
+                        socket->flush();
+                    }
                 }
                 else
                 {
@@ -166,7 +174,7 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 socket->flush();
             }
         }
-        else if(messageParameters.at(0) == "PART")
+        else if(messageParameters.at(0) == "PART" && (USERS_CAN_CHANGE_CHANNELS || _clients.client(socket)->mode()->administrator()))
         {
             if(messageParameters.count() == 2)
             {

@@ -3,5 +3,7 @@
 
 #define ADMIN_ONLY_REGISTRATION true
 #define ADMINS_CAN_SEND_QUERIES true
+#define USERS_CAN_CHANGE_CHANNELS true
+#define USERS_CAN_CREATE_CHANNELS true
 
 #endif // CONFIG_HPP
