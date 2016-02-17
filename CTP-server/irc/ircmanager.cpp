@@ -29,7 +29,6 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
         QStringList messageParameters = message.split(" ", QString::SkipEmptyParts);
         if(messageParameters.at(0) == "GET_USERLIST" && messageParameters.count() == 1)
         {
-            qDebug()<<this<<"sending userlist to"<<socket;
             QString output = "USERLIST ";
             output += _clients.generateClientList();
             output += "\r\n";
@@ -67,7 +66,6 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
         }
         else if(messageParameters.at(0) == "GET_CHANNELLIST" && messageParameters.count() == 1)
         {
-            qDebug()<<this<<"sending channel list to"<<socket;
             QString output = "CHANELLIST";
             output += " " + _channels->generateChannelList();
             output += "\r\n";
@@ -361,6 +359,19 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 socket->flush();
             }
         }
+        else if(messageParameters.at(0) == "GET_OFFLINE_USERLIST")
+        {
+            QString output = "OFFLINE_USERLIST ";
+            output += generateOfflineClientList();
+            output += "\r\n";
+            socket->write(output.toUtf8());
+            socket->flush();
+        }
+        else
+        {
+            socket->write("INVALID_COMMAND\r\n");
+            socket->flush();
+        }
     }
     else
     {
@@ -608,6 +619,26 @@ bool IrcManager::hasMissedMessages(QTcpSocket *socket)
     if(query.first())
         if(query.value(0).toBool()) return true;
     return false;
+}
+
+QString IrcManager::generateOfflineClientList()
+{
+    if(!openDatabase())
+        return "";
+    QSqlQuery query(_db);
+    query.prepare("SELECT users.username FROM users");
+    if(!query.exec())
+    {
+        qDebug()<<this<<"error with query: "<<query.lastError().text()<<"   This shouldn't happen unless someone is logged in with an empty userlist";
+        return "";
+    }
+    if(!query.first())
+        return "";
+    QString userlist = "";
+    do userlist += query.value(0).toString() + ' ';
+    while(query.next());
+    userlist.remove(userlist.length() - 1, 1);
+    return userlist;
 }
 
 bool IrcManager::checkDatabaseForUsername(const QString &username)

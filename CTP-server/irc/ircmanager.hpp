@@ -32,6 +32,7 @@ private:
     void sendOfflineMessageToUsername(const QString &username, const QString &senderUsername, const QString &message);
     void sendMissedMessages(QTcpSocket* socket);
     bool hasMissedMessages(QTcpSocket* socket);
+    QString generateOfflineClientList();
     bool checkDatabaseForUsername(const QString &username);
     bool checkDatabaseForLogin(const QString &username, const QString &password);
     bool registerDatabaseLogin(const QString &username, const QString &password);
