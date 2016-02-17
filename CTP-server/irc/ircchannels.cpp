@@ -9,7 +9,7 @@ IrcChannels::IrcChannels(QSqlDatabase* db, QObject* parent) : QObject(parent)
         QSqlQuery query(*_db);
         if(!query.exec("CREATE TABLE IF NOT EXISTS channels(id INTEGER PRIMARY KEY, name TEXT, mode TEXT DEFAULT \"ST\")"))
             qDebug()<<this<<"error with channels table creation query: "<<query.lastError().text();
-        if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user INTEGER, last_message INTEGER)"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user TEXT, last_message INTEGER)"))
             qDebug()<<this<<"error with userlists table creation query: "<<query.lastError().text();
         if(!query.exec("CREATE TABLE IF NOT EXISTS offline_channel_messages(id INTEGER PRIMARY KEY, channel TEXT, sender TEXT, message TEXT, time TEXT)"))
             qDebug()<<this<<"error with offline channel messages table creation query: "<<query.lastError().text();
@@ -171,6 +171,29 @@ QString IrcChannels::generateUserList(const QString &channel)
             list += " ";
         list += userlist->at(i);
     }
+    return list;
+}
+
+QString IrcChannels::generateUserChannelList(const QString &username)
+{
+    if(!openDatabase())
+        return "";
+    QSqlQuery query(*_db);
+    query.prepare("SELECT channels.name FROM channels WHERE channels.id IN ("
+                  "SELECT userlists.id FROM userlists WHERE userlists.user = :username)");
+    query.bindValue(":username", username);
+    if(!query.exec())
+    {
+        qDebug()<<this<<"error with query: "<<query.lastError().text();
+        return "";
+    }
+    if(!query.first())
+        return "";
+    QString list = "";
+    do list += query.value(0).toString() + ' ';
+    while(query.next());
+    list.remove(list.length() - 1, 1);
+    qDebug()<<list;
     return list;
 }
 

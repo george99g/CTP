@@ -30,6 +30,7 @@ public:
     IrcChannel* channel(const QString &channel);
     QString generateChannelList();
     QString generateUserList(const QString &channel);
+    QString generateUserChannelList(const QString &username);
     void setChannelModeInDatabase(const QString &channel, IrcMode* mode);
     QString getChannelModeFromDatabase(const QString &channel);
 private:

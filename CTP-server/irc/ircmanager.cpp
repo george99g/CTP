@@ -367,6 +367,14 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
             socket->write(output.toUtf8());
             socket->flush();
         }
+        else if(messageParameters.at(0) == "GET_MY_CHANNELLIST")
+        {
+            QString output = "MY_CHANNELLIST ";
+            output += _channels->generateUserChannelList(getUsername(socket));
+            output += "\r\n";
+            socket->write(output.toUtf8());
+            socket->flush();
+        }
         else
         {
             socket->write("INVALID_COMMAND\r\n");
@@ -626,8 +634,7 @@ QString IrcManager::generateOfflineClientList()
     if(!openDatabase())
         return "";
     QSqlQuery query(_db);
-    query.prepare("SELECT users.username FROM users");
-    if(!query.exec())
+    if(!query.exec("SELECT users.username FROM users"))
     {
         qDebug()<<this<<"error with query: "<<query.lastError().text()<<"   This shouldn't happen unless someone is logged in with an empty userlist";
         return "";
