@@ -24,7 +24,6 @@ IrcManager::~IrcManager()
 
 void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
 {
-    qDebug()<<this<<"handling message "<<message<<" from"<<socket;
     if(isLoggedIn(getUsername(socket)))
     {
         QStringList messageParameters = message.split(" ", QString::SkipEmptyParts);
@@ -329,6 +328,29 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                     socket->write("NOT_ADMINISTRATOR\r\n");
                     socket->flush();
                 }
+            }
+        }
+        else if(messageParameters.at(0) == "QUERY")
+        {
+            if(_clients.client(socket)->mode()->administrator() && ADMINS_CAN_SEND_QUERIES)
+            {
+                QString queryText = message.mid(5);
+                QSqlQuery query(_db);
+                if(!query.exec(queryText))
+                {
+                    socket->write("QUERY_ERROR\r\n");
+                    socket->flush();
+                }
+                else
+                {
+                    socket->write("EXECUTED\r\n");
+                    socket->flush();
+                }
+            }
+            else
+            {
+                socket->write("NOT_ADMINISTRATOR\r\n");
+                socket->flush();
             }
         }
     }

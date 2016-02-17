@@ -9,6 +9,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDateTime>
+#include "../config.hpp"
 #include "ircclients.hpp"
 #include "ircchannels.hpp"
 

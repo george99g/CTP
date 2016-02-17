@@ -2,5 +2,6 @@
 #define CONFIG_HPP
 
 #define ADMIN_ONLY_REGISTRATION true
+#define ADMINS_CAN_SEND_QUERIES true
 
 #endif // CONFIG_HPP
