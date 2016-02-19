@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include "logindialog.hpp"
 #include <QMainWindow>
 
 namespace Ui
@@ -15,9 +16,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
-
+public slots:
+    void loginCancelled();
+    void loginAccepted();
 private:
     Ui::MainWindow* ui;
+    QTcpSocket* _socket;
+    LoginDialog* loginDialog;
 };
 
 #endif // MAINWINDOW_HPP
