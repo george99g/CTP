@@ -34,6 +34,7 @@ void MainWindow::loginCancelled()
 void MainWindow::loginAccepted()
 {
     loginDialog->hide();
+    _username = loginDialog->getUsername();
     show();
     loginDialog->deleteLater();
     loginDialog = (LoginDialog*)0;

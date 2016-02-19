@@ -48,7 +48,6 @@ void LoginDialog::handleSocketReadyRead()
             QStringList splitLine = currentLine.split(' ', QString::SkipEmptyParts);
             if(splitLine.count() >= 2)
                 _username = splitLine.at(1);
-            qDebug()<<_username;
             handleValidAuthentication();
         }
     }
