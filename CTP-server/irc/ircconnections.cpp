@@ -75,6 +75,8 @@ void IrcConnections::readyRead()
     while(socket->canReadLine())
     {
         QString line = QString::fromUtf8(socket->readLine().trimmed());
+        if(CLIENT_MESSAGES_ARE_DEBUGGED)
+            qDebug()<<line;
         if(line.mid(0, 5) == "LOGIN")
             _manager->handleLogin(socket, line);
         else if(line.mid(0, 8) == "REGISTER")

@@ -287,7 +287,7 @@ void IrcChannels::loadChannelFromDatabase(const QString &channel)
             while(query.next());
         }
         else
-            qDebug()<<this<<"error with query: "<<query.lastError().text();
+            qDebug()<<this<<"error with query: "<<query.lastError().text()<<" Channels exist yet there are no users in them. Is the database okay?";
     }
     return;
 }
