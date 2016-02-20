@@ -31,6 +31,7 @@ private:
     void handleValidAuthentication();
     void handleInvalidAuthentication();
     void handleSocketError();
+    void handleSocketStateChanged(QAbstractSocket::SocketState socketState);
     QString _username;
 };
 

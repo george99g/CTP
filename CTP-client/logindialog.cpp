@@ -11,8 +11,11 @@ LoginDialog::LoginDialog(QTcpSocket *socket, QWidget *parent) : QDialog(parent),
     connect(_socket, &QTcpSocket::connected, this, &LoginDialog::handleSocketConnection);
     connect(_socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &LoginDialog::handleSocketError);
     connect(_socket, &QTcpSocket::readyRead, this, &LoginDialog::handleSocketReadyRead);
+    connect(_socket, &QTcpSocket::stateChanged, this, &LoginDialog::handleSocketStateChanged);
     ui->progressBarConnection->setMinimum(0);
     ui->progressBarConnection->setValue(0);
+    ui->progressBarConnection->setMaximum(5);
+    ui->progressBarConnection->setFormat("");
     _username = "";
 }
 
@@ -57,15 +60,14 @@ void LoginDialog::handleSocketReadyRead()
 void LoginDialog::handleLoginRequest()
 {
     if(!_socket->isOpen())
-    {
         _socket->connectToHost(ui->lineEditIP->text(), ui->spinBoxPort->value());
-        ui->progressBarConnection->setMaximum(0);
-    }
     return;
 }
 
 void LoginDialog::handleSocketConnection()
 {
+    ui->progressBarConnection->setValue(4);
+    ui->progressBarConnection->setFormat(tr("login.loggingIn"));
     if(ui->lineEditUsername->text().length() <= 0 || ui->lineEditPassword->text().length() <= 0)
     {
         handleInvalidAuthentication();
@@ -89,7 +91,8 @@ void LoginDialog::handleValidAuthentication()
 void LoginDialog::handleInvalidAuthentication()
 {
     QMessageBox::warning(this, tr("warning.invalidAuthentication"), tr("warning.invalidAuthenticationText"));
-    ui->progressBarConnection->setMaximum(100);
+    ui->progressBarConnection->setValue(0);
+    ui->progressBarConnection->setFormat("");
     if(_socket->isOpen())
         _socket->close();
     return;
@@ -98,8 +101,34 @@ void LoginDialog::handleInvalidAuthentication()
 void LoginDialog::handleSocketError()
 {
     QMessageBox::warning(this, tr("warning.connectionFailed"), tr("warning.connectionFailedText:\n%1").arg(_socket->errorString()));
-    ui->progressBarConnection->setMaximum(100);
+    ui->progressBarConnection->setValue(0);
+    ui->progressBarConnection->setFormat("");
     if(_socket->isOpen())
         _socket->close();
+    return;
+}
+
+void LoginDialog::handleSocketStateChanged(QAbstractSocket::SocketState socketState)
+{
+    switch(socketState)
+    {
+    case QAbstractSocket::UnconnectedState:
+        ui->progressBarConnection->setValue(0);
+        ui->progressBarConnection->setFormat("");
+        break;
+    case QAbstractSocket::HostLookupState:
+        ui->progressBarConnection->setValue(1);
+        ui->progressBarConnection->setFormat(tr("login.hostLookup"));
+        break;
+    case QAbstractSocket::ConnectingState:
+        ui->progressBarConnection->setValue(2);
+        ui->progressBarConnection->setFormat(tr("login.connecting"));
+        break;
+    case QAbstractSocket::ConnectedState:
+        ui->progressBarConnection->setValue(3);
+        ui->progressBarConnection->setFormat(tr("login.connected"));
+    default:
+        break;
+    }
     return;
 }
