@@ -3,6 +3,7 @@
 
 #include "logindialog.hpp"
 #include <QMainWindow>
+#include <QInputDialog>
 
 namespace Ui
 {
@@ -19,11 +20,24 @@ public:
 public slots:
     void loginCancelled();
     void loginAccepted();
+    static QString convertToNoSpace(QString string);
+    static QString convertFromNoSpace(QString string);
 private:
+    void handleSocketReadyRead();
+    void connectSocketSignals();
+    void disconnectSocketSignals();
+    void requestChannelListPopulation();
+    void handleSocketError();
+    void handleSocketDisconnected();
+    void handleJoinChannelRequest();
+    void handlePartChannelRequest();
+    void handleLogoutRequest();
+    void requestUsernamesForChannel(const QString& channel);
     Ui::MainWindow* ui;
     QTcpSocket* _socket;
-    LoginDialog* loginDialog;
+    LoginDialog* _loginDialog;
     QString _username;
+    QMap<QString, QStringList> _channelUsernames;
 };
 
 #endif // MAINWINDOW_HPP

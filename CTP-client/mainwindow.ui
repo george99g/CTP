@@ -95,7 +95,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listWidgetUsers"/>
+             <widget class="QListView" name="listViewUsers"/>
             </item>
            </layout>
           </widget>
@@ -125,9 +125,18 @@
     <property name="title">
      <string>menu.file</string>
     </property>
+    <addaction name="actionLogOut"/>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menuMenu_conversation">
+    <property name="title">
+     <string>menu.conversation</string>
+    </property>
+    <addaction name="actionJoinChannel"/>
+    <addaction name="actionPartChannel"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuMenu_conversation"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -141,6 +150,21 @@
   <action name="actionExit">
    <property name="text">
     <string>action.exit</string>
+   </property>
+  </action>
+  <action name="actionJoinChannel">
+   <property name="text">
+    <string>action.joinChannel</string>
+   </property>
+  </action>
+  <action name="actionPartChannel">
+   <property name="text">
+    <string>action.partChannel</string>
+   </property>
+  </action>
+  <action name="actionLogOut">
+   <property name="text">
+    <string>action.logOut</string>
    </property>
   </action>
  </widget>

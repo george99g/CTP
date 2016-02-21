@@ -193,7 +193,6 @@ QString IrcChannels::generateUserChannelList(const QString &username)
     do list += query.value(0).toString() + ' ';
     while(query.next());
     list.remove(list.length() - 1, 1);
-    qDebug()<<list;
     return list;
 }
 
