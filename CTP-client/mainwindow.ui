@@ -73,7 +73,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QListView" name="listViewChannels"/>
+             <widget class="QListView" name="listViewChannels">
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -134,6 +138,7 @@
     </property>
     <addaction name="actionJoinChannel"/>
     <addaction name="actionPartChannel"/>
+    <addaction name="actionRefreshChannels"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuMenu_conversation"/>
@@ -145,6 +150,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionLogOut"/>
+   <addaction name="actionRefreshChannels"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExit">
@@ -165,6 +172,11 @@
   <action name="actionLogOut">
    <property name="text">
     <string>action.logOut</string>
+   </property>
+  </action>
+  <action name="actionRefreshChannels">
+   <property name="text">
+    <string>action.refreshChannels</string>
    </property>
   </action>
  </widget>

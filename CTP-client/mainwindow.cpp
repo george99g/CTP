@@ -10,8 +10,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
     connect(ui->actionJoinChannel, &QAction::triggered, this, &MainWindow::handleJoinChannelRequest);
+    connect(ui->actionRefreshChannels, &QAction::triggered, this, &MainWindow::handleChannelRefreshRequest);
     connect(ui->actionLogOut, &QAction::triggered, this, &MainWindow::handleLogoutRequest);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
+    _channelsModel.setStringList(_channelUsernames.keys());
+    ui->listViewChannels->setModel(&_channelsModel);
     _loginDialog->show();
 }
 
@@ -64,7 +67,7 @@ QString MainWindow::convertFromNoSpace(QString string)
 
 void MainWindow::handleSocketReadyRead()
 {
-    if(_socket->canReadLine())
+    while(_socket->canReadLine())
     {
         QString line = _socket->readLine().trimmed();
         qDebug()<<line;
@@ -74,6 +77,30 @@ void MainWindow::handleSocketReadyRead()
         if(messageParameters.at(0) == "MY_CHANNELLIST" && messageParameters.count() > 1)
             for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
                 requestUsernamesForChannel(messageParameters.at(i));
+        else if(messageParameters.at(0) == "CHANNEL_USERLIST" && messageParameters.count() > 2)
+        {
+            QString channelname = messageParameters.at(1);
+            QStringList userlist;
+            for(unsigned i = 2; i < (unsigned)messageParameters.count(); i++)
+                userlist.push_back(messageParameters.at(i));
+            if(!_channelUsernames.contains(channelname))
+            {
+                _channelUsernames.insert(channelname, userlist);
+                _channelsModel.setStringList(_channelUsernames.keys());
+            }
+            else
+            {
+                _channelUsernames.remove(channelname);
+                _channelUsernames.insert(channelname, userlist);
+            }
+        }
+        else if(messageParameters.at(0) == "CHANNEL_JOINED" && messageParameters.count() > 1)
+            requestUsernamesForChannel(messageParameters.at(1));
+        else if(messageParameters.at(0) == "CHANNEL_PARTED" && messageParameters.count() > 1)
+        {
+            _channelUsernames.remove(messageParameters.at(1));
+            _channelsModel.setStringList(_channelUsernames.keys());
+        }
         else if(messageParameters.at(0) == "CHANNEL_DOES_NOT_EXIST")
             QMessageBox::warning(this, tr("warning.channelDoesNotExist"), tr("warning.channelDoesNotExist.text"));
         else if(messageParameters.at(0) == "USER_DOES_NOT_EXIST")
@@ -180,6 +207,12 @@ void MainWindow::handlePartChannelRequest()
     text = convertToNoSpace(text);
     _socket->write(QString("PART "+text+"\r\n").toUtf8());
     _socket->flush();
+    return;
+}
+
+void MainWindow::handleChannelRefreshRequest()
+{
+    requestChannelListPopulation();
     return;
 }
 

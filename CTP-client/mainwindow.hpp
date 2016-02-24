@@ -2,6 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include "logindialog.hpp"
+#include <QStringListModel>
 #include <QMainWindow>
 #include <QInputDialog>
 
@@ -31,12 +32,14 @@ private:
     void handleSocketDisconnected();
     void handleJoinChannelRequest();
     void handlePartChannelRequest();
+    void handleChannelRefreshRequest();
     void handleLogoutRequest();
     void requestUsernamesForChannel(const QString& channel);
     Ui::MainWindow* ui;
     QTcpSocket* _socket;
     LoginDialog* _loginDialog;
     QString _username;
+    QStringListModel _channelsModel;
     QMap<QString, QStringList> _channelUsernames;
 };
 
