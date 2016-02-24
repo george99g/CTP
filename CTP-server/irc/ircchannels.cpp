@@ -9,7 +9,7 @@ IrcChannels::IrcChannels(QSqlDatabase* db, QObject* parent) : QObject(parent)
         QSqlQuery query(*_db);
         if(!query.exec("CREATE TABLE IF NOT EXISTS channels(id INTEGER PRIMARY KEY, name TEXT, mode TEXT DEFAULT \"ST\")"))
             qDebug()<<this<<"error with channels table creation query: "<<query.lastError().text();
-        if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user TEXT, last_message INTEGER)"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS userlists(id INTEGER, user TEXT, last_message INTEGER DEFAULT 0)"))
             qDebug()<<this<<"error with userlists table creation query: "<<query.lastError().text();
         if(!query.exec("CREATE TABLE IF NOT EXISTS offline_channel_messages(id INTEGER PRIMARY KEY, channel TEXT, sender TEXT, message TEXT, time TEXT)"))
             qDebug()<<this<<"error with offline channel messages table creation query: "<<query.lastError().text();
@@ -275,14 +275,16 @@ void IrcChannels::loadChannelFromDatabase(const QString &channel)
         if(!openDatabase())
             return;
         QSqlQuery query(*_db);
-        query.prepare("SELECT userlists.user FROM channels, userlists WHERE userlists.id = (SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1)");
+        query.prepare("SELECT userlists.user FROM userlists WHERE userlists.id = (SELECT channels.id FROM channels WHERE channels.name = :channelname LIMIT 1)");
         query.bindValue(":channelname", channel);
         if(!query.exec())
             qDebug()<<this<<"error with query: "<<query.lastError().text();
         if(query.first())
         {
             do
+            {
                 channelptr->offlineUserlist()->append(query.value(0).toString());
+            }
             while(query.next());
         }
         else

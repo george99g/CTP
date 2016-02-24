@@ -33,6 +33,7 @@ private:
     void handleJoinChannelRequest();
     void handlePartChannelRequest();
     void handleChannelRefreshRequest();
+    void handleChannelListChangeRequest();
     void handleLogoutRequest();
     void requestUsernamesForChannel(const QString& channel);
     Ui::MainWindow* ui;
@@ -40,6 +41,7 @@ private:
     LoginDialog* _loginDialog;
     QString _username;
     QStringListModel _channelsModel;
+    QPair<QString, QStringListModel> _channelUsersModel;
     QMap<QString, QStringList> _channelUsernames;
 };
 

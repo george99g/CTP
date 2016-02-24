@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionRefreshChannels, &QAction::triggered, this, &MainWindow::handleChannelRefreshRequest);
     connect(ui->actionLogOut, &QAction::triggered, this, &MainWindow::handleLogoutRequest);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
+    connect(ui->listViewChannels, &QListView::clicked, this, &MainWindow::handleChannelListChangeRequest);
     _channelsModel.setStringList(_channelUsernames.keys());
     ui->listViewChannels->setModel(&_channelsModel);
+    ui->listViewUsers->setModel(&_channelUsersModel.second);
     _loginDialog->show();
 }
 
@@ -216,11 +218,24 @@ void MainWindow::handleChannelRefreshRequest()
     return;
 }
 
+void MainWindow::handleChannelListChangeRequest()
+{
+    QString selectedChannel = ui->listViewChannels->currentIndex().data().toString();
+    _channelUsersModel.first = selectedChannel;
+    _channelUsersModel.second.setStringList(_channelUsernames.value(selectedChannel));
+    return;
+}
+
 void MainWindow::handleLogoutRequest()
 {
     _socket->write("LOGOUT\r\n");
     _socket->flush();
     _socket->close();
+    _username.clear();
+    _channelUsernames.clear();
+    _channelsModel.setStringList(QStringList());
+    _channelUsersModel.first.clear();
+    _channelUsersModel.second.setStringList(QStringList());
     return;
 }
 

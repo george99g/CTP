@@ -99,7 +99,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QListView" name="listViewUsers"/>
+             <widget class="QListView" name="listViewUsers">
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
