@@ -2,6 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include "logindialog.hpp"
+#include "configuration.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 
@@ -23,6 +24,7 @@ public slots:
     static QString convertToNoSpace(QString string);
     static QString convertFromNoSpace(QString string);
 private:
+    void resizeEvent(QResizeEvent*);
     void handleSocketReadyRead();
     void connectSocketSignals();
     void disconnectSocketSignals();
@@ -38,6 +40,7 @@ private:
     LoginDialog* _loginDialog;
     QString _username;
     QMap<QString, QStringList> _channelUsernames;
+    Configuration _config;
 };
 
 #endif // MAINWINDOW_HPP

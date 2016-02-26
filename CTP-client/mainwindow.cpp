@@ -25,6 +25,7 @@ MainWindow::~MainWindow()
             _socket->close();
         _socket->deleteLater();
     }
+    _config.saveToFile();
     delete ui;
 }
 
@@ -40,6 +41,8 @@ void MainWindow::loginAccepted()
     _username = _loginDialog->getUsername();
     disconnect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     disconnect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
+    _config.loadFromFile();
+    resize(_config.getMainWindowX(), _config.getMainWindowY());
     show();
     _loginDialog->deleteLater();
     _loginDialog = (LoginDialog*)0;
@@ -60,6 +63,12 @@ QString MainWindow::convertFromNoSpace(QString string)
     string.replace("\\", "\\\\");
     string.replace(" ", "\\s");
     return string;
+}
+
+void MainWindow::resizeEvent(QResizeEvent*)
+{
+    _config.setMainWindowParameters(size().width(), size().height());
+    return;
 }
 
 void MainWindow::handleSocketReadyRead()
