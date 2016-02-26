@@ -103,9 +103,9 @@ void LoginDialog::handleSocketConnection()
         return;
     }
     QString loginMessage = "LOGIN ";
-    loginMessage += ui->lineEditUsername->text();
+    loginMessage += convertToNoSpace(ui->lineEditUsername->text());
     loginMessage += ' ';
-    loginMessage += ui->lineEditPassword->text().replace(' ', "\\s");
+    loginMessage += convertToNoSpace(ui->lineEditPassword->text());
     loginMessage += "\r\n";
     _socket->write(loginMessage.toUtf8());
     return;

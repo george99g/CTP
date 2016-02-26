@@ -90,13 +90,13 @@ void MainWindow::handleSocketReadyRead()
                 requestUsernamesForChannel(messageParameters.at(i));
         else if(messageParameters.at(0) == "CHANNEL_USERLIST" && messageParameters.count() > 2)
         {
-            QString channelname = messageParameters.at(1);
+            QString channelname = convertFromNoSpace(messageParameters.at(1));
             QStringList userlist;
             for(unsigned i = 2; i < (unsigned)messageParameters.count(); i++)
-                userlist.push_back(messageParameters.at(i));
-            if(!_channelUsernames.contains(channelname))
+                userlist.push_back(convertFromNoSpace(messageParameters.at(i)));
+            if(!_channelUsernames.contains(convertFromNoSpace(channelname)))
             {
-                _channelUsernames.insert(channelname, userlist);
+                _channelUsernames.insert(convertFromNoSpace(channelname), userlist);
                 _channelsModel.setStringList(_channelUsernames.keys());
             }
             else
@@ -109,7 +109,7 @@ void MainWindow::handleSocketReadyRead()
             requestUsernamesForChannel(messageParameters.at(1));
         else if(messageParameters.at(0) == "CHANNEL_PARTED" && messageParameters.count() > 1)
         {
-            _channelUsernames.remove(messageParameters.at(1));
+            _channelUsernames.remove(convertFromNoSpace(messageParameters.at(1)));
             _channelsModel.setStringList(_channelUsernames.keys());
         }
         else if(messageParameters.at(0) == "CHANNEL_DOES_NOT_EXIST")
