@@ -16,7 +16,8 @@ void IrcChannel::addUser(const QString &username, QTcpSocket* socket)
     {
         sendJoinMessage(username);
         _userlist.insert(socket, username);
-        _offlineUserlist.append(username);
+        if(!_offlineUserlist.contains(username))
+            _offlineUserlist.append(username);
         socket->write(QString("CHANNEL_JOINED "+_name+"\r\n").toUtf8());
         socket->flush();
     }
@@ -25,7 +26,7 @@ void IrcChannel::addUser(const QString &username, QTcpSocket* socket)
 
 void IrcChannel::rejoinUser(const QString &username, QTcpSocket* socket)
 {
-    if(!_userlist.values().contains(username))
+    if(!_userlist.values().contains(username) && _offlineUserlist.contains(username))
         _userlist.insert(socket, username);
     return;
 }

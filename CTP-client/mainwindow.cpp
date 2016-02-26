@@ -10,8 +10,13 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
     connect(ui->actionJoinChannel, &QAction::triggered, this, &MainWindow::handleJoinChannelRequest);
+    connect(ui->actionRefreshChannels, &QAction::triggered, this, &MainWindow::handleChannelRefreshRequest);
     connect(ui->actionLogOut, &QAction::triggered, this, &MainWindow::handleLogoutRequest);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
+    connect(ui->listViewChannels, &QListView::clicked, this, &MainWindow::handleChannelListChangeRequest);
+    _channelsModel.setStringList(_channelUsernames.keys());
+    ui->listViewChannels->setModel(&_channelsModel);
+    ui->listViewUsers->setModel(&_channelUsersModel.second);
     _loginDialog->show();
 }
 
@@ -73,7 +78,7 @@ void MainWindow::resizeEvent(QResizeEvent*)
 
 void MainWindow::handleSocketReadyRead()
 {
-    if(_socket->canReadLine())
+    while(_socket->canReadLine())
     {
         QString line = _socket->readLine().trimmed();
         qDebug()<<line;
@@ -83,6 +88,50 @@ void MainWindow::handleSocketReadyRead()
         if(messageParameters.at(0) == "MY_CHANNELLIST" && messageParameters.count() > 1)
             for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
                 requestUsernamesForChannel(messageParameters.at(i));
+        else if(messageParameters.at(0) == "CHANNEL_USERLIST" && messageParameters.count() > 2)
+        {
+            QString channelname = messageParameters.at(1);
+            QStringList userlist;
+            for(unsigned i = 2; i < (unsigned)messageParameters.count(); i++)
+                userlist.push_back(messageParameters.at(i));
+            if(!_channelUsernames.contains(channelname))
+            {
+                _channelUsernames.insert(channelname, userlist);
+                _channelsModel.setStringList(_channelUsernames.keys());
+            }
+            else
+            {
+                _channelUsernames.remove(channelname);
+                _channelUsernames.insert(channelname, userlist);
+            }
+        }
+        else if(messageParameters.at(0) == "CHANNEL_JOINED" && messageParameters.count() > 1)
+            requestUsernamesForChannel(messageParameters.at(1));
+        else if(messageParameters.at(0) == "CHANNEL_PARTED" && messageParameters.count() > 1)
+        {
+            _channelUsernames.remove(messageParameters.at(1));
+            _channelsModel.setStringList(_channelUsernames.keys());
+        }
+        else if(messageParameters.at(0) == "CHANNEL_DOES_NOT_EXIST")
+            QMessageBox::warning(this, tr("warning.channelDoesNotExist"), tr("warning.channelDoesNotExist.text"));
+        else if(messageParameters.at(0) == "USER_DOES_NOT_EXIST")
+            QMessageBox::warning(this, tr("warning.userDoesNotExist"), tr("warning.userDoesNotExist.text"));
+        else if(messageParameters.at(0) == "WRONG_ARGUMENTS")
+            QMessageBox::warning(this, tr("warning.wrongParameters"), tr("warning.wrongParameters.text"));
+        else if(messageParameters.at(0) == "USER_IS_NOT_LOGGED_IN" && messageParameters.count() > 1)
+            QMessageBox::warning(this, tr("warning.userIsNotLoggedIn"), tr("warning.userIsNotLoggedIn.text:%1").arg(messageParameters.at(1)));
+        else if(messageParameters.at(0) == "NOT_IN_CHANNEL" && messageParameters.count() > 1)
+            QMessageBox::warning(this, tr("warning.notInChannel"), tr("warning.notInChannel.text:%1").arg(messageParameters.at(1)));
+        else if(messageParameters.at(0) == "NOT_ADMINISTRATOR")
+            QMessageBox::warning(this, tr("warning.notAdministrator"), tr("warning.notAdministrator.text"));
+        else if(messageParameters.at(0) == "ALREADY_JOINED" && messageParameters.count() > 1)
+            QMessageBox::warning(this, tr("warning.alreadyInChannel"), tr("warning.alreadyInChannel.text:%1").arg(messageParameters.at(1)));
+        else if(messageParameters.at(0) == "CHANNEL_MODE_DOES_NOT_ALLOW_ACCESS")
+            QMessageBox::warning(this, tr("warning.notAllowedInChannel"), tr("warning.notAllowedInChannel.text"));
+        else if(messageParameters.at(0) == "QUERY_ERROR")
+            QMessageBox::warning(this, tr("warning.queryError"), tr("warning.queryError.text"));
+        else if(messageParameters.at(0) == "NOT_LOGGED_IN")
+            handleSocketDisconnected();
     }
     return;
 }
@@ -172,11 +221,30 @@ void MainWindow::handlePartChannelRequest()
     return;
 }
 
+void MainWindow::handleChannelRefreshRequest()
+{
+    requestChannelListPopulation();
+    return;
+}
+
+void MainWindow::handleChannelListChangeRequest()
+{
+    QString selectedChannel = ui->listViewChannels->currentIndex().data().toString();
+    _channelUsersModel.first = selectedChannel;
+    _channelUsersModel.second.setStringList(_channelUsernames.value(selectedChannel));
+    return;
+}
+
 void MainWindow::handleLogoutRequest()
 {
     _socket->write("LOGOUT\r\n");
     _socket->flush();
     _socket->close();
+    _username.clear();
+    _channelUsernames.clear();
+    _channelsModel.setStringList(QStringList());
+    _channelUsersModel.first.clear();
+    _channelUsersModel.second.setStringList(QStringList());
     return;
 }
 
