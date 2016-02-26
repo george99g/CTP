@@ -88,7 +88,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="checkBoxAutoLogin">
      <property name="text">
       <string>login.stayLoggedIn</string>
      </property>

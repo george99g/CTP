@@ -1,6 +1,7 @@
 #ifndef LOGINDIALOG_HPP
 #define LOGINDIALOG_HPP
 
+#include "configuration.hpp"
 #include <QDialog>
 #include <QTcpSocket>
 #include <QMessageBox>
@@ -15,15 +16,18 @@ class LoginDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit LoginDialog(QTcpSocket* socket, QWidget *parent = 0);
+    explicit LoginDialog(QTcpSocket* socket, Configuration* config, QWidget *parent = 0);
     ~LoginDialog();
     QString getUsername();
+    static QString convertToNoSpace(QString string);
+    static QString convertFromNoSpace(QString string);
 signals:
     void loginCancelled();
     void loginAccepted();
 private:
     Ui::LoginDialog *ui;
     QTcpSocket* _socket;
+    void handleAutoLogin();
     void handleLoginCancel();
     void handleSocketReadyRead();
     void handleLoginRequest();
@@ -33,6 +37,7 @@ private:
     void handleSocketError();
     void handleSocketStateChanged(QAbstractSocket::SocketState socketState);
     QString _username;
+    Configuration* _config;
 };
 
 #endif // LOGINDIALOG_HPP

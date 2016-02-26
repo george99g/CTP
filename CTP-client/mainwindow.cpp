@@ -5,7 +5,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
     _socket = new QTcpSocket(this);
-    _loginDialog = new LoginDialog(_socket, this);
+    _config.loadFromFile();
+    _loginDialog = new LoginDialog(_socket, &_config, this);
     connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
@@ -46,8 +47,7 @@ void MainWindow::loginAccepted()
     _username = _loginDialog->getUsername();
     disconnect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     disconnect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
-    _config.loadFromFile();
-    resize(_config.getMainWindowX(), _config.getMainWindowY());
+    resize(_config.mainWindowX(), _config.mainWindowY());
     show();
     _loginDialog->deleteLater();
     _loginDialog = (LoginDialog*)0;
@@ -65,8 +65,8 @@ QString MainWindow::convertToNoSpace(QString string)
 
 QString MainWindow::convertFromNoSpace(QString string)
 {
-    string.replace("\\", "\\\\");
-    string.replace(" ", "\\s");
+    string.replace("\\\\", "\\");
+    string.replace("\\s", " ");
     return string;
 }
 
@@ -169,7 +169,7 @@ void MainWindow::handleSocketError()
         disconnectSocketSignals();
         if(_socket->isOpen())
             _socket->close();
-        _loginDialog = new LoginDialog(_socket, this);
+        _loginDialog = new LoginDialog(_socket, &_config, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
         _loginDialog->show();
@@ -185,7 +185,7 @@ void MainWindow::handleSocketDisconnected()
         disconnectSocketSignals();
         if(_socket->isOpen())
             _socket->close();
-        _loginDialog = new LoginDialog(_socket, this);
+        _loginDialog = new LoginDialog(_socket, &_config, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
         _loginDialog->show();
@@ -237,6 +237,10 @@ void MainWindow::handleChannelListChangeRequest()
 
 void MainWindow::handleLogoutRequest()
 {
+    _config.setAutoLogin(false);
+    _config.setLogin("","");
+    _config.setHostParameters("localhost", 2000);
+    _config.saveToFile();
     _socket->write("LOGOUT\r\n");
     _socket->flush();
     _socket->close();

@@ -1,7 +1,7 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
 
-LoginDialog::LoginDialog(QTcpSocket *socket, QWidget *parent) : QDialog(parent), ui(new Ui::LoginDialog)
+LoginDialog::LoginDialog(QTcpSocket *socket, Configuration* config, QWidget *parent) : QDialog(parent), ui(new Ui::LoginDialog)
 {
     ui->setupUi(this);
     _socket = socket;
@@ -17,6 +17,9 @@ LoginDialog::LoginDialog(QTcpSocket *socket, QWidget *parent) : QDialog(parent),
     ui->progressBarConnection->setMaximum(5);
     ui->progressBarConnection->setFormat("");
     _username = "";
+    _config = config;
+    if(_config->autoLogin())
+        handleAutoLogin();
 }
 
 LoginDialog::~LoginDialog()
@@ -27,6 +30,32 @@ LoginDialog::~LoginDialog()
 QString LoginDialog::getUsername()
 {
     return _username;
+}
+
+QString LoginDialog::convertToNoSpace(QString string)
+{
+    string.replace("\\", "\\\\");
+    string.replace(" ", "\\s");
+    return string;
+}
+
+QString LoginDialog::convertFromNoSpace(QString string)
+{
+    string.replace("\\\\", "\\");
+    string.replace("\\s", " ");
+    return string;
+}
+
+void LoginDialog::handleAutoLogin()
+{
+    ui->checkBoxAutoLogin->setChecked(_config->autoLogin());
+    ui->lineEditIP->setText(_config->hostname());
+    ui->spinBoxPort->setValue(_config->port());
+    ui->lineEditUsername->setText(_config->username());
+    ui->lineEditPassword->setText(_config->password());
+    if(!_socket->isOpen())
+        _socket->connectToHost(_config->hostname(), _config->port());
+    return;
 }
 
 void LoginDialog::handleLoginCancel()
@@ -74,7 +103,7 @@ void LoginDialog::handleSocketConnection()
         return;
     }
     QString loginMessage = "LOGIN ";
-    loginMessage += ui->lineEditUsername->text().replace(' ', "\\s");
+    loginMessage += ui->lineEditUsername->text();
     loginMessage += ' ';
     loginMessage += ui->lineEditPassword->text().replace(' ', "\\s");
     loginMessage += "\r\n";
@@ -84,6 +113,20 @@ void LoginDialog::handleSocketConnection()
 
 void LoginDialog::handleValidAuthentication()
 {
+    if(ui->checkBoxAutoLogin->isChecked())
+    {
+        _config->setAutoLogin(true);
+        _config->setHostParameters(ui->lineEditIP->text(), ui->spinBoxPort->value());
+        _config->setLogin(convertToNoSpace(ui->lineEditUsername->text()), convertToNoSpace(ui->lineEditPassword->text()));
+        _config->saveToFile();
+    }
+    else
+    {
+        _config->setAutoLogin(false);
+        _config->setHostParameters(ui->lineEditIP->text(), ui->spinBoxPort->value());
+        _config->setLogin("", "");
+        _config->saveToFile();
+    }
     emit loginAccepted();
     return;
 }

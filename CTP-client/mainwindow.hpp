@@ -2,7 +2,6 @@
 #define MAINWINDOW_HPP
 
 #include "logindialog.hpp"
-#include "configuration.hpp"
 #include <QStringListModel>
 #include <QMainWindow>
 #include <QInputDialog>

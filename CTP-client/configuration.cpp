@@ -5,6 +5,11 @@ Configuration::Configuration(QObject *parent) : QObject(parent)
     _saveFile = new QFile("config.dat");
     _mainWindowX = 1000;
     _mainWindowY = 500;
+    _autoLogin = false;
+    _username = "";
+    _password = "";
+    _hostname = "localhost";
+    _port = 2000;
 }
 
 Configuration::~Configuration()
@@ -20,7 +25,10 @@ void Configuration::saveToFile()
         return;
     }
     QDataStream out(_saveFile);
-    out << _mainWindowX << _mainWindowY;
+    out << _mainWindowX << _mainWindowY
+        << _autoLogin << _username
+        << _password << _hostname
+        << _port;
     _saveFile->close();
     return;
 }
@@ -33,17 +41,64 @@ void Configuration::loadFromFile()
         return;
     }
     QDataStream in(_saveFile);
-    in >> _mainWindowX >> _mainWindowY;
+    in >> _mainWindowX >> _mainWindowY
+       >> _autoLogin >> _username
+       >> _password >> _hostname
+       >> _port;
     _saveFile->close();
     return;
 }
 
-int Configuration::getMainWindowX()
+void Configuration::setHostParameters(const QString &hostname, const qint64 &port)
+{
+    _hostname = hostname;
+    _port = port;
+}
+
+QString Configuration::hostname()
+{
+    return _hostname;
+}
+
+qint64 Configuration::port()
+{
+    return _port;
+}
+
+bool Configuration::autoLogin()
+{
+    return _autoLogin;
+}
+
+void Configuration::setAutoLogin(bool autoLogin)
+{
+    _autoLogin = autoLogin;
+    return;
+}
+
+QString Configuration::username()
+{
+    return _username;
+}
+
+QString Configuration::password()
+{
+    return _password;
+}
+
+void Configuration::setLogin(const QString &username, const QString &password)
+{
+    _username = username;
+    _password = password;
+    return;
+}
+
+int Configuration::mainWindowX()
 {
     return _mainWindowX;
 }
 
-int Configuration::getMainWindowY()
+int Configuration::mainWindowY()
 {
     return _mainWindowY;
 }
