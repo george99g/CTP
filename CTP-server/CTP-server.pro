@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     irc/ircchannels.cpp \
     irc/ircmode.cpp \
     irc/ircclient.cpp \
-    irc/ircclients.cpp
+    irc/ircclients.cpp \
+    ftp/ftpserver.cpp \
+    ftp/ftpconnections.cpp
 
 HEADERS  += dialog.hpp \
     tcp/tcpconnection.hpp \
@@ -38,6 +40,8 @@ HEADERS  += dialog.hpp \
     irc/ircmode.hpp \
     irc/ircclient.hpp \
     irc/ircclients.hpp \
-    config.hpp
+    config.hpp \
+    ftp/ftpserver.hpp \
+    ftp/ftpconnections.hpp
 
 FORMS    += dialog.ui
