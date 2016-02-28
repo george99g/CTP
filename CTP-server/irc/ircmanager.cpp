@@ -279,12 +279,24 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                                 IrcChannel* channel = _channels->channel(targetUsername);
                                 channel->mode()->addMode(targetMode.at(1));
                                 _channels->setChannelModeInDatabase(targetUsername, channel->mode());
+                                QString sendMessage = "MODE ";
+                                sendMessage += targetUsername;
+                                sendMessage += ' ';
+                                sendMessage += _channels->getChannelModeFromDatabase(targetUsername);
+                                sendMessage += "\r\n";
+                                channel->broadcast(sendMessage);
                             }
                             else if(targetMode.startsWith('-') && targetMode.length() == 2)
                             {
                                 IrcChannel* channel = _channels->channel(targetUsername);
                                 channel->mode()->removeMode(targetMode.at(1));
                                 _channels->setChannelModeInDatabase(targetUsername, channel->mode());
+                                QString sendMessage = "MODE ";
+                                sendMessage += targetUsername;
+                                sendMessage += ' ';
+                                sendMessage += _channels->getChannelModeFromDatabase(targetUsername);
+                                sendMessage += "\r\n";
+                                channel->broadcast(sendMessage);
                             }
                             else
                             {

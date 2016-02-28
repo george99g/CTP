@@ -61,6 +61,12 @@ void IrcChannels::sendMessage(const QString &channel, const QString &message, co
     return;
 }
 
+void IrcChannels::broadcast(const QString &channel, const QString &message)
+{
+    _channels.value(channel)->broadcast(message);
+    return;
+}
+
 void IrcChannels::joinChannel(const QString &channel, const QString &username, QTcpSocket* socket)
 {
     if(channelExists(channel))

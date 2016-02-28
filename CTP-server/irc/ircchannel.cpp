@@ -80,6 +80,17 @@ void IrcChannel::sendMessage(const QString &sender, const QString &message)
     }
 }
 
+void IrcChannel::broadcast(const QString &message)
+{
+    for(unsigned i = 0; i < (unsigned)_userlist.keys().count(); i++)
+    {
+        QTcpSocket* socket = _userlist.keys().at(i);
+        socket->write(message.toUtf8());
+        socket->flush();
+    }
+    return;
+}
+
 void IrcChannel::removeUser(const QString &username)
 {
     if(_offlineUserlist.contains(username))

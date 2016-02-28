@@ -16,6 +16,7 @@ public:
     void sendJoinMessage(const QString &sender);
     void sendPartMessage(const QString &sender);
     void sendMessage(const QString &sender, const QString &message);
+    void broadcast(const QString &message);
     void removeUser(const QString &username);
     void clearUser(const QString &username);
     void removeAllUsers();
