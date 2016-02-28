@@ -10,6 +10,7 @@ Configuration::Configuration(QObject *parent) : QObject(parent)
     _password = "";
     _hostname = "localhost";
     _port = 2000;
+    _maximized = false;
 }
 
 Configuration::~Configuration()
@@ -28,7 +29,7 @@ void Configuration::saveToFile()
     out << _mainWindowX << _mainWindowY
         << _autoLogin << _username
         << _password << _hostname
-        << _port;
+        << _port << _maximized;
     _saveFile->close();
     return;
 }
@@ -44,7 +45,7 @@ void Configuration::loadFromFile()
     in >> _mainWindowX >> _mainWindowY
        >> _autoLogin >> _username
        >> _password >> _hostname
-       >> _port;
+       >> _port >> _maximized;
     _saveFile->close();
     return;
 }
@@ -101,6 +102,17 @@ int Configuration::mainWindowX()
 int Configuration::mainWindowY()
 {
     return _mainWindowY;
+}
+
+bool Configuration::maximized()
+{
+    return _maximized;
+}
+
+void Configuration::setMaximized(bool maximized)
+{
+    _maximized = maximized;
+    return;
 }
 
 void Configuration::setMainWindowParameters(int x, int y)

@@ -5,6 +5,7 @@
 #include <QStringListModel>
 #include <QMainWindow>
 #include <QInputDialog>
+#include <QWindowStateChangeEvent>
 
 namespace Ui
 {
@@ -24,13 +25,16 @@ public slots:
     static QString convertToNoSpace(QString string);
     static QString convertFromNoSpace(QString string);
 private:
+    void changeEvent(QEvent* event);
     void resizeEvent(QResizeEvent*);
     void handleSocketReadyRead();
     void connectSocketSignals();
     void disconnectSocketSignals();
     void requestChannelListPopulation();
+    void requestMode(const QString &target);
     void handleSocketError();
     void handleSocketDisconnected();
+    void handleSendQueryRequest();
     void handleJoinChannelRequest();
     void handlePartChannelRequest();
     void handleChannelRefreshRequest();
@@ -38,6 +42,9 @@ private:
     void handleLogoutRequest();
     void requestUsernamesForChannel(const QString& channel);
     Ui::MainWindow* ui;
+    bool _isAdmin;
+    bool _isStudent;
+    bool _isTeacher;
     QTcpSocket* _socket;
     LoginDialog* _loginDialog;
     QString _username;

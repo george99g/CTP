@@ -74,6 +74,12 @@
             </item>
             <item>
              <widget class="QListView" name="listViewChannels">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="editTriggers">
                <set>QAbstractItemView::NoEditTriggers</set>
               </property>
@@ -82,6 +88,12 @@
            </layout>
           </widget>
           <widget class="QStackedWidget" name="stackedWidgetChat">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="currentIndex">
             <number>-1</number>
            </property>
@@ -100,6 +112,12 @@
             </item>
             <item>
              <widget class="QListView" name="listViewUsers">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="editTriggers">
                <set>QAbstractItemView::NoEditTriggers</set>
               </property>
@@ -144,8 +162,18 @@
     <addaction name="actionPartChannel"/>
     <addaction name="actionRefreshChannels"/>
    </widget>
+   <widget class="QMenu" name="administrationMenu">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>menu.administration</string>
+    </property>
+    <addaction name="actionSendQuery"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuMenu_conversation"/>
+   <addaction name="administrationMenu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -181,6 +209,11 @@
   <action name="actionRefreshChannels">
    <property name="text">
     <string>action.refreshChannels</string>
+   </property>
+  </action>
+  <action name="actionSendQuery">
+   <property name="text">
+    <string>action.sendQuery</string>
    </property>
   </action>
  </widget>

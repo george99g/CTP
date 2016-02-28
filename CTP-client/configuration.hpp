@@ -25,8 +25,11 @@ public:
     void setLogin(const QString &username, const QString &password);
     int mainWindowX();
     int mainWindowY();
+    bool maximized();
+    void setMaximized(bool maximized);
     void setMainWindowParameters(int x, int y);
 private:
+    bool _maximized;
     bool _autoLogin;
     QString _hostname;
     qint64 _port;

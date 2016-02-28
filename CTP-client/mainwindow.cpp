@@ -14,11 +14,15 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionRefreshChannels, &QAction::triggered, this, &MainWindow::handleChannelRefreshRequest);
     connect(ui->actionLogOut, &QAction::triggered, this, &MainWindow::handleLogoutRequest);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
+    connect(ui->actionSendQuery, &QAction::triggered, this, &MainWindow::handleSendQueryRequest);
     connect(ui->listViewChannels, &QListView::clicked, this, &MainWindow::handleChannelListChangeRequest);
     _channelsModel.setStringList(_channelUsernames.keys());
     ui->listViewChannels->setModel(&_channelsModel);
     ui->listViewUsers->setModel(&_channelUsersModel.second);
     _loginDialog->show();
+    _isAdmin = false;
+    _isStudent = false;
+    _isTeacher = false;
 }
 
 MainWindow::~MainWindow()
@@ -47,12 +51,18 @@ void MainWindow::loginAccepted()
     _username = _loginDialog->getUsername();
     disconnect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     disconnect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
-    resize(_config.mainWindowX(), _config.mainWindowY());
-    show();
+    if(!_config.maximized())
+    {
+        resize(_config.mainWindowX(), _config.mainWindowY());
+        show();
+    }
+    else
+        showMaximized();
     _loginDialog->deleteLater();
     _loginDialog = (LoginDialog*)0;
     connectSocketSignals();
     requestChannelListPopulation();
+    requestMode(_username);
     return;
 }
 
@@ -68,6 +78,19 @@ QString MainWindow::convertFromNoSpace(QString string)
     string.replace("\\\\", "\\");
     string.replace("\\s", " ");
     return string;
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+    if(event->type() == QEvent::WindowStateChange)
+    {
+        QWindowStateChangeEvent* stateChangeEvent = static_cast<QWindowStateChangeEvent*>(event);
+        if(stateChangeEvent->oldState() == Qt::WindowNoState && this->windowState() == Qt::WindowMaximized )
+            _config.setMaximized(true);
+        else if(stateChangeEvent->oldState() == Qt::WindowMaximized && this->windowState() == Qt::WindowNoState)
+            _config.setMaximized(false);
+    }
+    return;
 }
 
 void MainWindow::resizeEvent(QResizeEvent*)
@@ -111,6 +134,23 @@ void MainWindow::handleSocketReadyRead()
         {
             _channelUsernames.remove(convertFromNoSpace(messageParameters.at(1)));
             _channelsModel.setStringList(_channelUsernames.keys());
+        }
+        else if(messageParameters.at(0) == "MODE" && messageParameters.count() > 2)
+        {
+            if(messageParameters.at(1) == _username)
+            {
+                QString mode = messageParameters.at(2);
+                if(mode.contains('A'))
+                    _isAdmin = true;
+                else _isAdmin = false;
+                if(mode.contains('S'))
+                    _isStudent = true;
+                else _isStudent = false;
+                if(mode.contains('T'))
+                    _isTeacher = true;
+                else _isTeacher = false;
+                ui->administrationMenu->setEnabled(_isAdmin);
+            }
         }
         else if(messageParameters.at(0) == "CHANNEL_DOES_NOT_EXIST")
             QMessageBox::warning(this, tr("warning.channelDoesNotExist"), tr("warning.channelDoesNotExist.text"));
@@ -161,6 +201,15 @@ void MainWindow::requestChannelListPopulation()
     return;
 }
 
+void MainWindow::requestMode(const QString &target)
+{
+    QString sendMessage = "MODE ";
+    sendMessage += target;
+    sendMessage += "\r\n";
+    _socket->write(sendMessage.toUtf8());
+    _socket->flush();
+}
+
 void MainWindow::handleSocketError()
 {
     if(_loginDialog == (LoginDialog*)0)
@@ -190,6 +239,19 @@ void MainWindow::handleSocketDisconnected()
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
         _loginDialog->show();
     }
+    return;
+}
+
+void MainWindow::handleSendQueryRequest()
+{
+    bool accepted;
+    QString text = QInputDialog::getText(this, tr("dialog.getQuery.title"), tr("dialog.getQuery.content"), QLineEdit::Normal, "", &accepted);
+    if(!accepted)
+        return;
+    if(text.isEmpty())
+        return;
+    _socket->write(QString("QUERY "+text+"\r\n").toUtf8());
+    _socket->flush();
     return;
 }
 
