@@ -11,6 +11,7 @@ Configuration::Configuration(QObject *parent) : QObject(parent)
     _hostname = "localhost";
     _port = 2000;
     _maximized = false;
+    _splitterSizes = QList<int>();
 }
 
 Configuration::~Configuration()
@@ -29,7 +30,8 @@ void Configuration::saveToFile()
     out << _mainWindowX << _mainWindowY
         << _autoLogin << _username
         << _password << _hostname
-        << _port << _maximized;
+        << _port << _maximized
+        << _splitterSizes;
     _saveFile->close();
     return;
 }
@@ -45,7 +47,8 @@ void Configuration::loadFromFile()
     in >> _mainWindowX >> _mainWindowY
        >> _autoLogin >> _username
        >> _password >> _hostname
-       >> _port >> _maximized;
+       >> _port >> _maximized
+       >> _splitterSizes;
     _saveFile->close();
     return;
 }
@@ -119,5 +122,16 @@ void Configuration::setMainWindowParameters(int x, int y)
 {
     _mainWindowX = x;
     _mainWindowY = y;
+    return;
+}
+
+QList<int> Configuration::splitterSizes()
+{
+    return _splitterSizes;
+}
+
+void Configuration::setSplitterSizes(const QList<int> &splitterSizes)
+{
+    _splitterSizes = splitterSizes;
     return;
 }

@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _socket = new QTcpSocket(this);
     _config.loadFromFile();
     _loginDialog = new LoginDialog(_socket, &_config, this);
-    _pmWindow = new PrivateMessageWindow(&_config, _socket, this);
+    _pmWindow = (PrivateMessageWindow*)0;
     connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
@@ -38,6 +38,7 @@ MainWindow::~MainWindow()
             _socket->close();
         _socket->deleteLater();
     }
+    clearChatBoxWidgets();
     _config.saveToFile();
     delete ui;
 }
@@ -54,6 +55,7 @@ void MainWindow::loginAccepted()
     _username = _loginDialog->getUsername();
     disconnect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     disconnect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
+    ui->splitter->setSizes(_config.splitterSizes());
     if(!_config.maximized())
     {
         resize(_config.mainWindowX(), _config.mainWindowY());
@@ -64,6 +66,7 @@ void MainWindow::loginAccepted()
     _loginDialog->deleteLater();
     _loginDialog = (LoginDialog*)0;
     connectSocketSignals();
+    _pmWindow = new PrivateMessageWindow(&_config, _socket, this);
     requestChannelListPopulation();
     requestMode(_username);
     return;
@@ -124,6 +127,7 @@ void MainWindow::handleSocketReadyRead()
             {
                 _channelUsernames.insert(convertFromNoSpace(channelname), userlist);
                 _channelsModel.setStringList(_channelUsernames.keys());
+                insertChatBoxWidget(convertFromNoSpace(channelname));
             }
             else
             {
@@ -132,10 +136,14 @@ void MainWindow::handleSocketReadyRead()
             }
         }
         else if(messageParameters.at(0) == "CHANNEL_JOINED" && messageParameters.count() > 1)
+        {
             requestUsernamesForChannel(messageParameters.at(1));
+            insertChatBoxWidget(convertFromNoSpace(messageParameters.at(1)));
+        }
         else if(messageParameters.at(0) == "CHANNEL_PARTED" && messageParameters.count() > 1)
         {
             _channelUsernames.remove(convertFromNoSpace(messageParameters.at(1)));
+            removeChatBoxWidget(convertFromNoSpace(messageParameters.at(1)));
             _channelsModel.setStringList(_channelUsernames.keys());
         }
         else if(messageParameters.at(0) == "MODE" && messageParameters.count() > 2)
@@ -154,6 +162,10 @@ void MainWindow::handleSocketReadyRead()
                 else _isTeacher = false;
                 ui->administrationMenu->setEnabled(_isAdmin);
             }
+        }
+        else if(messageParameters.at(0) == "PRIVMSG" && messageParameters.count() > 2)
+        {
+
         }
         else if(messageParameters.at(0) == "CHANNEL_DOES_NOT_EXIST")
             QMessageBox::warning(this, tr("warning.channelDoesNotExist"), tr("warning.channelDoesNotExist.text"));
@@ -218,6 +230,14 @@ void MainWindow::handleSocketError()
     if(_loginDialog == (LoginDialog*)0)
     {
         this->hide();
+        if(_pmWindow != (PrivateMessageWindow*)0)
+        {
+            _pmWindow->deleteLater();
+            _pmWindow = (PrivateMessageWindow*)0;
+        }
+        _config.setSplitterSizes(ui->splitter->sizes());
+        clearChatBoxWidgets();
+        _config.saveToFile();
         disconnectSocketSignals();
         if(_socket->isOpen())
             _socket->close();
@@ -237,6 +257,14 @@ void MainWindow::handleSocketDisconnected()
         disconnectSocketSignals();
         if(_socket->isOpen())
             _socket->close();
+        if(_pmWindow != (PrivateMessageWindow*)0)
+        {
+            _pmWindow->deleteLater();
+            _pmWindow = (PrivateMessageWindow*)0;
+        }
+        _config.setSplitterSizes(ui->splitter->sizes());
+        clearChatBoxWidgets();
+        _config.saveToFile();
         _loginDialog = new LoginDialog(_socket, &_config, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
@@ -295,6 +323,7 @@ void MainWindow::handleChannelRefreshRequest()
 void MainWindow::handleChannelListChangeRequest()
 {
     QString selectedChannel = ui->listViewChannels->currentIndex().data().toString();
+    ui->stackedWidgetChat->setCurrentWidget(_textBoxWidgets.value(selectedChannel));
     _channelUsersModel.first = selectedChannel;
     _channelUsersModel.second.setStringList(_channelUsernames.value(selectedChannel));
     return;
@@ -314,6 +343,14 @@ void MainWindow::handleLogoutRequest()
     _channelsModel.setStringList(QStringList());
     _channelUsersModel.first.clear();
     _channelUsersModel.second.setStringList(QStringList());
+    if(_pmWindow != (PrivateMessageWindow*)0)
+    {
+        _pmWindow->deleteLater();
+        _pmWindow = (PrivateMessageWindow*)0;
+    }
+    _config.setSplitterSizes(ui->splitter->sizes());
+    clearChatBoxWidgets();
+    _config.saveToFile();
     return;
 }
 
@@ -321,5 +358,29 @@ void MainWindow::requestUsernamesForChannel(const QString &channel)
 {
     _socket->write(QString("GET_USERLIST " + channel + "\r\n").toUtf8());
     _socket->flush();
+    return;
+}
+
+void MainWindow::insertChatBoxWidget(const QString &target)
+{
+    ChatBoxWidget* widget = new ChatBoxWidget(_socket, target, _username, this);
+    ui->stackedWidgetChat->addWidget(widget);
+    _textBoxWidgets.insert(target, widget);
+    return;
+}
+
+void MainWindow::removeChatBoxWidget(const QString &target)
+{
+    ChatBoxWidget* widget = _textBoxWidgets.value(target);
+    ui->stackedWidgetChat->removeWidget(widget);
+    widget->deleteLater();
+    _textBoxWidgets.remove(target);
+    return;
+}
+
+void MainWindow::clearChatBoxWidgets()
+{
+    for(unsigned i = 0; i < (unsigned)_textBoxWidgets.values().count(); i++)
+        removeChatBoxWidget(_textBoxWidgets.values().at(i)->getTarget());
     return;
 }

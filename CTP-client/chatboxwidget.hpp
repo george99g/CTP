@@ -21,8 +21,10 @@ public:
     void insertMessage(const QString &sender, const QString &message, const QDateTime &time = QDateTime::currentDateTime());
     void insertSystemMessage(const QString &type, const QString &message, const QDateTime &time = QDateTime::currentDateTime());
     void handleSendMessage();
+    QString getTarget() const;
     void clear();
 private:
+    QString convertToNoSpace(QString string);
     Ui::ChatBoxWidget *ui;
     QString _target;
     QString _self;

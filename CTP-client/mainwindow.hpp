@@ -3,9 +3,11 @@
 
 #include "logindialog.hpp"
 #include "privatemessagewindow.hpp"
+#include "chatboxwidget.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QWindowStateChangeEvent>
+#include <QStackedWidget>
 
 namespace Ui
 {
@@ -41,6 +43,9 @@ private:
     void handleChannelListChangeRequest();
     void handleLogoutRequest();
     void requestUsernamesForChannel(const QString& channel);
+    void insertChatBoxWidget(const QString &target);
+    void removeChatBoxWidget(const QString &target);
+    void clearChatBoxWidgets();
     Ui::MainWindow* ui;
     bool _isAdmin;
     bool _isStudent;
@@ -52,6 +57,7 @@ private:
     QStringListModel _channelsModel;
     QPair<QString, QStringListModel> _channelUsersModel;
     QMap<QString, QStringList> _channelUsernames;
+    QMap<QString, ChatBoxWidget*> _textBoxWidgets;
     Configuration _config;
 };
 

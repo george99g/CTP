@@ -23,9 +23,9 @@ void ChatBoxWidget::insertMessage(const QString &sender, const QString &message,
         atEnd = true;
     QString formattedMessage = "<font color=\"#0534CE\">[</font><font color=\"#01840A\">";
     formattedMessage += time.toString(Qt::TextDate);
-    formattedMessage += "</font><font color=\"#0534CE\">]</font><font color=\"#02A292\">(";
+    formattedMessage += "</font><font color=\"#0534CE\">]</font><font color=\"#02A292\">";
     formattedMessage += sender.toHtmlEscaped();
-    formattedMessage += "):</font> ";
+    formattedMessage += ":</font> ";
     formattedMessage += message.toHtmlEscaped();
     formattedMessage += "<br>";
     ui->textEdit->insertHtml(formattedMessage);
@@ -59,18 +59,32 @@ void ChatBoxWidget::handleSendMessage()
     if(ui->lineEdit->text().isEmpty())
         return;
     QString sendMessage = "PRIVMSG ";
-    sendMessage += _target;
+    sendMessage += convertToNoSpace(_target);
     sendMessage += ' ';
     sendMessage += ui->lineEdit->text();
     sendMessage += "\r\n";
     _socket->write(sendMessage.toUtf8());
     _socket->flush();
     insertMessage(_self, ui->lineEdit->text());
+    ui->lineEdit->clear();
+    ui->lineEdit->setFocus();
     return;
+}
+
+QString ChatBoxWidget::getTarget() const
+{
+    return _target;
 }
 
 void ChatBoxWidget::clear()
 {
     ui->textEdit->clear();
     return;
+}
+
+QString ChatBoxWidget::convertToNoSpace(QString string)
+{
+    string.replace("\\", "\\\\");
+    string.replace(" ", "\\s");
+    return string;
 }
