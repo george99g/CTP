@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _socket = new QTcpSocket(this);
     _config.loadFromFile();
     _loginDialog = new LoginDialog(_socket, &_config, this);
+    _pmWindow = new PrivateMessageWindow(&_config, _socket, this);
     connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
@@ -29,6 +30,8 @@ MainWindow::~MainWindow()
 {
     if(_loginDialog != (LoginDialog*)0)
         _loginDialog->deleteLater();
+    if(_pmWindow != (PrivateMessageWindow*)0)
+        _pmWindow->deleteLater();
     if(_socket != (QTcpSocket*)0)
     {
         if(_socket->isOpen())

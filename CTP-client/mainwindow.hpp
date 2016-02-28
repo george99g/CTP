@@ -2,7 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include "logindialog.hpp"
-#include <QStringListModel>
+#include "privatemessagewindow.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QWindowStateChangeEvent>
@@ -47,6 +47,7 @@ private:
     bool _isTeacher;
     QTcpSocket* _socket;
     LoginDialog* _loginDialog;
+    PrivateMessageWindow* _pmWindow;
     QString _username;
     QStringListModel _channelsModel;
     QPair<QString, QStringListModel> _channelUsersModel;
