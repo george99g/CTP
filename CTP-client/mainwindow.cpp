@@ -146,9 +146,30 @@ void MainWindow::handleSocketReadyRead()
             removeChatBoxWidget(convertFromNoSpace(messageParameters.at(1)));
             _channelsModel.setStringList(_channelUsernames.keys());
         }
+        else if(messageParameters.count() > 2 && messageParameters.at(1) == "JOIN")
+        {
+            QString user = messageParameters.at(0);
+            QString channel = messageParameters.at(2);
+            QStringList userlist = _channelUsernames.value(convertFromNoSpace(channel));
+            if(!userlist.contains(convertFromNoSpace(user)))
+                userlist.push_back(convertFromNoSpace(user));
+            _channelUsernames.insert(convertFromNoSpace(channel), userlist);
+            if(_channelUsersModel.first == convertFromNoSpace(channel))
+                _channelUsersModel.second.setStringList(_channelUsernames.value(convertFromNoSpace(channel)));
+        }
+        else if(messageParameters.count() > 2 && messageParameters.at(1) == "PART")
+        {
+            QString user = messageParameters.at(0);
+            QString channel = messageParameters.at(2);
+            QStringList userlist = _channelUsernames.value(convertFromNoSpace(channel));
+            userlist.removeAll(convertFromNoSpace(user));
+            _channelUsernames.insert(convertFromNoSpace(channel), userlist);
+            if(_channelUsersModel.first == convertFromNoSpace(channel))
+                _channelUsersModel.second.setStringList(_channelUsernames.value(convertFromNoSpace(channel)));
+        }
         else if(messageParameters.at(0) == "MODE" && messageParameters.count() > 2)
         {
-            if(messageParameters.at(1) == _username)
+            if(convertFromNoSpace(messageParameters.at(1)) == _username)
             {
                 QString mode = messageParameters.at(2);
                 if(mode.contains('A'))
@@ -163,9 +184,16 @@ void MainWindow::handleSocketReadyRead()
                 ui->administrationMenu->setEnabled(_isAdmin);
             }
         }
-        else if(messageParameters.at(0) == "PRIVMSG" && messageParameters.count() > 2)
+        else if(messageParameters.count() > 2 && messageParameters.at(1) == "PRIVMSG")
         {
-
+            QString sender = messageParameters.at(0);
+            QString target = messageParameters.at(2);
+            int pos = line.indexOf(' ', 0) + 1;
+            pos = line.indexOf(' ', pos) + 1;
+            pos = line.indexOf(' ', pos) + 1;
+            QString message = line.mid(pos, -1);
+            if(_textBoxWidgets.keys().contains(convertFromNoSpace(target)))
+                _textBoxWidgets.value(target)->insertMessage(convertFromNoSpace(sender), message);
         }
         else if(messageParameters.at(0) == "CHANNEL_DOES_NOT_EXIST")
             QMessageBox::warning(this, tr("warning.channelDoesNotExist"), tr("warning.channelDoesNotExist.text"));
