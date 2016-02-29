@@ -92,3 +92,30 @@ QString IrcClients::generateClientList()
     }
     return list;
 }
+
+bool IrcClients::hasPonged(const QString &username)
+{
+    return client(username)->ponged();
+}
+
+void IrcClients::setPonged(const QString &username, bool state)
+{
+    client(username)->setPonged(state);
+    return;
+}
+
+bool IrcClients::hasPinged(const QString &username)
+{
+    return client(username)->pinged();
+}
+
+void IrcClients::setPinged(const QString &username, bool state)
+{
+    client(username)->setPinged(state);
+    return;
+}
+
+QMap<QString, IrcClient *> &IrcClients::clients()
+{
+    return _clients;
+}

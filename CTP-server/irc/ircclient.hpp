@@ -17,11 +17,13 @@ public:
     void setSocket(QTcpSocket* socket);
     IrcMode* mode();
     void setMode(const QString &mode);
-signals:
-
-public slots:
-
+    bool pinged();
+    void setPinged(bool state);
+    bool ponged();
+    void setPonged(bool state);
 private:
+    bool _pinged;
+    bool _ponged;
     QString _username;
     QTcpSocket* _socket;
     IrcMode _mode;

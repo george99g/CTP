@@ -13,6 +13,10 @@ IrcManager::IrcManager(QObject* parent) : QObject(parent)
             qDebug()<<this<<"error with offline messages table creation query: "<<query.lastError().text();
     }
     _channels = new IrcChannels(&_db);
+    _clients.moveToThread(QThread::currentThread());
+    pingTimer.setInterval(PING_PONG_DELAY);
+    connect(&pingTimer, &QTimer::timeout, this, &IrcManager::handlePings);
+    pingTimer.start();
 }
 
 IrcManager::~IrcManager()
@@ -401,6 +405,8 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
             socket->write(output.toUtf8());
             socket->flush();
         }
+        else if(messageParameters.at(0) == "PONG")
+            _clients.client(socket)->setPonged(true);
         else
         {
             socket->write("INVALID_COMMAND\r\n");
@@ -738,6 +744,37 @@ bool IrcManager::openDatabase()
         }
     }
     return true;
+}
+
+void IrcManager::handlePings() //This entire thing is incredibly hacky but the other method ended in segfaults
+{
+    QTcpSocket* socket;
+    IrcClient* client;
+    for(unsigned i = 0; i < (unsigned)_clients.clients().values().count(); i++)
+    {
+        socket = _clients.clients().values().at(i)->socket();
+        client = _clients.clients().values().at(i);
+        if(client->pinged())
+        {
+            if(client->ponged())
+            {
+                client->setPonged(false);
+                socket->write("PING\r\n");
+                socket->flush();
+            }
+            else
+            {
+                handleLogout(socket);
+            }
+        }
+        else
+        {
+            client->setPinged(true);
+            socket->write("PING\r\n");
+            socket->flush();
+        }
+    }
+    return;
 }
 
 QTcpSocket* IrcManager::getSocket(const QString &username)

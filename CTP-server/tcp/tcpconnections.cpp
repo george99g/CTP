@@ -65,15 +65,15 @@ void TcpConnections::quit()
 
 void TcpConnections::accept(qintptr handle, TcpConnection* connection)
 {
-    QTcpSocket* socket = new QTcpSocket(this);
+    QTcpSocket* socket = new QTcpSocket(0);
     if(!socket->setSocketDescriptor(handle))
     {
         qWarning()<<"Connection handler "<<this<<" could not accept socket with handle "<<handle;
         connection->deleteLater();
         return;
     }
-    connect(socket, &QTcpSocket::disconnected, this, &TcpConnections::disconnected);
-    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpConnections::error); //More magic. Don't touch.
+    connect(socket, &QTcpSocket::disconnected, this, &TcpConnections::disconnected, Qt::QueuedConnection);
+    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpConnections::error, Qt::QueuedConnection); //More magic. Don't touch.
     connection->moveToThread(QThread::currentThread());
     connection->setSocket(socket);
     _connections.insert(socket, connection);

@@ -21,6 +21,11 @@ public:
     bool hasClient(QTcpSocket* socket);
     void broadcast(const QString &message);
     QString generateClientList();
+    bool hasPonged(const QString &username);
+    void setPonged(const QString &username, bool state);
+    bool hasPinged(const QString &username);
+    void setPinged(const QString &username, bool state);
+    QMap<QString, IrcClient*> &clients();
 private:
     QMap<QString, IrcClient*> _clients;
 };

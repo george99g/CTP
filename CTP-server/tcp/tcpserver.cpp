@@ -17,7 +17,7 @@ bool TcpServer::listen(const QHostAddress &address, quint16 port)
     if(!QTcpServer::listen(address, port))
         return false;
     _thread = new QThread(this);
-    _connections = new TcpConnections();
+    _connections = new TcpConnections(0);
     connect(_thread, &QThread::started, _connections, &TcpConnections::start, Qt::QueuedConnection);
     connect(this, &TcpServer::accepting, _connections, &TcpConnections::accept, Qt::QueuedConnection);
     connect(this, &TcpServer::finished, _connections, &TcpConnections::quit, Qt::QueuedConnection);
@@ -44,7 +44,7 @@ qint64 TcpServer::port()
 void TcpServer::incomingConnection(qintptr handle)
 {
     qDebug()<<"TcpServer "<<this<<" attempting to accept connection with descriptor "<<handle;
-    TcpConnection* connection = new TcpConnection();
+    TcpConnection* connection = new TcpConnection(0);
     connection->moveToThread(_thread);
     emit accepting(handle, connection);
     return;

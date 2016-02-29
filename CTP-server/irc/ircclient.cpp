@@ -4,6 +4,8 @@ IrcClient::IrcClient(QString username, QTcpSocket* socket, QObject* parent) : QO
 {
     _username = username;
     _socket = socket;
+    _pinged = false;
+    _ponged = false;
 }
 
 IrcClient::~IrcClient()
@@ -44,4 +46,25 @@ void IrcClient::setMode(const QString &mode)
 {
     _mode.fromString(mode);
     return;
+}
+
+bool IrcClient::pinged()
+{
+    return _pinged;
+}
+
+void IrcClient::setPinged(bool state)
+{
+    _pinged = state;
+    return;
+}
+
+bool IrcClient::ponged()
+{
+    return _ponged;
+}
+
+void IrcClient::setPonged(bool state)
+{
+    _ponged = state;
 }

@@ -9,6 +9,8 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDateTime>
+#include <QTimer>
+#include <QThread>
 #include "../config.hpp"
 #include "ircclients.hpp"
 #include "ircchannels.hpp"
@@ -37,10 +39,12 @@ private:
     bool checkDatabaseForLogin(const QString &username, const QString &password);
     bool registerDatabaseLogin(const QString &username, const QString &password);
     bool openDatabase();
+    void handlePings();
     QTcpSocket* getSocket(const QString &username);
     QString getUsername(QTcpSocket* socket);
     bool isLoggedIn(const QString &username);
     void broadcast(const QString &message);
+    QTimer pingTimer;
     IrcClients _clients;
     QSqlDatabase _db;
     IrcChannels* _channels;
