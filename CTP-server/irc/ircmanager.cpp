@@ -15,14 +15,19 @@ IrcManager::IrcManager(QThread* thread, QObject* parent) : QObject(parent), _cli
     }
     _channels = new IrcChannels(&_db);
     _clients.moveToThread(thread);
-    pingTimer.setInterval(PING_PONG_DELAY);
-    connect(&pingTimer, &QTimer::timeout, this, &IrcManager::handlePings);
-    pingTimer.start();
+    pingTimer = new QTimer(0);
+    pingTimer->setInterval(PING_PONG_DELAY);
+    connect(pingTimer, &QTimer::timeout, this, &IrcManager::handlePings);
+    connect(this, &IrcManager::destroyed, pingTimer, &QTimer::deleteLater, Qt::DirectConnection);
+    pingTimer->start();
+    pingTimer->moveToThread(thread);
     _thread = thread;
 }
 
 IrcManager::~IrcManager()
 {
+    pingTimer->stop();
+    pingTimer->deleteLater();
     _db.close();
     _channels->deleteLater();
     _clients.removeAllClients();

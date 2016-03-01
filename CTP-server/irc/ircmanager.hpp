@@ -44,7 +44,7 @@ private:
     QString getUsername(QTcpSocket* socket);
     bool isLoggedIn(const QString &username);
     void broadcast(const QString &message);
-    QTimer pingTimer;
+    QTimer* pingTimer;
     IrcClients _clients;
     QSqlDatabase _db;
     IrcChannels* _channels;
