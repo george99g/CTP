@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionLogOut, &QAction::triggered, this, &MainWindow::handleLogoutRequest);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
     connect(ui->actionSendQuery, &QAction::triggered, this, &MainWindow::handleSendQueryRequest);
+    connect(ui->actionShowPrivateMessages, &QAction::triggered, this, &MainWindow::handleShowPmRequest);
     connect(ui->listViewChannels, &QListView::clicked, this, &MainWindow::handleChannelListChangeRequest);
     _channelsModel.setStringList(_channelUsernames.keys());
     ui->listViewChannels->setModel(&_channelsModel);
@@ -194,6 +195,11 @@ void MainWindow::handleSocketReadyRead()
             QString message = line.mid(pos, -1);
             if(_textBoxWidgets.keys().contains(convertFromNoSpace(target)))
                 _textBoxWidgets.value(target)->insertMessage(convertFromNoSpace(sender), message);
+        }
+        else if(messageParameters.at(0) == "PING")
+        {
+            _socket->write("PONG\r\n");
+            _socket->flush();
         }
         else if(messageParameters.at(0) == "CHANNEL_DOES_NOT_EXIST")
             QMessageBox::warning(this, tr("warning.channelDoesNotExist"), tr("warning.channelDoesNotExist.text"));
@@ -411,4 +417,11 @@ void MainWindow::clearChatBoxWidgets()
     for(unsigned i = 0; i < (unsigned)_textBoxWidgets.values().count(); i++)
         removeChatBoxWidget(_textBoxWidgets.values().at(i)->getTarget());
     return;
+}
+
+void MainWindow::handleShowPmRequest()
+{
+    if(_pmWindow == (PrivateMessageWindow*)0)
+        return;
+    _pmWindow->show();
 }
