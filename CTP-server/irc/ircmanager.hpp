@@ -19,7 +19,7 @@ class IrcManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit IrcManager(QObject* parent = 0);
+    explicit IrcManager(QThread* thread, QObject* parent = 0);
     ~IrcManager();
     void handleMessage(QTcpSocket* socket, const QString &message);
     void handleLogin(QTcpSocket* socket, const QString &message);
@@ -48,6 +48,7 @@ private:
     IrcClients _clients;
     QSqlDatabase _db;
     IrcChannels* _channels;
+    QThread* _thread;
 };
 
 #endif // IRCMANAGER_HPP

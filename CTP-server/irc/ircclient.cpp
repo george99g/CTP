@@ -6,6 +6,7 @@ IrcClient::IrcClient(QString username, QTcpSocket* socket, QObject* parent) : QO
     _socket = socket;
     _pinged = false;
     _ponged = false;
+    qDebug()<<"initialized"<<this<<"in"<<QThread::currentThread();
 }
 
 IrcClient::~IrcClient()

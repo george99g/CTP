@@ -17,7 +17,7 @@ bool IrcServer::listen(const QHostAddress &address, quint16 port)
     if(!QTcpServer::listen(address, port))
         return false;
     _thread = new QThread(this);
-    _connections = new IrcConnections();
+    _connections = new IrcConnections(_thread);
     connect(_thread, &QThread::started, _connections, &IrcConnections::start, Qt::QueuedConnection);
     connect(this, &IrcServer::accepting, _connections, &IrcConnections::accept, Qt::QueuedConnection);
     connect(this, &IrcServer::finished, _connections, &IrcConnections::quit, Qt::QueuedConnection);

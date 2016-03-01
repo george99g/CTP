@@ -9,7 +9,7 @@ class IrcClients : public QObject
 {
     Q_OBJECT
 public:
-    explicit IrcClients(QObject* parent = 0);
+    explicit IrcClients(QThread* thread, QObject* parent = 0);
     ~IrcClients();
     IrcClient* addClient(const QString &username, QTcpSocket* socket);
     void removeClient(const QString &username);
@@ -28,6 +28,7 @@ public:
     QMap<QString, IrcClient*> &clients();
 private:
     QMap<QString, IrcClient*> _clients;
+    QThread* _thread;
 };
 
 #endif // IRCCLIENTS_HPP

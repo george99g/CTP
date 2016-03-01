@@ -1,7 +1,8 @@
 #include "ircmanager.hpp"
 
-IrcManager::IrcManager(QObject* parent) : QObject(parent)
+IrcManager::IrcManager(QThread* thread, QObject* parent) : QObject(parent), _clients(thread)
 {
+    _clients.moveToThread(QThread::currentThread());
     _db = QSqlDatabase::addDatabase("QSQLITE");
     _db.setDatabaseName("database.db3");
     if(openDatabase())
@@ -13,10 +14,11 @@ IrcManager::IrcManager(QObject* parent) : QObject(parent)
             qDebug()<<this<<"error with offline messages table creation query: "<<query.lastError().text();
     }
     _channels = new IrcChannels(&_db);
-    _clients.moveToThread(QThread::currentThread());
+    _clients.moveToThread(thread);
     pingTimer.setInterval(PING_PONG_DELAY);
     connect(&pingTimer, &QTimer::timeout, this, &IrcManager::handlePings);
     pingTimer.start();
+    _thread = thread;
 }
 
 IrcManager::~IrcManager()

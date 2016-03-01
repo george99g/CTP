@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QThread>
 #include "ircmode.hpp"
 
 class IrcClient : public QObject

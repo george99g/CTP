@@ -1,8 +1,10 @@
 #include "ircconnections.hpp"
 
-IrcConnections::IrcConnections(QObject* parent) : TcpConnections(parent)
+IrcConnections::IrcConnections(QThread* thread, QObject* parent) : TcpConnections(parent)
 {
-    _manager = new IrcManager();
+    _manager = new IrcManager(thread);
+    _manager->moveToThread(thread);
+    _thread = thread;
 }
 
 IrcConnections::~IrcConnections()

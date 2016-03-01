@@ -1,8 +1,9 @@
 #include "ircclients.hpp"
 
-IrcClients::IrcClients(QObject* parent) : QObject(parent)
+IrcClients::IrcClients(QThread* thread, QObject* parent) : QObject(parent)
 {
-
+    qDebug()<<"initialized"<<this<<"in"<<QThread::currentThread();
+    _thread = thread;
 }
 
 IrcClients::~IrcClients()
@@ -13,6 +14,7 @@ IrcClients::~IrcClients()
 IrcClient* IrcClients::addClient(const QString &username, QTcpSocket* socket)
 {
     IrcClient* client = new IrcClient(username, socket);
+    client->moveToThread(_thread);
     _clients.insert(username, client);
     return client;
 }
