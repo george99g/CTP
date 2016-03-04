@@ -66,7 +66,7 @@ void MainWindow::loginAccepted()
     _loginDialog->deleteLater();
     _loginDialog = (LoginDialog*)0;
     connectSocketSignals();
-    _pmWindow = new PrivateMessageWindow(&_config, _socket, this);
+    _pmWindow = new PrivateMessageWindow(&_config, this);
     requestChannelListPopulation();
     requestMode(_username);
     return;

@@ -16,11 +16,10 @@ class PrivateMessageWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit PrivateMessageWindow(Configuration* config, QTcpSocket* socket, QWidget* parent = 0);
+    explicit PrivateMessageWindow(Configuration* config, QWidget* parent = 0);
     ~PrivateMessageWindow();
 private:
     Ui::PrivateMessageWindow* ui;
-    QTcpSocket* _socket;
     Configuration* _config;
 };
 

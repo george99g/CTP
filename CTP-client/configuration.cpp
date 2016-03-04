@@ -31,7 +31,7 @@ void Configuration::saveToFile()
         << _autoLogin << _username
         << _password << _hostname
         << _port << _maximized
-        << _splitterSizes;
+        << _splitterSizes << _pmSplitterSizes;
     _saveFile->close();
     return;
 }
@@ -48,7 +48,7 @@ void Configuration::loadFromFile()
        >> _autoLogin >> _username
        >> _password >> _hostname
        >> _port >> _maximized
-       >> _splitterSizes;
+       >> _splitterSizes >> _pmSplitterSizes;
     _saveFile->close();
     return;
 }
@@ -122,6 +122,17 @@ void Configuration::setMainWindowParameters(int x, int y)
 {
     _mainWindowX = x;
     _mainWindowY = y;
+    return;
+}
+
+QList<int> Configuration::pmSplitterSizes()
+{
+    return _pmSplitterSizes;
+}
+
+void Configuration::setPmSplitterSizes(const QList<int> &splitterSizes)
+{
+    _pmSplitterSizes = splitterSizes;
     return;
 }
 

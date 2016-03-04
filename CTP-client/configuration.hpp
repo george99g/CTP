@@ -29,6 +29,8 @@ public:
     bool maximized();
     void setMaximized(bool maximized);
     void setMainWindowParameters(int x, int y);
+    QList<int> pmSplitterSizes();
+    void setPmSplitterSizes(const QList<int> &splitterSizes);
     QList<int> splitterSizes();
     void setSplitterSizes(const QList<int> &splitterSizes);
 private:
@@ -41,6 +43,7 @@ private:
     int _mainWindowX;
     int _mainWindowY;
     QList<int> _splitterSizes;
+    QList<int> _pmSplitterSizes;
     QFile* _saveFile;
 };
 
