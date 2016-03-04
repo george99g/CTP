@@ -7,7 +7,6 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QWindowStateChangeEvent>
-#include <QStackedWidget>
 
 namespace Ui
 {
@@ -27,12 +26,14 @@ public slots:
     static QString convertToNoSpace(QString string);
     static QString convertFromNoSpace(QString string);
 private:
+    void clearEverything();
     void changeEvent(QEvent* event);
     void resizeEvent(QResizeEvent*);
     void handleSocketReadyRead();
     void connectSocketSignals();
     void disconnectSocketSignals();
     void requestChannelListPopulation();
+    void requestUserlistPopulation();
     void requestMode(const QString &target);
     void handleSocketError();
     void handleSocketDisconnected();
@@ -46,6 +47,9 @@ private:
     void insertChatBoxWidget(const QString &target);
     void removeChatBoxWidget(const QString &target);
     void clearChatBoxWidgets();
+    void insertPmChatBoxWidget(const QString &target);
+    void removePmChatBoxWidget(const QString &target);
+    void clearPmChatBoxWidgets();
     void handleShowPmRequest();
     Ui::MainWindow* ui;
     bool _isAdmin;
@@ -57,6 +61,9 @@ private:
     QString _username;
     QStringListModel _channelsModel;
     QPair<QString, QStringListModel> _channelUsersModel;
+    QStringList _usernames;
+    QMap<QString, ChatBoxWidget*> _pmTextBoxWidgets;
+    QStringListModel _usernamesModel;
     QMap<QString, QStringList> _channelUsernames;
     QMap<QString, ChatBoxWidget*> _textBoxWidgets;
     Configuration _config;

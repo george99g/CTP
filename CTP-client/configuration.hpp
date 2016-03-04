@@ -26,6 +26,9 @@ public:
     void setLogin(const QString &username, const QString &password);
     int mainWindowX();
     int mainWindowY();
+    int pmWindowX();
+    int pmWindowY();
+    void setPmWindowParameters(int x, int y);
     bool maximized();
     void setMaximized(bool maximized);
     void setMainWindowParameters(int x, int y);
@@ -42,6 +45,8 @@ private:
     QString _password;
     int _mainWindowX;
     int _mainWindowY;
+    int _pmWindowX;
+    int _pmWindowY;
     QList<int> _splitterSizes;
     QList<int> _pmSplitterSizes;
     QFile* _saveFile;

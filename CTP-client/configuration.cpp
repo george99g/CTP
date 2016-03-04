@@ -2,6 +2,8 @@
 
 Configuration::Configuration(QObject *parent) : QObject(parent)
 {
+    //Make sure all of these are set
+    //Everything will fall back to these if the read fails or the config file doesn't exist
     _saveFile = new QFile("config.dat");
     _mainWindowX = 1000;
     _mainWindowY = 500;
@@ -12,6 +14,9 @@ Configuration::Configuration(QObject *parent) : QObject(parent)
     _port = 2000;
     _maximized = false;
     _splitterSizes = QList<int>();
+    _pmSplitterSizes = QList<int>();
+    _pmWindowX = 1000;
+    _pmWindowY = 500;
 }
 
 Configuration::~Configuration()
@@ -27,11 +32,14 @@ void Configuration::saveToFile()
         return;
     }
     QDataStream out(_saveFile);
+    //For the sake of compatability, please only add values at the end.
+    //Otherwise you'll need to re-create all config files to avoid issues
     out << _mainWindowX << _mainWindowY
         << _autoLogin << _username
         << _password << _hostname
         << _port << _maximized
-        << _splitterSizes << _pmSplitterSizes;
+        << _splitterSizes << _pmSplitterSizes
+        << _pmWindowX << _pmWindowY;
     _saveFile->close();
     return;
 }
@@ -44,11 +52,13 @@ void Configuration::loadFromFile()
         return;
     }
     QDataStream in(_saveFile);
+    //Make sure this matches the above
     in >> _mainWindowX >> _mainWindowY
        >> _autoLogin >> _username
        >> _password >> _hostname
        >> _port >> _maximized
-       >> _splitterSizes >> _pmSplitterSizes;
+       >> _splitterSizes >> _pmSplitterSizes
+       >> _pmWindowX >> _pmWindowY;
     _saveFile->close();
     return;
 }
@@ -105,6 +115,23 @@ int Configuration::mainWindowX()
 int Configuration::mainWindowY()
 {
     return _mainWindowY;
+}
+
+int Configuration::pmWindowX()
+{
+    return _pmWindowX;
+}
+
+int Configuration::pmWindowY()
+{
+    return _pmWindowY;
+}
+
+void Configuration::setPmWindowParameters(int x, int y)
+{
+    _pmWindowX = x;
+    _pmWindowY = y;
+    return;
 }
 
 bool Configuration::maximized()

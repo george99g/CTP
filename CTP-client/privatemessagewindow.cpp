@@ -11,7 +11,27 @@ PrivateMessageWindow::PrivateMessageWindow(Configuration* config, QWidget* paren
 
 PrivateMessageWindow::~PrivateMessageWindow()
 {
-    delete ui;
     _config->setPmSplitterSizes(ui->splitter->sizes());
-    _config->saveToFile();
+    delete ui;
+}
+
+QStackedWidget* PrivateMessageWindow::stackedWidget()
+{
+    return ui->stackedWidget;
+}
+
+QListView* PrivateMessageWindow::listView()
+{
+    return ui->listView;
+}
+
+QList<int> PrivateMessageWindow::splitterSizes()
+{
+    return ui->splitter->sizes();
+}
+
+void PrivateMessageWindow::resizeEvent(QResizeEvent*)
+{
+    _config->setPmWindowParameters(width(), height());
+    return;
 }

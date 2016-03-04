@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     _socket = new QTcpSocket(this);
     _config.loadFromFile();
-    _loginDialog = new LoginDialog(_socket, &_config, this);
+    _loginDialog = new LoginDialog(_socket, &_config);
     _pmWindow = (PrivateMessageWindow*)0;
     connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
@@ -29,17 +29,25 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow()
 {
+    clearEverything();
     if(_loginDialog != (LoginDialog*)0)
+    {
         _loginDialog->deleteLater();
+        _loginDialog = (LoginDialog*)0;
+    }
     if(_pmWindow != (PrivateMessageWindow*)0)
+    {
+        _config.setPmSplitterSizes(_pmWindow->splitterSizes());
         _pmWindow->deleteLater();
+        _pmWindow = (PrivateMessageWindow*)0;
+    }
     if(_socket != (QTcpSocket*)0)
     {
         if(_socket->isOpen())
             _socket->close();
         _socket->deleteLater();
+        _socket = (QTcpSocket*)0;
     }
-    clearChatBoxWidgets();
     _config.saveToFile();
     delete ui;
 }
@@ -67,8 +75,11 @@ void MainWindow::loginAccepted()
     _loginDialog->deleteLater();
     _loginDialog = (LoginDialog*)0;
     connectSocketSignals();
-    _pmWindow = new PrivateMessageWindow(&_config, this);
+    _pmWindow = new PrivateMessageWindow(&_config);
+    _pmWindow->listView()->setModel(&_usernamesModel);
+    _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
     requestChannelListPopulation();
+    requestUserlistPopulation();
     requestMode(_username);
     return;
 }
@@ -85,6 +96,28 @@ QString MainWindow::convertFromNoSpace(QString string)
     string.replace("\\\\", "\\");
     string.replace("\\s", " ");
     return string;
+}
+
+void MainWindow::clearEverything()
+{
+    clearChatBoxWidgets();
+    clearPmChatBoxWidgets();
+    _username.clear();
+    _channelUsernames.clear();
+    _channelsModel.setStringList(QStringList());
+    _channelUsersModel.first.clear();
+    _channelUsersModel.second.setStringList(QStringList());
+    _usernames.clear();
+    _usernamesModel.setStringList(QStringList());
+    if(_pmWindow != (PrivateMessageWindow*)0)
+    {
+        _config.setPmSplitterSizes(_pmWindow->splitterSizes());
+        _pmWindow->deleteLater();
+        _pmWindow = (PrivateMessageWindow*)0;
+    }
+    _config.setSplitterSizes(ui->splitter->sizes());
+    _config.saveToFile();
+    return;
 }
 
 void MainWindow::changeEvent(QEvent* event)
@@ -135,6 +168,22 @@ void MainWindow::handleSocketReadyRead()
                 _channelUsernames.remove(channelname);
                 _channelUsernames.insert(channelname, userlist);
             }
+        }
+        else if(messageParameters.at(0) == "USERLIST" && messageParameters.count() > 1)
+        {
+            QStringList userlist;
+            for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
+            {
+                userlist.push_back(convertFromNoSpace(messageParameters.at(i)));
+                if(!_usernames.contains(convertFromNoSpace(messageParameters.at(i))))
+                    insertPmChatBoxWidget(convertFromNoSpace(messageParameters.at(i)));
+            }
+            if(!userlist.count() > _username.count())
+                for(unsigned i = 0; i < (unsigned)_usernames.count(); i++)
+                    if(!userlist.contains(_usernames.at(i)))
+                        removePmChatBoxWidget(_usernames.at(i));
+            _usernames = userlist;
+            _usernamesModel.setStringList(_usernames);
         }
         else if(messageParameters.at(0) == "CHANNEL_JOINED" && messageParameters.count() > 1)
         {
@@ -250,6 +299,14 @@ void MainWindow::requestChannelListPopulation()
     return;
 }
 
+void MainWindow::requestUserlistPopulation()
+{
+    if(!_socket->isOpen())
+        return;
+    _socket->write("GET_USERLIST\r\n");
+    _socket->flush();
+}
+
 void MainWindow::requestMode(const QString &target)
 {
     QString sendMessage = "MODE ";
@@ -264,15 +321,8 @@ void MainWindow::handleSocketError()
     if(_loginDialog == (LoginDialog*)0)
     {
         this->hide();
-        if(_pmWindow != (PrivateMessageWindow*)0)
-        {
-            _pmWindow->deleteLater();
-            _pmWindow = (PrivateMessageWindow*)0;
-        }
-        _config.setSplitterSizes(ui->splitter->sizes());
-        clearChatBoxWidgets();
-        _config.saveToFile();
         disconnectSocketSignals();
+        clearEverything();
         if(_socket->isOpen())
             _socket->close();
         _loginDialog = new LoginDialog(_socket, &_config, this);
@@ -289,16 +339,7 @@ void MainWindow::handleSocketDisconnected()
     {
         this->hide();
         disconnectSocketSignals();
-        if(_socket->isOpen())
-            _socket->close();
-        if(_pmWindow != (PrivateMessageWindow*)0)
-        {
-            _pmWindow->deleteLater();
-            _pmWindow = (PrivateMessageWindow*)0;
-        }
-        _config.setSplitterSizes(ui->splitter->sizes());
-        clearChatBoxWidgets();
-        _config.saveToFile();
+        clearEverything();
         _loginDialog = new LoginDialog(_socket, &_config, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
@@ -351,6 +392,7 @@ void MainWindow::handlePartChannelRequest()
 void MainWindow::handleChannelRefreshRequest()
 {
     requestChannelListPopulation();
+    requestUserlistPopulation();
     return;
 }
 
@@ -372,19 +414,7 @@ void MainWindow::handleLogoutRequest()
     _socket->write("LOGOUT\r\n");
     _socket->flush();
     _socket->close();
-    _username.clear();
-    _channelUsernames.clear();
-    _channelsModel.setStringList(QStringList());
-    _channelUsersModel.first.clear();
-    _channelUsersModel.second.setStringList(QStringList());
-    if(_pmWindow != (PrivateMessageWindow*)0)
-    {
-        _pmWindow->deleteLater();
-        _pmWindow = (PrivateMessageWindow*)0;
-    }
-    _config.setSplitterSizes(ui->splitter->sizes());
-    clearChatBoxWidgets();
-    _config.saveToFile();
+    clearEverything();
     return;
 }
 
@@ -416,6 +446,30 @@ void MainWindow::clearChatBoxWidgets()
 {
     for(unsigned i = 0; i < (unsigned)_textBoxWidgets.values().count(); i++)
         removeChatBoxWidget(_textBoxWidgets.values().at(i)->getTarget());
+    return;
+}
+
+void MainWindow::insertPmChatBoxWidget(const QString &target)
+{
+    ChatBoxWidget* widget = new ChatBoxWidget(_socket, target, _username, this);
+    _pmWindow->stackedWidget()->addWidget(widget);
+    _pmTextBoxWidgets.insert(target, widget);
+    return;
+}
+
+void MainWindow::removePmChatBoxWidget(const QString &target)
+{
+    ChatBoxWidget* widget = _pmTextBoxWidgets.value(target);
+    _pmWindow->stackedWidget()->removeWidget(widget);
+    widget->deleteLater();
+    _pmTextBoxWidgets.remove(target);
+    return;
+}
+
+void MainWindow::clearPmChatBoxWidgets()
+{
+    for(unsigned i = 0; i < (unsigned)_pmTextBoxWidgets.values().count(); i++)
+        removePmChatBoxWidget(_pmTextBoxWidgets.values().at(i)->getTarget());
     return;
 }
 
