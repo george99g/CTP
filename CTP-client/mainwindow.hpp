@@ -55,7 +55,9 @@ private:
     bool _isAdmin;
     bool _isStudent;
     bool _isTeacher;
+    bool _populatedUserlist;
     QTcpSocket* _socket;
+    QStringList _readQueue;
     LoginDialog* _loginDialog;
     PrivateMessageWindow* _pmWindow;
     QString _username;
