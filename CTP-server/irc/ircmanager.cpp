@@ -38,6 +38,8 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
     if(isLoggedIn(getUsername(socket)))
     {
         QStringList messageParameters = message.split(" ", QString::SkipEmptyParts);
+        if(messageParameters.count() <= 0)
+            return;
         if(messageParameters.at(0) == "GET_USERLIST" && messageParameters.count() == 1)
         {
             QString output = "USERLIST ";

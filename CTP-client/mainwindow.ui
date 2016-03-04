@@ -161,6 +161,7 @@
     <addaction name="actionJoinChannel"/>
     <addaction name="actionPartChannel"/>
     <addaction name="actionRefreshChannels"/>
+    <addaction name="actionShowPrivateMessages"/>
    </widget>
    <widget class="QMenu" name="administrationMenu">
     <property name="enabled">
@@ -184,6 +185,7 @@
    </attribute>
    <addaction name="actionLogOut"/>
    <addaction name="actionRefreshChannels"/>
+   <addaction name="actionShowPrivateMessages"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExit">
@@ -214,6 +216,11 @@
   <action name="actionSendQuery">
    <property name="text">
     <string>action.sendQuery</string>
+   </property>
+  </action>
+  <action name="actionShowPrivateMessages">
+   <property name="text">
+    <string>action.showPrivateMessages</string>
    </property>
   </action>
  </widget>

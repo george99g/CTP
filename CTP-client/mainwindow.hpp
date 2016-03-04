@@ -46,6 +46,7 @@ private:
     void insertChatBoxWidget(const QString &target);
     void removeChatBoxWidget(const QString &target);
     void clearChatBoxWidgets();
+    void handleShowPmRequest();
     Ui::MainWindow* ui;
     bool _isAdmin;
     bool _isStudent;
