@@ -6,7 +6,6 @@
 #include "chatboxwidget.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QWindowStateChangeEvent>
 
 namespace Ui
 {
@@ -51,6 +50,7 @@ private:
     void removePmChatBoxWidget(const QString &target);
     void clearPmChatBoxWidgets();
     void handleShowPmRequest();
+    void handleUserChangeRequest(QString newUser);
     Ui::MainWindow* ui;
     bool _isAdmin;
     bool _isStudent;

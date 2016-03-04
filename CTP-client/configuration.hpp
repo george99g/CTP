@@ -31,6 +31,8 @@ public:
     void setPmWindowParameters(int x, int y);
     bool maximized();
     void setMaximized(bool maximized);
+    bool pmMaximized();
+    void setPmMaximized(bool maximized);
     void setMainWindowParameters(int x, int y);
     QList<int> pmSplitterSizes();
     void setPmSplitterSizes(const QList<int> &splitterSizes);
@@ -38,6 +40,7 @@ public:
     void setSplitterSizes(const QList<int> &splitterSizes);
 private:
     bool _maximized;
+    bool _pmMaximized;
     bool _autoLogin;
     QString _hostname;
     qint64 _port;

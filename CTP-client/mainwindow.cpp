@@ -76,8 +76,8 @@ void MainWindow::loginAccepted()
     _loginDialog = (LoginDialog*)0;
     connectSocketSignals();
     _pmWindow = new PrivateMessageWindow(&_config);
+    connect(_pmWindow, &PrivateMessageWindow::switchUser, this, &MainWindow::handleUserChangeRequest);
     _pmWindow->listView()->setModel(&_usernamesModel);
-    _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
     requestChannelListPopulation();
     requestUserlistPopulation();
     requestMode(_username);
@@ -112,6 +112,7 @@ void MainWindow::clearEverything()
     if(_pmWindow != (PrivateMessageWindow*)0)
     {
         _config.setPmSplitterSizes(_pmWindow->splitterSizes());
+        disconnect(_pmWindow, &PrivateMessageWindow::switchUser, this, &MainWindow::handleUserChangeRequest);
         _pmWindow->deleteLater();
         _pmWindow = (PrivateMessageWindow*)0;
     }
@@ -169,7 +170,7 @@ void MainWindow::handleSocketReadyRead()
                 _channelUsernames.insert(channelname, userlist);
             }
         }
-        else if(messageParameters.at(0) == "USERLIST" && messageParameters.count() > 1)
+        else if(messageParameters.at(0) == "OFFLINE_USERLIST" && messageParameters.count() > 1)
         {
             QStringList userlist;
             for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
@@ -243,7 +244,21 @@ void MainWindow::handleSocketReadyRead()
             pos = line.indexOf(' ', pos) + 1;
             QString message = line.mid(pos, -1);
             if(_textBoxWidgets.keys().contains(convertFromNoSpace(target)))
-                _textBoxWidgets.value(target)->insertMessage(convertFromNoSpace(sender), message);
+                _textBoxWidgets.value(convertFromNoSpace(target))->insertMessage(convertFromNoSpace(sender), message);
+            else if(_pmTextBoxWidgets.keys().contains(convertFromNoSpace(sender)) && convertFromNoSpace(target) == _username)
+            {
+                _pmTextBoxWidgets.value(convertFromNoSpace(sender))->insertMessage(convertFromNoSpace(sender), message);
+                if(_pmWindow->isHidden())
+                {
+                    if(_config.pmMaximized())
+                        _pmWindow->showMaximized();
+                    else
+                    {
+                        _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
+                        _pmWindow->show();
+                    }
+                }
+            }
         }
         else if(messageParameters.at(0) == "PING")
         {
@@ -303,7 +318,7 @@ void MainWindow::requestUserlistPopulation()
 {
     if(!_socket->isOpen())
         return;
-    _socket->write("GET_USERLIST\r\n");
+    _socket->write("GET_OFFLINE_USERLIST\r\n");
     _socket->flush();
 }
 
@@ -460,7 +475,8 @@ void MainWindow::insertPmChatBoxWidget(const QString &target)
 void MainWindow::removePmChatBoxWidget(const QString &target)
 {
     ChatBoxWidget* widget = _pmTextBoxWidgets.value(target);
-    _pmWindow->stackedWidget()->removeWidget(widget);
+    if(_pmWindow != (PrivateMessageWindow*)0)
+        _pmWindow->stackedWidget()->removeWidget(widget);
     widget->deleteLater();
     _pmTextBoxWidgets.remove(target);
     return;
@@ -477,5 +493,17 @@ void MainWindow::handleShowPmRequest()
 {
     if(_pmWindow == (PrivateMessageWindow*)0)
         return;
-    _pmWindow->show();
+    if(_config.pmMaximized())
+        _pmWindow->showMaximized();
+    else
+    {
+        _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
+        _pmWindow->show();
+    }
+}
+
+void MainWindow::handleUserChangeRequest(QString newUser)
+{
+    _pmWindow->stackedWidget()->setCurrentWidget(_pmTextBoxWidgets.value(newUser));
+    return;
 }

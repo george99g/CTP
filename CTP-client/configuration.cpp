@@ -13,6 +13,7 @@ Configuration::Configuration(QObject *parent) : QObject(parent)
     _hostname = "localhost";
     _port = 2000;
     _maximized = false;
+    _pmMaximized = false;
     _splitterSizes = QList<int>();
     _pmSplitterSizes = QList<int>();
     _pmWindowX = 1000;
@@ -39,7 +40,8 @@ void Configuration::saveToFile()
         << _password << _hostname
         << _port << _maximized
         << _splitterSizes << _pmSplitterSizes
-        << _pmWindowX << _pmWindowY;
+        << _pmWindowX << _pmWindowY
+        << _pmMaximized;
     _saveFile->close();
     return;
 }
@@ -58,7 +60,8 @@ void Configuration::loadFromFile()
        >> _password >> _hostname
        >> _port >> _maximized
        >> _splitterSizes >> _pmSplitterSizes
-       >> _pmWindowX >> _pmWindowY;
+       >> _pmWindowX >> _pmWindowY
+       >> _pmMaximized;
     _saveFile->close();
     return;
 }
@@ -142,6 +145,17 @@ bool Configuration::maximized()
 void Configuration::setMaximized(bool maximized)
 {
     _maximized = maximized;
+    return;
+}
+
+bool Configuration::pmMaximized()
+{
+    return _pmMaximized;
+}
+
+void Configuration::setPmMaximized(bool maximized)
+{
+    _pmMaximized = maximized;
     return;
 }
 
