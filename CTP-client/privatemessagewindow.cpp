@@ -44,6 +44,12 @@ void PrivateMessageWindow::changeEvent(QEvent *event)
     return;
 }
 
+void PrivateMessageWindow::setUser(const QString &username)
+{
+    emit switchUser(username);
+    return;
+}
+
 void PrivateMessageWindow::handleUserChangeRequest()
 {
     QString selectedUser = ui->listView->currentIndex().data().toString();

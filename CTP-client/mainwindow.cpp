@@ -25,13 +25,16 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _isAdmin = false;
     _isStudent = false;
     _isTeacher = false;
-    _populatedUserlist = false;
-    _readQueue = QStringList();
 }
 
 MainWindow::~MainWindow()
 {
     clearEverything();
+    if(_loginDialog != (LoginDialog*)0)
+    {
+        _loginDialog->deleteLater();
+        _loginDialog = (LoginDialog*)0;
+    }
     if(_pmWindow != (PrivateMessageWindow*)0)
     {
         _config.setPmSplitterSizes(_pmWindow->splitterSizes());
@@ -109,15 +112,9 @@ void MainWindow::clearEverything()
     if(_pmWindow != (PrivateMessageWindow*)0)
     {
         _config.setPmSplitterSizes(_pmWindow->splitterSizes());
-        _config.saveToFile();
         disconnect(_pmWindow, &PrivateMessageWindow::switchUser, this, &MainWindow::handleUserChangeRequest);
         _pmWindow->deleteLater();
         _pmWindow = (PrivateMessageWindow*)0;
-    }
-    if(_loginDialog != (LoginDialog*)0)
-    {
-        _loginDialog->deleteLater();
-        _loginDialog = (LoginDialog*)0;
     }
     _config.setSplitterSizes(ui->splitter->sizes());
     _config.saveToFile();
@@ -145,16 +142,9 @@ void MainWindow::resizeEvent(QResizeEvent*)
 
 void MainWindow::handleSocketReadyRead()
 {
-    while(_socket->canReadLine() || (_readQueue.count() > 0 && _populatedUserlist))
+    while(_socket->canReadLine())
     {
-        QString line = "";
-        if(_socket->canReadLine())
-            line = _socket->readLine().trimmed();
-        else if(_readQueue.count() > 0)
-        {
-            line = _readQueue.at(0);
-            _readQueue.removeAt(0);
-        }
+        QString line = _socket->readLine().trimmed();
         qDebug()<<line;
         QStringList messageParameters = line.split(' ', QString::SkipEmptyParts);
         if(messageParameters.count() <= 0)
@@ -195,7 +185,6 @@ void MainWindow::handleSocketReadyRead()
                         removePmChatBoxWidget(_usernames.at(i));
             _usernames = userlist;
             _usernamesModel.setStringList(_usernames);
-            _populatedUserlist = true;
         }
         else if(messageParameters.at(0) == "CHANNEL_JOINED" && messageParameters.count() > 1)
         {
@@ -268,35 +257,7 @@ void MainWindow::handleSocketReadyRead()
                         _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
                         _pmWindow->show();
                     }
-                }
-            }
-        }
-        else if(messageParameters.count() > 3 && messageParameters.at(0) == "OFFLINE_MESSAGE")
-        {
-            QString sender = messageParameters.at(1);
-            QDateTime time = QDateTime::fromTime_t(QString(messageParameters.at(2)).toUInt());
-            if(!_pmTextBoxWidgets.keys().contains(convertFromNoSpace(sender)))
-            {
-                _readQueue.push_back(line);
-                handleSocketReadyRead();
-                continue;
-            }
-            int pos = line.indexOf(' ', 0) + 1;
-            pos = line.indexOf(' ', pos) + 1;
-            pos = line.indexOf(' ', pos) + 1;
-            QString message = line.mid(pos, -1);
-            qDebug()<<sender;
-            qDebug()<<time;
-            qDebug()<<message;
-            _pmTextBoxWidgets.value(convertFromNoSpace(sender))->insertMessage(convertFromNoSpace(sender), message, time);
-            if(_pmWindow->isHidden())
-            {
-                if(_config.pmMaximized())
-                    _pmWindow->showMaximized();
-                else
-                {
-                    _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
-                    _pmWindow->show();
+                    _pmWindow->setUser(sender);
                 }
             }
         }
@@ -380,8 +341,6 @@ void MainWindow::handleSocketError()
         clearEverything();
         if(_socket->isOpen())
             _socket->close();
-        _config.setAutoLogin(false);
-        _config.saveToFile();
         _loginDialog = new LoginDialog(_socket, &_config, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
@@ -397,10 +356,6 @@ void MainWindow::handleSocketDisconnected()
         this->hide();
         disconnectSocketSignals();
         clearEverything();
-        if(_socket->isOpen())
-            _socket->close();
-        _config.setAutoLogin(false);
-        _config.saveToFile();
         _loginDialog = new LoginDialog(_socket, &_config, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
@@ -474,7 +429,8 @@ void MainWindow::handleLogoutRequest()
     _config.saveToFile();
     _socket->write("LOGOUT\r\n");
     _socket->flush();
-    handleSocketDisconnected();
+    _socket->close();
+    clearEverything();
     return;
 }
 
@@ -550,5 +506,6 @@ void MainWindow::handleShowPmRequest()
 void MainWindow::handleUserChangeRequest(QString newUser)
 {
     _pmWindow->stackedWidget()->setCurrentWidget(_pmTextBoxWidgets.value(newUser));
+    _pmWindow->listView()->setCurrentIndex(_pmWindow->listView()->model()->index(_usernames.indexOf(newUser), 0));
     return;
 }
