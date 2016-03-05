@@ -75,6 +75,8 @@ void LoginDialog::handleSocketReadyRead()
             handleInvalidAuthentication();
         else if(currentLine.startsWith("WRONG_ARGUMENTS"))
             handleInvalidAuthentication();
+        else if(currentLine.startsWith("IN_USE"))
+            handleInvalidAuthentication();
         else if(currentLine.startsWith("AUTH"))
         {
             QStringList splitLine = currentLine.split(' ', QString::SkipEmptyParts);
