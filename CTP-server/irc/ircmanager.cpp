@@ -22,6 +22,7 @@ IrcManager::IrcManager(QThread* thread, QObject* parent) : QObject(parent), _cli
     pingTimer->start();
     pingTimer->moveToThread(thread);
     _thread = thread;
+    _ftpPort = 2001;
 }
 
 IrcManager::~IrcManager()
@@ -451,6 +452,8 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 _channels->rejoinChannels(username, socket);
                 if(hasMissedMessages(socket))
                     sendMissedMessages(socket);
+                socket->write(QString("FTP_PORT "+QString::number(_ftpPort)+"\r\n").toUtf8());
+                socket->flush();
             }
             else
             {
@@ -537,6 +540,17 @@ void IrcManager::handleDisconnection(QTcpSocket* socket)
         handleLogout(socket);
     qDebug()<<socket<<"disconnected without login.";
     return;
+}
+
+void IrcManager::setFtpPort(qint16 ftpPort)
+{
+    _ftpPort = ftpPort;
+    return;
+}
+
+qint16 IrcManager::ftpPort()
+{
+    return _ftpPort;
 }
 
 void IrcManager::setClientModeInDatabase(const QString &username, IrcMode *mode)

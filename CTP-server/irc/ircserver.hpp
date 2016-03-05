@@ -14,10 +14,13 @@ public:
     explicit IrcServer(QObject* parent = 0);
     ~IrcServer();
     virtual bool listen(const QHostAddress &address, quint16 port);
+    void setFtpPort(qint16 port);
+    qint16 ftpPort();
 public slots:
     virtual void complete();
 private:
     IrcConnections* _connections;
+    qint16 _ftpPort;
 };
 
 #endif // IRCSERVER_HPP

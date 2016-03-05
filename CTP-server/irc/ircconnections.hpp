@@ -11,7 +11,7 @@ class IrcConnections : public TcpConnections
 {
     Q_OBJECT
 public:
-    explicit IrcConnections(QThread* thread, QObject* parent = 0);
+    explicit IrcConnections(QThread* thread, qint16 ftpPort, QObject* parent = 0);
     ~IrcConnections();
 public slots:
     virtual void accept(qintptr handle, TcpConnection* connection);
@@ -23,6 +23,7 @@ protected slots:
 private:
     IrcManager* _manager;
     QThread* _thread;
+    qint16 _ftpPort;
 };
 
 #endif // IRCCONNECTIONS_HPP

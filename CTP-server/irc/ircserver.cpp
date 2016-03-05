@@ -4,6 +4,7 @@ IrcServer::IrcServer(QObject* parent) : TcpServer(parent)
 {
     qDebug()<<this<<"constructed";
     _thread = (QThread*)0;
+    _ftpPort = 2001;
 }
 
 IrcServer::~IrcServer()
@@ -17,7 +18,7 @@ bool IrcServer::listen(const QHostAddress &address, quint16 port)
     if(!QTcpServer::listen(address, port))
         return false;
     _thread = new QThread(this);
-    _connections = new IrcConnections(_thread);
+    _connections = new IrcConnections(_thread, _ftpPort);
     connect(_thread, &QThread::started, _connections, &IrcConnections::start, Qt::QueuedConnection);
     connect(this, &IrcServer::accepting, _connections, &IrcConnections::accept, Qt::QueuedConnection);
     connect(this, &IrcServer::finished, _connections, &IrcConnections::quit, Qt::QueuedConnection);
@@ -25,6 +26,17 @@ bool IrcServer::listen(const QHostAddress &address, quint16 port)
     _connections->moveToThread(_thread);
     _thread->start();
     return true;
+}
+
+void IrcServer::setFtpPort(qint16 port)
+{
+    _ftpPort = port;
+    return;
+}
+
+qint16 IrcServer::ftpPort()
+{
+    return _ftpPort;
 }
 
 void IrcServer::complete()

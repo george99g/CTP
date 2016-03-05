@@ -1,10 +1,12 @@
 #include "ircconnections.hpp"
 
-IrcConnections::IrcConnections(QThread* thread, QObject* parent) : TcpConnections(parent)
+IrcConnections::IrcConnections(QThread* thread, qint16 ftpPort, QObject* parent) : TcpConnections(parent)
 {
     _manager = new IrcManager(thread);
+    _manager->setFtpPort(ftpPort);
     _manager->moveToThread(thread);
     _thread = thread;
+    _ftpPort = ftpPort;
 }
 
 IrcConnections::~IrcConnections()

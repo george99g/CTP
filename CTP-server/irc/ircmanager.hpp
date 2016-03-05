@@ -27,6 +27,8 @@ public:
     void handleLogout(QTcpSocket* socket);
     void handleConnection(QTcpSocket* socket);
     void handleDisconnection(QTcpSocket* socket);
+    void setFtpPort(qint16 ftpPort);
+    qint16 ftpPort();
 private:
     void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);
@@ -49,6 +51,7 @@ private:
     QSqlDatabase _db;
     IrcChannels* _channels;
     QThread* _thread;
+    qint16 _ftpPort;
 };
 
 #endif // IRCMANAGER_HPP

@@ -16,6 +16,7 @@ void Dialog::tickBoxToggled(bool state)
 {
     if(state)
     {
+        _server.setFtpPort(ui->spinBoxFtpPort->value());
         if(_server.listen(QHostAddress::Any, ui->spinBox->value()) && _ftpServer.listen(QHostAddress::Any, ui->spinBoxFtpPort->value()))
         {
             ui->checkBoxRun->setChecked(true);
