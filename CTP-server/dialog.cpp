@@ -16,15 +16,20 @@ void Dialog::tickBoxToggled(bool state)
 {
     if(state)
     {
-        if(_server.listen(QHostAddress::Any, ui->spinBox->value()))
+        if(_server.listen(QHostAddress::Any, ui->spinBox->value()) && _ftpServer.listen(QHostAddress::Any, ui->spinBoxFtpPort->value()))
         {
             ui->checkBoxRun->setChecked(true);
+            ui->spinBox->setEnabled(false);
+            ui->spinBoxFtpPort->setEnabled(false);
         }
     }
     else
     {
         _server.close();
+        _ftpServer.close();
         ui->checkBoxRun->setChecked(false);
+        ui->spinBox->setEnabled(true);
+        ui->spinBoxFtpPort->setEnabled(true);
     }
     return;
 }

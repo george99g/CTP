@@ -2,12 +2,14 @@
 
 FtpServer::FtpServer(QObject *parent) : TcpServer(parent)
 {
-
+    qDebug()<<this<<"constructed";
+    _thread = (QThread*)0;
 }
 
 FtpServer::~FtpServer()
 {
-
+    qDebug()<<this<<"destroyed";
+    close();
 }
 
 bool FtpServer::listen(const QHostAddress &address, quint16 port)
@@ -15,7 +17,7 @@ bool FtpServer::listen(const QHostAddress &address, quint16 port)
     if(!QTcpServer::listen(address, port))
         return false;
     _thread = new QThread(this);
-    _connections = new FtpConnections();
+    _connections = new FtpConnections(_thread);
     connect(_thread, &QThread::started, _connections, &FtpConnections::start, Qt::QueuedConnection);
     connect(this, &FtpServer::accepting, _connections, &FtpConnections::accept, Qt::QueuedConnection);
     connect(this, &FtpServer::finished, _connections, &FtpConnections::quit, Qt::QueuedConnection);

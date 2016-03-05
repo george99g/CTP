@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "config.hpp"
 #include "irc/ircserver.hpp"
+#include "ftp/ftpserver.hpp"
 
 namespace Ui
 {
@@ -22,6 +23,7 @@ private slots:
 private:
     Ui::Dialog* ui;
     IrcServer _server;
+    FtpServer _ftpServer;
 };
 
 #endif // DIALOG_HPP
