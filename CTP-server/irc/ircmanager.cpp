@@ -147,9 +147,9 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                     if(USERS_CAN_CREATE_CHANNELS || _clients.client(socket)->mode()->administrator())
                     {
                         _channels->createChannel(joinChannelName);
-                        _channels->joinChannel(joinChannelName, getUsername(socket), socket);
                         socket->write(QString("CHANNEL_CREATED "+joinChannelName+"\r\n").toUtf8());
                         socket->flush();
+                        _channels->joinChannel(joinChannelName, getUsername(socket), socket);
                     }
                     else
                     {

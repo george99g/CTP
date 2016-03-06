@@ -225,6 +225,9 @@ void MainWindow::handleSocketReadyRead()
             _channelUsernames.insert(convertFromNoSpace(channel), userlist);
             if(_channelUsersModel.first == convertFromNoSpace(channel))
                 _channelUsersModel.second.setStringList(_channelUsernames.value(convertFromNoSpace(channel)));
+            ChatBoxWidget* chatBox = _textBoxWidgets.value(channel);
+            if(chatBox != (ChatBoxWidget*)0)
+                chatBox->insertSystemMessage(tr("message.join"), convertFromNoSpace(user));
         }
         else if(messageParameters.count() > 2 && messageParameters.at(1) == "PART")
         {
@@ -235,6 +238,9 @@ void MainWindow::handleSocketReadyRead()
             _channelUsernames.insert(convertFromNoSpace(channel), userlist);
             if(_channelUsersModel.first == convertFromNoSpace(channel))
                 _channelUsersModel.second.setStringList(_channelUsernames.value(convertFromNoSpace(channel)));
+            ChatBoxWidget* chatBox = _textBoxWidgets.value(channel);
+            if(chatBox != (ChatBoxWidget*)0)
+                chatBox->insertSystemMessage(tr("message.part"), convertFromNoSpace(user));
         }
         else if(messageParameters.at(0) == "MODE" && messageParameters.count() > 2)
         {
