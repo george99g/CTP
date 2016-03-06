@@ -17,15 +17,18 @@ SOURCES += main.cpp\
     logindialog.cpp \
     configuration.cpp \
     privatemessagewindow.cpp \
-    chatboxwidget.cpp
+    chatboxwidget.cpp \
+    registrationdialog.cpp
 
 HEADERS  += mainwindow.hpp \
     logindialog.hpp \
     configuration.hpp \
     privatemessagewindow.hpp \
-    chatboxwidget.hpp
+    chatboxwidget.hpp \
+    registrationdialog.hpp
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
     privatemessagewindow.ui \
-    chatboxwidget.ui
+    chatboxwidget.ui \
+    registrationdialog.ui

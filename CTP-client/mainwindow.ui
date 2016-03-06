@@ -171,6 +171,7 @@
      <string>menu.administration</string>
     </property>
     <addaction name="actionSendQuery"/>
+    <addaction name="actionRegisterUser"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuMenu_conversation"/>
@@ -214,6 +215,9 @@
    </property>
   </action>
   <action name="actionSendQuery">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>action.sendQuery</string>
    </property>
@@ -221,6 +225,11 @@
   <action name="actionShowPrivateMessages">
    <property name="text">
     <string>action.showPrivateMessages</string>
+   </property>
+  </action>
+  <action name="actionRegisterUser">
+   <property name="text">
+    <string>action.registerUser</string>
    </property>
   </action>
  </widget>

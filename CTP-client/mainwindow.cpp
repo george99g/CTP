@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
     connect(ui->actionSendQuery, &QAction::triggered, this, &MainWindow::handleSendQueryRequest);
     connect(ui->actionShowPrivateMessages, &QAction::triggered, this, &MainWindow::handleShowPmRequest);
+    connect(ui->actionRegisterUser, &QAction::triggered, this, &MainWindow::handleRegisterUserRequest);
     connect(ui->listViewChannels, &QListView::clicked, this, &MainWindow::handleChannelListChangeRequest);
     connect(ui->listViewUsers, &QListView::doubleClicked, this, &MainWindow::handlePmUserOpenRequest);
     _channelsModel.setStringList(_channelUsernames.keys());
@@ -425,6 +426,31 @@ void MainWindow::handleSendQueryRequest()
     if(text.isEmpty())
         return;
     _socket->write(QString("QUERY "+text+"\r\n").toUtf8());
+    _socket->flush();
+    return;
+}
+
+void MainWindow::handleRegisterUserRequest()
+{
+    QString username = "";
+    QString password = "";
+    RegistrationDialog regDialog(this);
+    regDialog.setModal(true);
+    regDialog.exec();
+    if(regDialog.result() != QDialog::Accepted)
+        return;
+    username = regDialog.username();
+    if(username == "")
+        return;
+    password = regDialog.password();
+    if(password == "")
+        return;
+    QString sendMessage = "ADD_USER ";
+    sendMessage += convertToNoSpace(username);
+    sendMessage += ' ';
+    sendMessage += convertToNoSpace(password);
+    sendMessage += "\r\n";
+    _socket->write(sendMessage.toUtf8());
     _socket->flush();
     return;
 }

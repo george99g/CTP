@@ -415,6 +415,37 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
             socket->write(output.toUtf8());
             socket->flush();
         }
+        else if(messageParameters.at(0) == "ADD_USER")
+        {
+            if(messageParameters.count() == 3)
+            {
+                if(_clients.client(socket)->mode()->administrator())
+                {
+                    QString username = messageParameters.at(1);
+                    QString password = messageParameters.at(2);
+                    if(registerDatabaseLogin(username, password))
+                    {
+                        socket->write(QString("REGISTERED "+username+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                    else
+                    {
+                        socket->write(QString("REGISTRATION_FAILED "+username+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                }
+                else
+                {
+                    socket->write("NOT_ADMINISTRATOR\r\n");
+                    socket->flush();
+                }
+            }
+            else
+            {
+                socket->write("WRONG_ARGUMENTS\r\n");
+                socket->flush();
+            }
+        }
         else if(messageParameters.at(0) == "PONG")
             _clients.client(socket)->setPonged(true);
         else

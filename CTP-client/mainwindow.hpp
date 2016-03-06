@@ -4,6 +4,7 @@
 #include "logindialog.hpp"
 #include "privatemessagewindow.hpp"
 #include "chatboxwidget.hpp"
+#include "registrationdialog.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 
@@ -37,6 +38,7 @@ private:
     void handleSocketError();
     void handleSocketDisconnected();
     void handleSendQueryRequest();
+    void handleRegisterUserRequest();
     void handleJoinChannelRequest();
     void handlePartChannelRequest();
     void handleChannelRefreshRequest();
