@@ -41,6 +41,7 @@ private:
     void handlePartChannelRequest();
     void handleChannelRefreshRequest();
     void handleChannelListChangeRequest();
+    void handlePmUserOpenRequest();
     void handleLogoutRequest();
     void requestUsernamesForChannel(const QString& channel);
     void insertChatBoxWidget(const QString &target);
