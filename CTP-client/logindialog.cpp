@@ -18,6 +18,7 @@ LoginDialog::LoginDialog(QTcpSocket *socket, Configuration* config, QWidget *par
     ui->progressBarConnection->setFormat("");
     _username = "";
     _config = config;
+    retranslateUi();
     if(_config->autoLogin())
         handleAutoLogin();
 }
@@ -44,6 +45,12 @@ QString LoginDialog::convertFromNoSpace(QString string)
     string.replace("\\\\", "\\");
     string.replace("\\s", " ");
     return string;
+}
+
+void LoginDialog::retranslateUi()
+{
+    ui->retranslateUi(this);
+    return;
 }
 
 void LoginDialog::handleAutoLogin()

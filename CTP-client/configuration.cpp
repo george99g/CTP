@@ -44,7 +44,7 @@ void Configuration::saveToFile()
         << _port << _maximized
         << _splitterSizes << _pmSplitterSizes
         << _pmWindowX << _pmWindowY
-        << _pmMaximized;
+        << _pmMaximized << _language;
     _saveFile->close();
     return;
 }
@@ -64,7 +64,7 @@ void Configuration::loadFromFile()
        >> _port >> _maximized
        >> _splitterSizes >> _pmSplitterSizes
        >> _pmWindowX >> _pmWindowY
-       >> _pmMaximized;
+       >> _pmMaximized >> _language;
     _saveFile->close();
     return;
 }

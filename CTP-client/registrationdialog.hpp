@@ -17,6 +17,7 @@ public:
     QString username();
     QString password();
     ~RegistrationDialog();
+    void retranslateUi();
 private:
     Ui::RegistrationDialog* ui;
 };

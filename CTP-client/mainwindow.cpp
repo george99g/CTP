@@ -171,9 +171,14 @@ void MainWindow::loadLanguage(const QString &language)
 
 void MainWindow::switchTranslator(QTranslator &translator, const QString &filename)
 {
+    QString langPath = QApplication::applicationDirPath();
+    langPath.append("/languages/");
+    langPath.append(filename);
     qApp->removeTranslator(&translator);
-    if(translator.load(filename))
+    if(translator.load(langPath))
         qApp->installTranslator(&translator);
+    else
+        qDebug()<<"Failed to load translator for "<<langPath;
     return;
 }
 
@@ -202,7 +207,17 @@ void MainWindow::clearEverything()
 
 void MainWindow::changeEvent(QEvent* event)
 {
-    if(event->type() == QEvent::WindowStateChange)
+    if(event == (QEvent*)0)
+        return;
+    if(event->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        if(_pmWindow != (PrivateMessageWindow*)0)
+            _pmWindow->retranslateUi();
+        if(_loginDialog != (LoginDialog*)0)
+            _loginDialog->retranslateUi();
+    }
+    else if(event->type() == QEvent::WindowStateChange)
     {
         QWindowStateChangeEvent* stateChangeEvent = static_cast<QWindowStateChangeEvent*>(event);
         if(stateChangeEvent->oldState() == Qt::WindowNoState && this->windowState() == Qt::WindowMaximized )
@@ -510,6 +525,7 @@ void MainWindow::handleRegisterUserRequest()
     QString username = "";
     QString password = "";
     RegistrationDialog regDialog(this);
+    regDialog.retranslateUi();
     regDialog.setModal(true);
     regDialog.exec();
     if(regDialog.result() != QDialog::Accepted)

@@ -8,6 +8,7 @@ PrivateMessageWindow::PrivateMessageWindow(Configuration* config, QWidget* paren
     _config->loadFromFile();
     ui->splitter->setSizes(_config->pmSplitterSizes());
     connect(ui->listView, &QListView::clicked, this, &PrivateMessageWindow::handleUserChangeRequest);
+    retranslateUi();
 }
 
 PrivateMessageWindow::~PrivateMessageWindow()
@@ -47,6 +48,12 @@ void PrivateMessageWindow::changeEvent(QEvent *event)
 void PrivateMessageWindow::setUser(const QString &username)
 {
     emit switchUser(username);
+    return;
+}
+
+void PrivateMessageWindow::retranslateUi()
+{
+    ui->retranslateUi(this);
     return;
 }
 

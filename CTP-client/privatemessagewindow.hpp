@@ -26,6 +26,7 @@ public:
     QList<int> splitterSizes();
     void changeEvent(QEvent* event);
     void setUser(const QString &username);
+    void retranslateUi();
 signals:
     void switchUser(QString newUser);
 private:

@@ -21,6 +21,7 @@ public:
     QString getUsername();
     static QString convertToNoSpace(QString string);
     static QString convertFromNoSpace(QString string);
+    void retranslateUi();
 signals:
     void loginCancelled();
     void loginAccepted();

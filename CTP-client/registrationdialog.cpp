@@ -4,6 +4,7 @@
 RegistrationDialog::RegistrationDialog(QWidget* parent) : QDialog(parent), ui(new Ui::RegistrationDialog)
 {
     ui->setupUi(this);
+    retranslateUi();
 }
 
 QString RegistrationDialog::username()
@@ -19,4 +20,10 @@ QString RegistrationDialog::password()
 RegistrationDialog::~RegistrationDialog()
 {
     delete ui;
+}
+
+void RegistrationDialog::retranslateUi()
+{
+    ui->retranslateUi(this);
+    return;
 }
