@@ -298,11 +298,15 @@ void MainWindow::handleSocketReadyRead()
             if(_pmWindow->isHidden())
             {
                 if(_config.pmMaximized())
+                {
                     _pmWindow->showMaximized();
+                    _pmWindow->setUser(sender);
+                }
                 else
                 {
                     _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
                     _pmWindow->show();
+                    _pmWindow->setUser(sender);
                 }
             }
         }
@@ -475,6 +479,7 @@ void MainWindow::handleChannelListChangeRequest()
 void MainWindow::handlePmUserOpenRequest()
 {
 
+    return;
 }
 
 void MainWindow::handleLogoutRequest()
