@@ -166,6 +166,7 @@ void MainWindow::loadLanguage(const QString &language)
     QLocale::setDefault(locale);
     switchTranslator(_translator, QString("CTP_%1.qm").arg(_currentLanguage));
     switchTranslator(_translatorQt, QString("qt_%1.qm").arg(_currentLanguage));
+    switchTranslator(_translatorBaseQt, QString("qtbase_%1.qm").arg(_currentLanguage));
     return;
 }
 

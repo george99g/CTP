@@ -83,6 +83,7 @@ private:
     Configuration _config;
     QTranslator _translator;
     QTranslator _translatorQt;
+    QTranslator _translatorBaseQt;
 };
 
 #endif // MAINWINDOW_HPP
