@@ -18,6 +18,9 @@ Configuration::Configuration(QObject *parent) : QObject(parent)
     _pmSplitterSizes = QList<int>();
     _pmWindowX = 1000;
     _pmWindowY = 500;
+    QString defaultLocale = QLocale::system().name();
+    defaultLocale.truncate(defaultLocale.lastIndexOf('_'));
+    _language = defaultLocale;
 }
 
 Configuration::~Configuration()
@@ -185,5 +188,16 @@ QList<int> Configuration::splitterSizes()
 void Configuration::setSplitterSizes(const QList<int> &splitterSizes)
 {
     _splitterSizes = splitterSizes;
+    return;
+}
+
+QString Configuration::language()
+{
+    return _language;
+}
+
+void Configuration::setLanguage(const QString &language)
+{
+    _language = language;
     return;
 }

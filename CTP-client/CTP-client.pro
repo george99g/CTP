@@ -32,3 +32,5 @@ FORMS    += mainwindow.ui \
     privatemessagewindow.ui \
     chatboxwidget.ui \
     registrationdialog.ui
+TRANSLATIONS += CTP_en.ts \
+    CTP_bg.ts

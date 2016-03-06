@@ -38,6 +38,8 @@ public:
     void setPmSplitterSizes(const QList<int> &splitterSizes);
     QList<int> splitterSizes();
     void setSplitterSizes(const QList<int> &splitterSizes);
+    QString language();
+    void setLanguage(const QString &language);
 private:
     bool _maximized;
     bool _pmMaximized;
@@ -52,6 +54,7 @@ private:
     int _pmWindowY;
     QList<int> _splitterSizes;
     QList<int> _pmSplitterSizes;
+    QString _language;
     QFile* _saveFile;
 };
 

@@ -173,9 +173,15 @@
     <addaction name="actionSendQuery"/>
     <addaction name="actionRegisterUser"/>
    </widget>
+   <widget class="QMenu" name="languageMenu">
+    <property name="title">
+     <string>menu.language</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuMenu_conversation"/>
    <addaction name="administrationMenu"/>
+   <addaction name="languageMenu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

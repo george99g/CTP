@@ -7,6 +7,9 @@
 #include "registrationdialog.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
+#include <QDir>
+#include <QActionGroup>
+#include <QTranslator>
 
 namespace Ui
 {
@@ -25,7 +28,12 @@ public slots:
     void loginAccepted();
     static QString convertToNoSpace(QString string);
     static QString convertFromNoSpace(QString string);
+    Configuration* config();
 private:
+    void languageChanged(QAction* action);
+    void configureLanguages();
+    void loadLanguage(const QString &language);
+    void switchTranslator(QTranslator &translator, const QString &filename);
     void clearEverything();
     void changeEvent(QEvent* event);
     void resizeEvent(QResizeEvent*);
@@ -71,7 +79,10 @@ private:
     QStringListModel _usernamesModel;
     QMap<QString, QStringList> _channelUsernames;
     QMap<QString, ChatBoxWidget*> _textBoxWidgets;
+    QString _currentLanguage;
     Configuration _config;
+    QTranslator _translator;
+    QTranslator _translatorQt;
 };
 
 #endif // MAINWINDOW_HPP

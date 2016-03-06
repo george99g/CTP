@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _isTeacher = false;
     _populatedUserlist = false;
     _readQueue = QStringList();
+    _currentLanguage = "";
+    configureLanguages();
 }
 
 MainWindow::~MainWindow()
@@ -65,6 +67,7 @@ MainWindow::~MainWindow()
 void MainWindow::loginCancelled()
 {
     close();
+    exit(0);
     return;
 }
 
@@ -106,6 +109,72 @@ QString MainWindow::convertFromNoSpace(QString string)
     string.replace("\\\\", "\\");
     string.replace("\\s", " ");
     return string;
+}
+
+Configuration* MainWindow::config()
+{
+    return &_config;
+}
+
+void MainWindow::languageChanged(QAction* action)
+{
+    if(action != (QAction*)0)
+        loadLanguage(action->data().toString());
+    return;
+}
+
+void MainWindow::configureLanguages()
+{
+    QActionGroup* languageGroup = new QActionGroup(ui->languageMenu);
+    languageGroup->setExclusive(true);
+    connect(languageGroup, &QActionGroup::triggered, this, &MainWindow::languageChanged);
+    QString langPath = QApplication::applicationDirPath();
+    langPath.append("/languages");
+    QDir dir(langPath);
+    QStringList filenames = dir.entryList(QStringList("CTP_*.qm"));
+    if(filenames.count() <= 0)
+        QMessageBox::critical(this, "Critical error", "No translation files found.\nPlease add translation files to /languages in order to properly use this application.");
+    qDebug()<<_config.language();
+    for(unsigned i = 0; i < (unsigned)filenames.count(); i++)
+    {
+        QString locale;
+        locale = filenames.at(i);
+        locale.truncate(locale.lastIndexOf('.'));
+        locale.remove(0, locale.indexOf('_') + 1);
+        QString lang = QLocale::languageToString(QLocale(locale).language());
+        QIcon icon(QString("%1/%2.png").arg(langPath).arg(locale));
+        QAction* action = new QAction(icon, lang, this);
+        action->setCheckable(true);
+        action->setData(locale);
+        ui->languageMenu->addAction(action);
+        languageGroup->addAction(action);
+        if(_config.language() == locale)
+            action->setChecked(true);
+    }
+    loadLanguage(_config.language());
+    return;
+}
+
+void MainWindow::loadLanguage(const QString &language)
+{
+    if(_currentLanguage == language)
+        return;
+    _currentLanguage = language;
+    _config.setLanguage(language);
+    _config.saveToFile();
+    QLocale locale = QLocale(_currentLanguage);
+    QLocale::setDefault(locale);
+    switchTranslator(_translator, QString("CTP_%1.qm").arg(_currentLanguage));
+    switchTranslator(_translatorQt, QString("qt_%1.qm").arg(_currentLanguage));
+    return;
+}
+
+void MainWindow::switchTranslator(QTranslator &translator, const QString &filename)
+{
+    qApp->removeTranslator(&translator);
+    if(translator.load(filename))
+        qApp->installTranslator(&translator);
+    return;
 }
 
 void MainWindow::clearEverything()
