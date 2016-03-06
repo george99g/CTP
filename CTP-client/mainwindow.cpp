@@ -298,16 +298,13 @@ void MainWindow::handleSocketReadyRead()
             if(_pmWindow->isHidden())
             {
                 if(_config.pmMaximized())
-                {
                     _pmWindow->showMaximized();
-                    _pmWindow->setUser(sender);
-                }
                 else
                 {
                     _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
                     _pmWindow->show();
-                    _pmWindow->setUser(sender);
                 }
+                _pmWindow->setUser(sender);
             }
         }
         else if(messageParameters.at(0) == "PING")
@@ -478,7 +475,18 @@ void MainWindow::handleChannelListChangeRequest()
 
 void MainWindow::handlePmUserOpenRequest()
 {
-
+    QString selectedUser = ui->listViewUsers->currentIndex().data().toString();
+    if(_pmWindow->isHidden())
+    {
+        if(_config.pmMaximized())
+            _pmWindow->showMaximized();
+        else
+        {
+            _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
+            _pmWindow->show();
+        }
+    }
+    _pmWindow->setUser(selectedUser);
     return;
 }
 
