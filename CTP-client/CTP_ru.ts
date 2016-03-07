@@ -6,12 +6,12 @@
     <message>
         <location filename="chatboxwidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="chatboxwidget.ui" line="44"/>
         <source>&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;</translation>
     </message>
 </context>
 <context>
