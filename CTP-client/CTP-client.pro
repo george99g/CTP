@@ -18,20 +18,23 @@ SOURCES += main.cpp\
     configuration.cpp \
     privatemessagewindow.cpp \
     chatboxwidget.cpp \
-    registrationdialog.cpp
+    registrationdialog.cpp \
+    partchanneldialog.cpp
 
 HEADERS  += mainwindow.hpp \
     logindialog.hpp \
     configuration.hpp \
     privatemessagewindow.hpp \
     chatboxwidget.hpp \
-    registrationdialog.hpp
+    registrationdialog.hpp \
+    partchanneldialog.hpp
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
     privatemessagewindow.ui \
     chatboxwidget.ui \
-    registrationdialog.ui
+    registrationdialog.ui \
+    partchanneldialog.ui
 TRANSLATIONS += CTP_en.ts \
     CTP_bg.ts \
     CTP_ru.ts

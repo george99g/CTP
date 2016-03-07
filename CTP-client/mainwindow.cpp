@@ -565,14 +565,20 @@ void MainWindow::handleJoinChannelRequest()
 
 void MainWindow::handlePartChannelRequest()
 {
-    bool accepted;
-    QString text = QInputDialog::getText(this, tr("dialog.getPartChannelName.title"), tr("dialog.getPartChannelName.content"), QLineEdit::Normal, "", &accepted);
-    if(!accepted)
+    QString channel = "";
+    PartChannelDialog dialog(this);
+    dialog.retranslateUi();
+    _channelnamesModel.setStringList(_channelUsernames.keys());
+    dialog.listView()->setModel(&_channelnamesModel);
+    dialog.setModal(true);
+    dialog.exec();
+    if(dialog.result() != QDialog::Accepted)
         return;
-    if(text.isEmpty())
+    channel = dialog.listView()->currentIndex().data().toString();
+    if(channel == "")
         return;
-    text = convertToNoSpace(text);
-    _socket->write(QString("PART "+text+"\r\n").toUtf8());
+    channel = convertToNoSpace(channel);
+    _socket->write(QString("PART "+channel+"\r\n").toUtf8());
     _socket->flush();
     return;
 }

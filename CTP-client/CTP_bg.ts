@@ -318,14 +318,35 @@
         <translation>Въведете канал, в който да влезете</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <source>dialog.getPartChannelName.title</source>
+        <translation type="obsolete">Излизане от канал</translation>
+    </message>
+    <message>
+        <source>dialog.getPartChannelName.content</source>
+        <translation type="obsolete">Въведете канал от който да излезете</translation>
+    </message>
+</context>
+<context>
+    <name>PartChannelDialog</name>
+    <message>
+        <location filename="partchanneldialog.ui" line="14"/>
         <source>dialog.getPartChannelName.title</source>
         <translation>Излизане от канал</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="partchanneldialog.ui" line="35"/>
         <source>dialog.getPartChannelName.content</source>
         <translation>Въведете канал от който да излезете</translation>
+    </message>
+    <message>
+        <location filename="partchanneldialog.ui" line="63"/>
+        <source>partChannelDialog.accept</source>
+        <translation>Добре</translation>
+    </message>
+    <message>
+        <location filename="partchanneldialog.ui" line="70"/>
+        <source>partChannelDialog.cancel</source>
+        <translation>Отказ</translation>
     </message>
 </context>
 <context>

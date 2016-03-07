@@ -5,6 +5,7 @@
 #include "privatemessagewindow.hpp"
 #include "chatboxwidget.hpp"
 #include "registrationdialog.hpp"
+#include "partchanneldialog.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QDir>
@@ -79,6 +80,7 @@ private:
     QStringListModel _usernamesModel;
     QMap<QString, QStringList> _channelUsernames;
     QMap<QString, ChatBoxWidget*> _textBoxWidgets;
+    QStringListModel _channelnamesModel;
     QString _currentLanguage;
     Configuration _config;
     QTranslator _translator;

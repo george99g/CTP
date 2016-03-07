@@ -11,7 +11,7 @@
     <message>
         <location filename="chatboxwidget.ui" line="44"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="unfinished">&gt;</translation>
     </message>
 </context>
 <context>
@@ -315,14 +315,27 @@
         <source>dialog.getJoinChannelName.content</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>PartChannelDialog</name>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="partchanneldialog.ui" line="14"/>
         <source>dialog.getPartChannelName.title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="partchanneldialog.ui" line="35"/>
         <source>dialog.getPartChannelName.content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="partchanneldialog.ui" line="63"/>
+        <source>partChannelDialog.accept</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="partchanneldialog.ui" line="70"/>
+        <source>partChannelDialog.cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

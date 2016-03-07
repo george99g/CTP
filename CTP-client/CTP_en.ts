@@ -317,14 +317,35 @@
         <translation>Enter a channel to be joined</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <source>dialog.getPartChannelName.title</source>
+        <translation type="obsolete">Parting channel</translation>
+    </message>
+    <message>
+        <source>dialog.getPartChannelName.content</source>
+        <translation type="obsolete">Enter a channel to be parted</translation>
+    </message>
+</context>
+<context>
+    <name>PartChannelDialog</name>
+    <message>
+        <location filename="partchanneldialog.ui" line="14"/>
         <source>dialog.getPartChannelName.title</source>
         <translation>Parting channel</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="partchanneldialog.ui" line="35"/>
         <source>dialog.getPartChannelName.content</source>
         <translation>Enter a channel to be parted</translation>
+    </message>
+    <message>
+        <location filename="partchanneldialog.ui" line="63"/>
+        <source>partChannelDialog.accept</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="partchanneldialog.ui" line="70"/>
+        <source>partChannelDialog.cancel</source>
+        <translation>Cancel</translation>
     </message>
 </context>
 <context>
