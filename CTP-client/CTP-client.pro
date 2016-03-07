@@ -33,4 +33,5 @@ FORMS    += mainwindow.ui \
     chatboxwidget.ui \
     registrationdialog.ui
 TRANSLATIONS += CTP_en.ts \
-    CTP_bg.ts
+    CTP_bg.ts \
+    CTP_ru.ts

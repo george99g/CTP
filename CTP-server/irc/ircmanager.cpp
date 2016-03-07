@@ -179,6 +179,11 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                         }
                     }
                 }
+                if(!USERS_CAN_CHANGE_CHANNELS && !_clients.client(socket)->mode()->administrator())
+                {
+                    socket->write("USERS_CANNOT_CHANGE_CHANNELS\r\n");
+                    socket->flush();
+                }
             }
             else
             {
@@ -214,6 +219,11 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 else
                 {
                     socket->write(QString("NOT_IN_CHANNEL "+partChannelName+"\r\n").toUtf8());
+                    socket->flush();
+                }
+                if(!USERS_CAN_CHANGE_CHANNELS && !_clients.client(socket)->mode()->administrator())
+                {
+                    socket->write("USERS_CANNOT_CHANGE_CHANNELS\r\n");
                     socket->flush();
                 }
             }

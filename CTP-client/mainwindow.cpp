@@ -422,6 +422,8 @@ void MainWindow::handleSocketReadyRead()
             QMessageBox::warning(this, tr("warning.notAllowedInChannel"), tr("warning.notAllowedInChannel.text"));
         else if(messageParameters.at(0) == "QUERY_ERROR")
             QMessageBox::warning(this, tr("warning.queryError"), tr("warning.queryError.text"));
+        else if(messageParameters.at(0) == "USERS_CANNOT_CHANGE_CHANNELS")
+            QMessageBox::warning(this, tr("warning.usersCannotChangeChannels"), tr("warning.usersCannotChangeChannels.text"));
         else if(messageParameters.at(0) == "NOT_LOGGED_IN")
             handleSocketDisconnected();
     }

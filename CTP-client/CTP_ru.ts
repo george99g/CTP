@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US">
+<TS version="2.0" language="ru_RU">
 <context>
     <name>ChatBoxWidget</name>
     <message>
         <location filename="chatboxwidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="chatboxwidget.ui" line="44"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19,84 +19,83 @@
     <message>
         <location filename="logindialog.ui" line="14"/>
         <source>loginWindow.title</source>
-        <translation>Login</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="24"/>
         <source>login.serverAddress</source>
-        <translation>Server address</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="41"/>
         <source>login.serverPort</source>
-        <translation>Port</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="67"/>
         <source>login.username</source>
-        <translation>Username:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="77"/>
         <source>login.password</source>
-        <translation>Password:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="93"/>
         <source>login.stayLoggedIn</source>
-        <translation>Stay logged in</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="141"/>
         <source>login.login</source>
-        <translation>Login</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="148"/>
         <source>login.cancel</source>
-        <translation>Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="108"/>
         <source>login.loggingIn</source>
-        <translation>Logging in...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="145"/>
         <source>warning.invalidAuthentication</source>
-        <translation>Invalid authentication</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="145"/>
         <source>warning.invalidAuthenticationText</source>
-        <translation>The supplied authentication is incorrect.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="155"/>
         <source>warning.connectionFailed</source>
-        <translation>Connection failed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="155"/>
         <source>warning.connectionFailedText:
 %1</source>
-        <translation>The connection failed for the follwing reason:
-%1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="173"/>
         <source>login.hostLookup</source>
-        <translation>Looking up host...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="177"/>
         <source>login.connecting</source>
-        <translation>Connecting...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="181"/>
         <source>login.connected</source>
-        <translation>Connected.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -104,227 +103,227 @@
     <message>
         <location filename="mainwindow.ui" line="14"/>
         <source>mainWindow.title</source>
-        <translation>CTP</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="40"/>
         <source>tab.chat</source>
-        <translation>Chat</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="68"/>
         <source>chat.channels</source>
-        <translation>Channels</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="106"/>
         <source>chat.onlineUsers</source>
-        <translation>Users</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="134"/>
         <source>Tab 2</source>
-        <translation>Work in progress</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="152"/>
         <source>menu.file</source>
-        <translation>File</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="159"/>
         <source>menu.conversation</source>
-        <translation>Conversation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="171"/>
         <source>menu.administration</source>
-        <translation>Administration</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="178"/>
         <source>menu.language</source>
-        <translation>Language</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="200"/>
         <source>action.exit</source>
-        <translation>Exit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="205"/>
         <source>action.joinChannel</source>
-        <translation>Join channel...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="210"/>
         <source>action.partChannel</source>
-        <translation>Part channel...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="215"/>
         <source>action.logOut</source>
-        <translation>Log out</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="220"/>
         <source>action.refreshChannels</source>
-        <translation>Refresh</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="228"/>
         <source>action.sendQuery</source>
-        <translation>Send query...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="233"/>
         <source>action.showPrivateMessages</source>
-        <translation>Show PMs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="238"/>
         <source>action.registerUser</source>
-        <translation>Register user...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="315"/>
         <source>message.join</source>
-        <translation>JOIN</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="328"/>
         <source>message.part</source>
-        <translation>PART</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="408"/>
         <source>warning.channelDoesNotExist</source>
-        <translation>Channel does not exist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="408"/>
         <source>warning.channelDoesNotExist.text</source>
-        <translation>The application has attempted to interface with a channel which does not exist.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="410"/>
         <source>warning.userDoesNotExist</source>
-        <translation>User does not exist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="410"/>
         <source>warning.userDoesNotExist.text</source>
-        <translation>The application has attempted to interface with a user who does not exist.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="412"/>
         <source>warning.wrongParameters</source>
-        <translation>Wrong parameters</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="412"/>
         <source>warning.wrongParameters.text</source>
-        <translation>The application has sent a command with incorrect parameters.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="414"/>
         <source>warning.userIsNotLoggedIn</source>
-        <translation>User is not logged in</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="414"/>
         <source>warning.userIsNotLoggedIn.text:%1</source>
-        <translation>The following user is not logged in: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="416"/>
         <source>warning.notInChannel</source>
-        <translation>Not in channel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="416"/>
         <source>warning.notInChannel.text:%1</source>
-        <translation>You are not in the following channel: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="418"/>
         <source>warning.notAdministrator</source>
-        <translation>Not administrator</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="418"/>
         <source>warning.notAdministrator.text</source>
-        <translation>The application has attempted to issue a command which requires administrator permissions.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="420"/>
         <source>warning.alreadyInChannel</source>
-        <translation>Already in channel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="420"/>
         <source>warning.alreadyInChannel.text:%1</source>
-        <translation>You are already in the following channel: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="422"/>
         <source>warning.notAllowedInChannel</source>
-        <translation>Not allowed in channel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="422"/>
         <source>warning.notAllowedInChannel.text</source>
-        <translation>You attempted to enter a channel for which you have no permission to enter.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="424"/>
         <source>warning.queryError</source>
-        <translation>Query error</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="424"/>
         <source>warning.queryError.text</source>
-        <translation>The query you have sent is incorrect.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="426"/>
         <source>warning.usersCannotChangeChannels</source>
-        <translation>User cannot change channels</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="426"/>
         <source>warning.usersCannotChangeChannels.text</source>
-        <translation>The system administrator has not allowed users to change channels.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="516"/>
         <source>dialog.getQuery.title</source>
-        <translation>Query</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="516"/>
         <source>dialog.getQuery.content</source>
-        <translation>Enter an SQLite query to be executed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="555"/>
         <source>dialog.getJoinChannelName.title</source>
-        <translation>Joining channel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="555"/>
         <source>dialog.getJoinChannelName.content</source>
-        <translation>Enter a channel to be joined</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="569"/>
         <source>dialog.getPartChannelName.title</source>
-        <translation>Parting channel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="569"/>
         <source>dialog.getPartChannelName.content</source>
-        <translation>Enter a channel to be parted</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -332,7 +331,7 @@
     <message>
         <location filename="privatemessagewindow.ui" line="14"/>
         <source>privateMessageWindow.title</source>
-        <translation>Private messages</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -340,27 +339,27 @@
     <message>
         <location filename="registrationdialog.ui" line="14"/>
         <source>registrationDialog.title</source>
-        <translation>Register a user</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="22"/>
         <source>registrationDialog.username</source>
-        <translation>Username:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="32"/>
         <source>registrationDialog.password</source>
-        <translation>Password:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="63"/>
         <source>registrationDialog.accept</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="70"/>
         <source>registrationDialog.cancel</source>
-        <translation>Cancel</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
