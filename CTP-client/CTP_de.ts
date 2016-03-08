@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU">
+<TS version="2.0" language="de_DE">
 <context>
     <name>ChatBoxWidget</name>
     <message>
@@ -19,84 +19,84 @@
     <message>
         <location filename="logindialog.ui" line="14"/>
         <source>loginWindow.title</source>
-        <translation>Логин</translation>
+        <translation>Anmeldung</translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="24"/>
         <source>login.serverAddress</source>
-        <translation>Адрес сервера</translation>
+        <translation>Server Adresse</translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="41"/>
         <source>login.serverPort</source>
-        <translation>Порт</translation>
+        <translation>Port</translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="67"/>
         <source>login.username</source>
-        <translation>Регистрационное имя:</translation>
+        <translation>Benutzername:</translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="77"/>
         <source>login.password</source>
-        <translation>Пароль:</translation>
+        <translation>Passwort:</translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="93"/>
         <source>login.stayLoggedIn</source>
-        <translation>Оставаться в системе</translation>
+        <translation>Bleibe eingeloggt</translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="141"/>
         <source>login.login</source>
-        <translation>Логин</translation>
+        <translation>Anmeldung</translation>
     </message>
     <message>
         <location filename="logindialog.ui" line="148"/>
         <source>login.cancel</source>
-        <translation>Отмена</translation>
+        <translation>Stornieren</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="108"/>
         <source>login.loggingIn</source>
-        <translation>Ведение журнала в...</translation>
+        <translation>Einloggen...</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="145"/>
         <source>warning.invalidAuthentication</source>
-        <translation>Недопустимая аутентификация</translation>
+        <translation>Ungültige Authentifizierung</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="145"/>
         <source>warning.invalidAuthenticationText</source>
-        <translation>Прилагаемый аутентификации неверны.</translation>
+        <translation>Die mitgelieferte Authentifizierung ist nicht korrekt.</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="155"/>
         <source>warning.connectionFailed</source>
-        <translation>Ошибка подключения</translation>
+        <translation>Verbindung fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="155"/>
         <source>warning.connectionFailedText:
 %1</source>
-        <translation>Соединения не удалась по следующей причине:
+        <translation>Die Verbindung ist fehlgeschlagen für die folgende Saison:
 %1</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="173"/>
         <source>login.hostLookup</source>
-        <translation>Глядя хост...</translation>
+        <translation>Nachschlagen von Host ...</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="177"/>
         <source>login.connecting</source>
-        <translation>Подключение...</translation>
+        <translation>Verbinden...</translation>
     </message>
     <message>
         <location filename="logindialog.cpp" line="181"/>
         <source>login.connected</source>
-        <translation>Подключен.</translation>
+        <translation>In Verbindung gebracht.</translation>
     </message>
 </context>
 <context>
@@ -104,22 +104,22 @@
     <message>
         <location filename="mainwindow.ui" line="14"/>
         <source>mainWindow.title</source>
-        <translation>ЧТП</translation>
+        <translation>CT</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="40"/>
         <source>tab.chat</source>
-        <translation>Чат</translation>
+        <translation>Unterhaltung</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="68"/>
         <source>chat.channels</source>
-        <translation>Каналы</translation>
+        <translation>Kanäle</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="106"/>
         <source>chat.onlineUsers</source>
-        <translation>Потребителей</translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="134"/>
@@ -129,192 +129,192 @@
     <message>
         <location filename="mainwindow.ui" line="152"/>
         <source>menu.file</source>
-        <translation>Файл</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="159"/>
         <source>menu.conversation</source>
-        <translation>Разговор</translation>
+        <translation>Konversation</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="171"/>
         <source>menu.administration</source>
-        <translation>Администрация</translation>
+        <translation>Verwaltung</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="178"/>
         <source>menu.language</source>
-        <translation>Язык</translation>
+        <translation>Sprache</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="200"/>
         <source>action.exit</source>
-        <translation>Выход</translation>
+        <translation>Ausgang</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="205"/>
         <source>action.joinChannel</source>
-        <translation>Подключение к каналу...</translation>
+        <translation>Registriert Kanal...</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="210"/>
         <source>action.partChannel</source>
-        <translation>Часть канала...</translation>
+        <translation>Part Kanal...</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="215"/>
         <source>action.logOut</source>
-        <translation>Выход</translation>
+        <translation>Ausloggen</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="220"/>
         <source>action.refreshChannels</source>
-        <translation>Обновить</translation>
+        <translation>auffrischen</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="228"/>
         <source>action.sendQuery</source>
-        <translation>Отправить запрос...</translation>
+        <translation>Anfrage senden...</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="233"/>
         <source>action.showPrivateMessages</source>
-        <translation>Показать ЛС</translation>
+        <translation>Privatnachrichten</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="238"/>
         <source>action.registerUser</source>
-        <translation>Зарегистрировать пользователя...</translation>
+        <translation>Benutzer registrieren...</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="315"/>
         <source>message.join</source>
-        <translation>ПРИСОЕДИНЯЙТЕСЬ</translation>
+        <translation>BEITRETEN</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="328"/>
         <source>message.part</source>
-        <translation>ЧАСТЬ</translation>
+        <translation>TEIL</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="408"/>
         <source>warning.channelDoesNotExist</source>
-        <translation>Канал не существует</translation>
+        <translation>Kanal existiert nicht</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="408"/>
         <source>warning.channelDoesNotExist.text</source>
-        <translation>Приложение попыталось интерфейс с каналом, который не существует.</translation>
+        <translation>Die Anwendung hat versucht, mit einem Kanal zu verbinden, die nicht existiert.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="410"/>
         <source>warning.userDoesNotExist</source>
-        <translation>Пользователь не существует</translation>
+        <translation>Benutzer existiert nicht</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="410"/>
         <source>warning.userDoesNotExist.text</source>
-        <translation>Приложение попыталось интерфейс с пользователем, который не существует.</translation>
+        <translation>Die Anwendung hat versucht, mit einer Benutzer-Schnittstelle, die nicht existiert.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="412"/>
         <source>warning.wrongParameters</source>
-        <translation>Неправильные параметры</translation>
+        <translation>Falsche Parameter</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="412"/>
         <source>warning.wrongParameters.text</source>
-        <translation>Заявку отправил команду с неправильными параметрами.</translation>
+        <translation>Die Anwendung hat einen Befehl mit falschen Parametern gesendet.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="414"/>
         <source>warning.userIsNotLoggedIn</source>
-        <translation>Пользователь не вошел в систему</translation>
+        <translation>Der Benutzer ist nicht angemeldet</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="414"/>
         <source>warning.userIsNotLoggedIn.text:%1</source>
-        <translation>Следующий пользователь не вошел в систему: %1</translation>
+        <translation>Der folgende Benutzer ist nicht angemeldet: %1</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="416"/>
         <source>warning.notInChannel</source>
-        <translation>Не в канале</translation>
+        <translation>Nicht im Kanal</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="416"/>
         <source>warning.notInChannel.text:%1</source>
-        <translation>Вы не в следующей канала: %1</translation>
+        <translation>Sie sind nicht in der folgenden Kanal: %1</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="418"/>
         <source>warning.notAdministrator</source>
-        <translation>Не администратор</translation>
+        <translation>Nicht-Administrator</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="418"/>
         <source>warning.notAdministrator.text</source>
-        <translation>Приложение попыталось выполнить команду которая требует права администратора.</translation>
+        <translation>Die Anwendung hat versucht, einen Befehl zu erteilen, die Administratorrechte erfordert.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="420"/>
         <source>warning.alreadyInChannel</source>
-        <translation>Уже в канале</translation>
+        <translation>Bereits im Kanal</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="420"/>
         <source>warning.alreadyInChannel.text:%1</source>
-        <translation>Вы уже в следующий канал: %1</translation>
+        <translation>Sie sind bereits im folgenden Kanal: %1</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="422"/>
         <source>warning.notAllowedInChannel</source>
-        <translation>Не пускают в канал</translation>
+        <translation>Nicht im Kanal erlaubt</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="422"/>
         <source>warning.notAllowedInChannel.text</source>
-        <translation>Вы попытались войти в канал, для которого у вас нет разрешения, чтобы войти.</translation>
+        <translation>Sie haben versucht, einen Kanal zu betreten, für die Sie keine Berechtigung haben, einzugeben.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="424"/>
         <source>warning.queryError</source>
-        <translation>Ошибка запроса</translation>
+        <translation>Query-Fehler</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="424"/>
         <source>warning.queryError.text</source>
-        <translation>Запрос вы отправили неправильный.</translation>
+        <translation>Die Abfrage, die Sie gesendet haben, ist falsch.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="426"/>
         <source>warning.usersCannotChangeChannels</source>
-        <translation>Пользователь не может переключать каналы</translation>
+        <translation>Der Benutzer kann nicht den Kanal wechseln</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="426"/>
         <source>warning.usersCannotChangeChannels.text</source>
-        <translation>Системный администратор не позволяет пользователям переключать каналы.</translation>
+        <translation>Der Systemadministrator hat Benutzer zum Wechseln der Kanäle nicht erlaubt.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="516"/>
         <source>dialog.getQuery.title</source>
-        <translation>Запрос</translation>
+        <translation>Abfrage</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="516"/>
         <source>dialog.getQuery.content</source>
-        <translation>Введите запрос для SQLite быть казнен</translation>
+        <translation>Geben Sie eine SQLite-Abfrage ausgeführt werden</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="555"/>
         <source>dialog.getJoinChannelName.title</source>
-        <translation>Присоединение канала</translation>
+        <translation>Verbindungskanal</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="555"/>
         <source>dialog.getJoinChannelName.content</source>
-        <translation>Введите канал, который будет зарегистрирован</translation>
+        <translation>Geben Sie einen Kanal zu verbinden</translation>
     </message>
 </context>
 <context>
@@ -322,22 +322,22 @@
     <message>
         <location filename="partchanneldialog.ui" line="14"/>
         <source>dialog.getPartChannelName.title</source>
-        <translation>Прощание канал</translation>
+        <translation>Parting Kanal</translation>
     </message>
     <message>
         <location filename="partchanneldialog.ui" line="35"/>
         <source>dialog.getPartChannelName.content</source>
-        <translation>Введите канал, чтобы быть расстались</translation>
+        <translation>Geben Sie einen Kanal zu gescheitelt</translation>
     </message>
     <message>
         <location filename="partchanneldialog.ui" line="63"/>
         <source>partChannelDialog.accept</source>
-        <translation>ОК</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="partchanneldialog.ui" line="70"/>
         <source>partChannelDialog.cancel</source>
-        <translation>Отмена</translation>
+        <translation>Stornieren</translation>
     </message>
 </context>
 <context>
@@ -345,7 +345,7 @@
     <message>
         <location filename="privatemessagewindow.ui" line="14"/>
         <source>privateMessageWindow.title</source>
-        <translation>Личные сообщения</translation>
+        <translation>Private Nachrichten</translation>
     </message>
 </context>
 <context>
@@ -353,27 +353,27 @@
     <message>
         <location filename="registrationdialog.ui" line="14"/>
         <source>registrationDialog.title</source>
-        <translation>Зарегистрировать пользователя</translation>
+        <translation>Registrieren Sie einen Benutzer</translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="22"/>
         <source>registrationDialog.username</source>
-        <translation>Имя пользователя:</translation>
+        <translation>Benutzername:</translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="32"/>
         <source>registrationDialog.password</source>
-        <translation>Пароль:</translation>
+        <translation>Passwort:</translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="63"/>
         <source>registrationDialog.accept</source>
-        <translation>ОК</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="registrationdialog.ui" line="70"/>
         <source>registrationDialog.cancel</source>
-        <translation>Отмена</translation>
+        <translation>Stornieren</translation>
     </message>
 </context>
 </TS>

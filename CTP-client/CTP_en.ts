@@ -9,7 +9,7 @@
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="chatboxwidget.ui" line="44"/>
+        <location filename="chatboxwidget.ui" line="37"/>
         <source>&gt;</source>
         <translation>&gt;</translation>
     </message>
@@ -80,7 +80,7 @@
         <location filename="logindialog.cpp" line="155"/>
         <source>warning.connectionFailedText:
 %1</source>
-        <translation>The connection failed for the follwing reason:
+        <translation>The connection failed for the following reason:
 %1</translation>
     </message>
     <message>

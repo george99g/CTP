@@ -9,7 +9,7 @@
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="chatboxwidget.ui" line="44"/>
+        <location filename="chatboxwidget.ui" line="37"/>
         <source>&gt;</source>
         <translation>&gt;</translation>
     </message>
@@ -294,8 +294,7 @@
     <message>
         <location filename="mainwindow.cpp" line="426"/>
         <source>warning.usersCannotChangeChannels.text</source>
-        <translatorcomment>Системният администратор не е позволил на потребителите да си сменят канала.</translatorcomment>
-        <translation></translation>
+        <translation>Системният администратор не е позволил на потребителите да си сменят канала.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="516"/>
