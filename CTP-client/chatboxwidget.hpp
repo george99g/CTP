@@ -1,6 +1,7 @@
 #ifndef CHATBOXWIDGET_HPP
 #define CHATBOXWIDGET_HPP
 
+#include "linktextedit.hpp"
 #include <QWidget>
 #include <QDateTime>
 #include <QScrollBar>
@@ -21,6 +22,7 @@ public:
     void insertMessage(const QString &sender, const QString &message, const QDateTime &time = QDateTime::currentDateTime());
     void insertSystemMessage(const QString &type, const QString &message, const QDateTime &time = QDateTime::currentDateTime());
     void handleSendMessage();
+    QString insertHtmlLinks(QString string);
     QString getTarget() const;
     void clear();
 private:
@@ -29,6 +31,7 @@ private:
     QString _target;
     QString _self;
     QTcpSocket* _socket;
+    LinkTextEdit* _textEdit;
 };
 
 #endif // CHATBOXWIDGET_HPP

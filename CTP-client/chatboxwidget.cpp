@@ -4,6 +4,8 @@
 ChatBoxWidget::ChatBoxWidget(QTcpSocket* socket, const QString &target, const QString &self, QWidget* parent) : QWidget(parent), ui(new Ui::ChatBoxWidget)
 {
     ui->setupUi(this);
+    _textEdit = new LinkTextEdit(ui->lineEdit);
+    ui->verticalLayout->insertWidget(0, _textEdit);
     connect(ui->lineEdit, &QLineEdit::returnPressed, this, &ChatBoxWidget::handleSendMessage);
     connect(ui->toolButton, &QToolButton::pressed, this, &ChatBoxWidget::handleSendMessage);
     _socket = socket;
@@ -14,41 +16,42 @@ ChatBoxWidget::ChatBoxWidget(QTcpSocket* socket, const QString &target, const QS
 ChatBoxWidget::~ChatBoxWidget()
 {
     delete ui;
+    _textEdit->deleteLater();
 }
 
 void ChatBoxWidget::insertMessage(const QString &sender, const QString &message, const QDateTime &time)
 {
     bool atEnd = false;
-    if(ui->textEdit->verticalScrollBar()->value() == ui->textEdit->verticalScrollBar()->maximum())
+    if(_textEdit->verticalScrollBar()->value() == _textEdit->verticalScrollBar()->maximum())
         atEnd = true;
     QString formattedMessage = "<font color=\"#0534CE\">[</font><font color=\"#01840A\">";
     formattedMessage += time.toString(Qt::TextDate);
     formattedMessage += "</font><font color=\"#0534CE\">]</font><font color=\"#02A292\">";
     formattedMessage += sender.toHtmlEscaped();
     formattedMessage += ":</font> ";
-    formattedMessage += message.toHtmlEscaped();
+    formattedMessage += insertHtmlLinks(message.toHtmlEscaped());
     formattedMessage += "<br>";
-    ui->textEdit->insertHtml(formattedMessage);
+    _textEdit->insertHtml(formattedMessage);
     if(atEnd)
-        ui->textEdit->verticalScrollBar()->setValue(ui->textEdit->verticalScrollBar()->maximum());
+        _textEdit->verticalScrollBar()->setValue(_textEdit->verticalScrollBar()->maximum());
     return;
 }
 
 void ChatBoxWidget::insertSystemMessage(const QString &type, const QString &message, const QDateTime &time)
 {
     bool atEnd = false;
-    if(ui->textEdit->verticalScrollBar()->value() == ui->textEdit->verticalScrollBar()->maximum())
+    if(_textEdit->verticalScrollBar()->value() == _textEdit->verticalScrollBar()->maximum())
         atEnd = true;
     QString formattedMessage = "<font color=\"#0534CE\">[</font><font color=\"#01840A\">";
     formattedMessage += time.toString(Qt::TextDate);
     formattedMessage += "</font><font color=\"#0534CE\">]</font><font color=\"#970005\">{";
     formattedMessage += type.toHtmlEscaped();
     formattedMessage += "}:</font> ";
-    formattedMessage += message.toHtmlEscaped();
+    formattedMessage += insertHtmlLinks(message.toHtmlEscaped());
     formattedMessage += "<br>";
-    ui->textEdit->insertHtml(formattedMessage);
+    _textEdit->insertHtml(formattedMessage);
     if(atEnd)
-        ui->textEdit->verticalScrollBar()->setValue(ui->textEdit->verticalScrollBar()->maximum());
+        _textEdit->verticalScrollBar()->setValue(_textEdit->verticalScrollBar()->maximum());
     return;
 }
 
@@ -71,6 +74,15 @@ void ChatBoxWidget::handleSendMessage()
     return;
 }
 
+QString ChatBoxWidget::insertHtmlLinks(QString string)
+{
+    QStringList explodedList = string.split(' ', QString::SkipEmptyParts);
+    for(unsigned i = 0; i < (unsigned)explodedList.count(); i++)
+        if((explodedList.at(i).startsWith("https://") || explodedList.at(i).startsWith("http://"))&&explodedList.at(i).contains('.'))
+            string = string.replace(explodedList.at(i), QString("<a href='"+explodedList.at(i)+"'>"+explodedList.at(i)+"</a>"));
+    return string;
+}
+
 QString ChatBoxWidget::getTarget() const
 {
     return _target;
@@ -78,7 +90,7 @@ QString ChatBoxWidget::getTarget() const
 
 void ChatBoxWidget::clear()
 {
-    ui->textEdit->clear();
+    _textEdit->clear();
     return;
 }
 

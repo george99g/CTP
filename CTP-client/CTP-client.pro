@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     privatemessagewindow.cpp \
     chatboxwidget.cpp \
     registrationdialog.cpp \
-    partchanneldialog.cpp
+    partchanneldialog.cpp \
+    linktextedit.cpp
 
 HEADERS  += mainwindow.hpp \
     logindialog.hpp \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.hpp \
     privatemessagewindow.hpp \
     chatboxwidget.hpp \
     registrationdialog.hpp \
-    partchanneldialog.hpp
+    partchanneldialog.hpp \
+    linktextedit.hpp
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
