@@ -80,8 +80,13 @@ QString ChatBoxWidget::insertHtmlLinks(QString string)
 {
     QStringList explodedList = string.split(' ', QString::SkipEmptyParts);
     for(unsigned i = 0; i < (unsigned)explodedList.count(); i++)
+    {
         if((explodedList.at(i).startsWith("https://") || explodedList.at(i).startsWith("http://"))&&explodedList.at(i).contains('.'))
             string = string.replace(explodedList.at(i), QString("<a href='"+explodedList.at(i)+"'>"+explodedList.at(i)+"</a>"));
+        else if(explodedList.at(i).contains('@') && explodedList.at(i).contains('.') &&
+                explodedList.at(i).lastIndexOf('.') != explodedList.at(i).count() - 1)
+            string = string.replace(explodedList.at(i), QString("<a href='mailto:"+explodedList.at(i)+"'>"+explodedList.at(i)+"</a>"));
+    }
     return string;
 }
 
