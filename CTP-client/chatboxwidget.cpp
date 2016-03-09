@@ -31,6 +31,7 @@ void ChatBoxWidget::insertMessage(const QString &sender, const QString &message,
     formattedMessage += ":</font> ";
     formattedMessage += insertHtmlLinks(message.toHtmlEscaped());
     formattedMessage += "<br>";
+    _textEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
     _textEdit->insertHtml(formattedMessage);
     if(atEnd)
         _textEdit->verticalScrollBar()->setValue(_textEdit->verticalScrollBar()->maximum());
@@ -49,6 +50,7 @@ void ChatBoxWidget::insertSystemMessage(const QString &type, const QString &mess
     formattedMessage += "}:</font> ";
     formattedMessage += insertHtmlLinks(message.toHtmlEscaped());
     formattedMessage += "<br>";
+    _textEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
     _textEdit->insertHtml(formattedMessage);
     if(atEnd)
         _textEdit->verticalScrollBar()->setValue(_textEdit->verticalScrollBar()->maximum());
