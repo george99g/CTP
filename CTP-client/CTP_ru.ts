@@ -164,7 +164,7 @@
     <message>
         <location filename="mainwindow.ui" line="215"/>
         <source>action.logOut</source>
-        <translation>Выход</translation>
+        <translation>Выйти</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="220"/>
