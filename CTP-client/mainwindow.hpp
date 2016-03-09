@@ -33,8 +33,8 @@ public slots:
 private:
     void languageChanged(QAction* action);
     void configureLanguages();
-    void loadLanguage(const QString &language);
-    void switchTranslator(QTranslator &translator, const QString &filename);
+    bool loadLanguage(const QString &language);
+    bool switchTranslator(QTranslator &translator, const QString &filename);
     void clearEverything();
     void changeEvent(QEvent* event);
     void resizeEvent(QResizeEvent*);

@@ -151,26 +151,28 @@ void MainWindow::configureLanguages()
         if(_config.language() == locale)
             action->setChecked(true);
     }
-    loadLanguage(_config.language());
+    if(!loadLanguage(_config.language()))
+        loadLanguage("en");
     return;
 }
 
-void MainWindow::loadLanguage(const QString &language)
+bool MainWindow::loadLanguage(const QString &language)
 {
     if(_currentLanguage == language)
-        return;
+        return true;
     _currentLanguage = language;
     _config.setLanguage(language);
     _config.saveToFile();
     QLocale locale = QLocale(_currentLanguage);
     QLocale::setDefault(locale);
-    switchTranslator(_translator, QString("CTP_%1.qm").arg(_currentLanguage));
+    if(!switchTranslator(_translator, QString("CTP_%1.qm").arg(_currentLanguage)))
+        return false;
     switchTranslator(_translatorQt, QString("qt_%1.qm").arg(_currentLanguage));
     switchTranslator(_translatorBaseQt, QString("qtbase_%1.qm").arg(_currentLanguage));
-    return;
+    return true;
 }
 
-void MainWindow::switchTranslator(QTranslator &translator, const QString &filename)
+bool MainWindow::switchTranslator(QTranslator &translator, const QString &filename)
 {
     QString langPath = QApplication::applicationDirPath();
     langPath.append("/languages/");
@@ -179,8 +181,11 @@ void MainWindow::switchTranslator(QTranslator &translator, const QString &filena
     if(translator.load(langPath))
         qApp->installTranslator(&translator);
     else
+    {
         qDebug()<<"Failed to load translator for "<<langPath;
-    return;
+        return false;
+    }
+    return true;
 }
 
 void MainWindow::clearEverything()
