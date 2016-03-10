@@ -41,7 +41,9 @@ qint16 IrcServer::ftpPort()
 
 IrcManager* IrcServer::manager()
 {
-    return _connections->manager();
+    if(_connections != (IrcConnections*)0)
+        return _connections->manager();
+    return (IrcManager*)0;
 }
 
 void IrcServer::complete()

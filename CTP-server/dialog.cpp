@@ -5,7 +5,6 @@ Dialog::Dialog(QWidget* parent) : QDialog(parent), ui(new Ui::Dialog)
 {
     ui->setupUi(this);
     connect(ui->checkBoxRun, &QCheckBox::toggled, this, &Dialog::tickBoxToggled);
-    connectServers();
 }
 
 Dialog::~Dialog()
@@ -23,10 +22,12 @@ void Dialog::tickBoxToggled(bool state)
             ui->checkBoxRun->setChecked(true);
             ui->spinBox->setEnabled(false);
             ui->spinBoxFtpPort->setEnabled(false);
+            connectServers();
         }
     }
     else
     {
+        disconnectServers();
         _server.close();
         _ftpServer.close();
         ui->checkBoxRun->setChecked(false);
@@ -40,5 +41,11 @@ void Dialog::tickBoxToggled(bool state)
 void Dialog::connectServers()
 {
     connect(_server.manager(), &IrcManager::ftpAddUsernameIdPair, _ftpServer.manager(), &FtpManager::addUsernameIdPair);
+    return;
+}
+
+void Dialog::disconnectServers()
+{
+    disconnect(_server.manager(), &IrcManager::ftpAddUsernameIdPair, _ftpServer.manager(), &FtpManager::addUsernameIdPair);
     return;
 }

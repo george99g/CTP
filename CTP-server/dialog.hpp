@@ -22,6 +22,7 @@ private slots:
     void tickBoxToggled(bool state);
 private:
     void connectServers();
+    void disconnectServers();
     Ui::Dialog* ui;
     IrcServer _server;
     FtpServer _ftpServer;
