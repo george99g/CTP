@@ -1,9 +1,10 @@
 #include "ftpconnections.hpp"
 
-FtpConnections::FtpConnections(QThread* thread, QObject* parent) : TcpConnections(parent)
+FtpConnections::FtpConnections(QThread* thread, QObject* parent) : TcpConnections(parent), _manager(thread)
 {
     qDebug()<<this<<"constructed";
     _thread = thread;
+    _manager.moveToThread(thread);
 }
 
 FtpConnections::~FtpConnections()
@@ -65,6 +66,11 @@ void FtpConnections::error(QAbstractSocket::SocketError socketError)
     }
     TcpConnections::error(socketError);
     return;
+}
+
+FtpManager* FtpConnections::manager()
+{
+    return &_manager;
 }
 
 void FtpConnections::readyRead()

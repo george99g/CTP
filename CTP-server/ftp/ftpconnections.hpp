@@ -3,6 +3,7 @@
 
 #include "../tcp/tcpconnections.hpp"
 #include "../config.hpp"
+#include "ftpmanager.hpp"
 #include <QObject>
 
 class FtpConnections : public TcpConnections
@@ -11,6 +12,7 @@ class FtpConnections : public TcpConnections
 public:
     explicit FtpConnections(QThread* thread, QObject* parent = 0);
     ~FtpConnections();
+    FtpManager* manager();
 public slots:
     virtual void accept(qintptr handle, TcpConnection* connection);
     virtual void disconnected();
@@ -20,6 +22,7 @@ protected slots:
     void readyRead();
 private:
     QThread* _thread;
+    FtpManager _manager;
 };
 
 #endif // FTPCONNECTIONS_HPP

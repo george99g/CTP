@@ -11,6 +11,8 @@
 #include <QDir>
 #include <QActionGroup>
 #include <QTranslator>
+#include <QString>
+#include <QStringList>
 
 namespace Ui
 {
@@ -69,6 +71,8 @@ private:
     bool _isTeacher;
     bool _populatedUserlist;
     QTcpSocket* _socket;
+    QTcpSocket* _ftpSocket;
+    qint32 _ftpUid;
     QStringList _readQueue;
     LoginDialog* _loginDialog;
     PrivateMessageWindow* _pmWindow;
@@ -81,7 +85,9 @@ private:
     QMap<QString, QStringList> _channelUsernames;
     QMap<QString, ChatBoxWidget*> _textBoxWidgets;
     QStringListModel _channelnamesModel;
+    QString _hostname;
     QString _currentLanguage;
+    QStringList _installedLanguages;
     Configuration _config;
     QTranslator _translator;
     QTranslator _translatorQt;

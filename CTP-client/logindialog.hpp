@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QTcpSocket>
 #include <QMessageBox>
+#include <QHostAddress>
 
 namespace Ui
 {
@@ -19,6 +20,7 @@ public:
     explicit LoginDialog(QTcpSocket* socket, Configuration* config, QWidget *parent = 0);
     ~LoginDialog();
     QString getUsername();
+    QString getHostname();
     static QString convertToNoSpace(QString string);
     static QString convertFromNoSpace(QString string);
     void retranslateUi();
@@ -38,6 +40,7 @@ private:
     void handleSocketError();
     void handleSocketStateChanged(QAbstractSocket::SocketState socketState);
     QString _username;
+    QString _hostname;
     Configuration* _config;
 };
 

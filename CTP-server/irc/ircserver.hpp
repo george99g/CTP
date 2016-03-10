@@ -16,6 +16,7 @@ public:
     virtual bool listen(const QHostAddress &address, quint16 port);
     void setFtpPort(qint16 port);
     qint16 ftpPort();
+    IrcManager* manager();
 public slots:
     virtual void complete();
 private:

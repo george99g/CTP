@@ -27,6 +27,11 @@ bool FtpServer::listen(const QHostAddress &address, quint16 port)
     return true;
 }
 
+FtpManager* FtpServer::manager()
+{
+    return _connections->manager();
+}
+
 void FtpServer::complete()
 {
     if(!_thread)

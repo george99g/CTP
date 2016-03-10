@@ -12,6 +12,7 @@ public:
     explicit FtpServer(QObject *parent = 0);
     ~FtpServer();
     virtual bool listen(const QHostAddress &address, quint16 port);
+    FtpManager* manager();
 public slots:
     virtual void complete();
 private:

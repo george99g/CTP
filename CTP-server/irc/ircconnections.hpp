@@ -13,6 +13,7 @@ class IrcConnections : public TcpConnections
 public:
     explicit IrcConnections(QThread* thread, qint16 ftpPort, QObject* parent = 0);
     ~IrcConnections();
+    IrcManager* manager();
 public slots:
     virtual void accept(qintptr handle, TcpConnection* connection);
     virtual void disconnected();

@@ -11,9 +11,11 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QThread>
+#include <qmath.h>
 #include "../config.hpp"
 #include "ircclients.hpp"
 #include "ircchannels.hpp"
+#include "../ftp/ftpmanager.hpp"
 
 class IrcManager : public QObject
 {
@@ -29,6 +31,8 @@ public:
     void handleDisconnection(QTcpSocket* socket);
     void setFtpPort(qint16 ftpPort);
     qint16 ftpPort();
+signals:
+    void ftpAddUsernameIdPair(const QString &username, qint32 id);
 private:
     void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);

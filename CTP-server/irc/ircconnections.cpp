@@ -14,6 +14,11 @@ IrcConnections::~IrcConnections()
     _manager->deleteLater();
 }
 
+IrcManager* IrcConnections::manager()
+{
+    return _manager;
+}
+
 void IrcConnections::accept(qintptr handle, TcpConnection* connection)
 {
     QTcpSocket* socket = new QTcpSocket(0);

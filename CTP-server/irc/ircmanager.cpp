@@ -493,8 +493,10 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 _channels->rejoinChannels(username, socket);
                 if(hasMissedMessages(socket))
                     sendMissedMessages(socket);
-                socket->write(QString("FTP_PORT "+QString::number(_ftpPort)+"\r\n").toUtf8());
+                qint32 uid = qAbs((qint32)qrand());
+                socket->write(QString("FTP_PORT "+QString::number(_ftpPort)+' '+QString::number(uid)+"\r\n").toUtf8());
                 socket->flush();
+                emit ftpAddUsernameIdPair(username, uid);
             }
             else
             {

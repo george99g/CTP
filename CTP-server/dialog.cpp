@@ -5,6 +5,7 @@ Dialog::Dialog(QWidget* parent) : QDialog(parent), ui(new Ui::Dialog)
 {
     ui->setupUi(this);
     connect(ui->checkBoxRun, &QCheckBox::toggled, this, &Dialog::tickBoxToggled);
+    connectServers();
 }
 
 Dialog::~Dialog()
@@ -32,5 +33,12 @@ void Dialog::tickBoxToggled(bool state)
         ui->spinBox->setEnabled(true);
         ui->spinBoxFtpPort->setEnabled(true);
     }
+    return;
+}
+
+//Don't forget to connect the IrcManager signals to the FtpManager slots!
+void Dialog::connectServers()
+{
+    connect(_server.manager(), &IrcManager::ftpAddUsernameIdPair, _ftpServer.manager(), &FtpManager::addUsernameIdPair);
     return;
 }

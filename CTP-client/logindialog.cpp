@@ -17,6 +17,7 @@ LoginDialog::LoginDialog(QTcpSocket *socket, Configuration* config, QWidget *par
     ui->progressBarConnection->setMaximum(5);
     ui->progressBarConnection->setFormat("");
     _username = "";
+    _hostname = "";
     _config = config;
     retranslateUi();
     if(_config->autoLogin())
@@ -31,6 +32,11 @@ LoginDialog::~LoginDialog()
 QString LoginDialog::getUsername()
 {
     return _username;
+}
+
+QString LoginDialog::getHostname()
+{
+    return _hostname;
 }
 
 QString LoginDialog::convertToNoSpace(QString string)
@@ -104,6 +110,7 @@ void LoginDialog::handleLoginRequest()
 
 void LoginDialog::handleSocketConnection()
 {
+    _hostname = _socket->peerAddress().toString();
     ui->progressBarConnection->setValue(4);
     ui->progressBarConnection->setFormat(tr("login.loggingIn"));
     if(ui->lineEditUsername->text().length() <= 0 || ui->lineEditPassword->text().length() <= 0)

@@ -5,9 +5,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
     _socket = new QTcpSocket(this);
+    _ftpSocket = new QTcpSocket(this);
     _config.loadFromFile();
     _loginDialog = new LoginDialog(_socket, &_config);
     _pmWindow = (PrivateMessageWindow*)0;
+    _ftpUid = 0;
+    _hostname = "localhost";
     connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
@@ -60,6 +63,13 @@ MainWindow::~MainWindow()
         _socket->deleteLater();
         _socket = (QTcpSocket*)0;
     }
+    if(_ftpSocket != (QTcpSocket*)0)
+    {
+        if(_ftpSocket->isOpen())
+            _ftpSocket->close();
+        _ftpSocket->deleteLater();
+        _socket = (QTcpSocket*)0;
+    }
     _config.saveToFile();
     delete ui;
 }
@@ -74,6 +84,7 @@ void MainWindow::loginCancelled()
 void MainWindow::loginAccepted()
 {
     _loginDialog->hide();
+    _hostname = _loginDialog->getHostname();
     _username = _loginDialog->getUsername();
     disconnect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     disconnect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
@@ -141,6 +152,7 @@ void MainWindow::configureLanguages()
         locale = filenames.at(i);
         locale.truncate(locale.lastIndexOf('.'));
         locale.remove(0, locale.indexOf('_') + 1);
+        _installedLanguages.push_back(locale);
         QString lang = QLocale::languageToString(QLocale(locale).language());
         QIcon icon(QString("%1/%2.png").arg(langPath).arg(locale));
         QAction* action = new QAction(icon, lang, this);
@@ -152,7 +164,9 @@ void MainWindow::configureLanguages()
             action->setChecked(true);
     }
     if(!loadLanguage(_config.language()))
-        loadLanguage("en");
+        if(!loadLanguage("en"))
+            if(_installedLanguages.count() > 0)
+                loadLanguage(_installedLanguages.at(0));
     return;
 }
 
@@ -403,6 +417,12 @@ void MainWindow::handleSocketReadyRead()
                 }
                 _pmWindow->setUser(sender);
             }
+        }
+        else if(messageParameters.count() > 2 && messageParameters.at(0) == "FTP_PORT")
+        {
+            qint64 port = messageParameters.at(1).toLongLong();
+            _ftpUid = messageParameters.at(2).toInt();
+            _ftpSocket->connectToHost(_hostname, port);
         }
         else if(messageParameters.at(0) == "PING")
         {
