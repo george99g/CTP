@@ -59,7 +59,10 @@ MainWindow::~MainWindow()
     if(_socket != (QTcpSocket*)0)
     {
         if(_socket->isOpen())
+        {
+            disconnectSocketSignals();
             _socket->close();
+        }
         _socket->deleteLater();
         _socket = (QTcpSocket*)0;
     }

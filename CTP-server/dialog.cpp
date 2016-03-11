@@ -41,11 +41,15 @@ void Dialog::tickBoxToggled(bool state)
 void Dialog::connectServers()
 {
     connect(_server.manager(), &IrcManager::ftpAddUsernameIdPair, _ftpServer.manager(), &FtpManager::addUsernameIdPair);
+    connect(_server.manager(), &IrcManager::ftpRemoveRecord, _ftpServer.manager(), static_cast<void (FtpManager::*)(qint32)>(&FtpManager::removeRecord));
+    connect(_server.manager(), &IrcManager::ftpGenerateHomeDirectoryForUser, _ftpServer.manager(), &FtpManager::generateHomeDirectoryForUser);
     return;
 }
 
 void Dialog::disconnectServers()
 {
     disconnect(_server.manager(), &IrcManager::ftpAddUsernameIdPair, _ftpServer.manager(), &FtpManager::addUsernameIdPair);
+    disconnect(_server.manager(), &IrcManager::ftpRemoveRecord, _ftpServer.manager(), static_cast<void (FtpManager::*)(qint32)>(&FtpManager::removeRecord));
+    disconnect(_server.manager(), &IrcManager::ftpGenerateHomeDirectoryForUser, _ftpServer.manager(), &FtpManager::generateHomeDirectoryForUser);
     return;
 }

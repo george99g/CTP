@@ -79,12 +79,6 @@ void FtpConnections::readyRead()
     QTcpSocket* socket = (QTcpSocket*)sender();
     if(!socket) return;
     qDebug()<<this<<"is ready to read"<<socket;
-    while(socket->canReadLine())
-    {
-        QString line = QString::fromUtf8(socket->readLine().trimmed());
-        if(CLIENT_MESSAGES_ARE_DEBUGGED)
-            qDebug()<<line;
-        //Handle messages here
-    }
+    _manager.handleSocketReadyRead(socket);
     return;
 }

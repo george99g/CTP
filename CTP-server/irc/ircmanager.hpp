@@ -33,6 +33,8 @@ public:
     qint16 ftpPort();
 signals:
     void ftpAddUsernameIdPair(const QString &username, qint32 id);
+    void ftpRemoveRecord(qint32 id);
+    void ftpGenerateHomeDirectoryForUser(QString username);
 private:
     void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);
@@ -53,6 +55,7 @@ private:
     QTimer* pingTimer;
     IrcClients _clients;
     QSqlDatabase _db;
+    QMap<qint32, IrcClient*> _clientIds;
     IrcChannels* _channels;
     QThread* _thread;
     qint16 _ftpPort;

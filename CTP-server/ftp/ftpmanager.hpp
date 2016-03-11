@@ -6,6 +6,11 @@
 #include <QDir>
 #include <QTcpSocket>
 #include <QMap>
+#include <QByteArray>
+#include <QApplication>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 
 class FtpManager : public QObject
 {
@@ -25,10 +30,19 @@ public:
     void removeSocket(QTcpSocket* socket);
     void removeRecord(const QString &username);
     void removeRecord(qint32 id);
+    void handleSocketReadyRead(QTcpSocket* socket);
+    void openFileForId(qint32 id, QString file);
+    void closeFileForId(qint32 id);
+    void generateHomeDirectoryForUser(QString username);
 private:
+    QString getUserHomeDirectory(const QString &username);
+    bool openDatabase();
+    void createUserfilesDir();
     QMap<qint32, QString> _usernameIdMap;
     QMap<qint32, QTcpSocket*> _socketIdMap;
+    QMap<qint32, QFile*> _socketFileMap;
     QThread* _thread;
+    QSqlDatabase _db;
 };
 
 #endif // FTPMANAGER_HPP

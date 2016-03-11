@@ -493,10 +493,14 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 _channels->rejoinChannels(username, socket);
                 if(hasMissedMessages(socket))
                     sendMissedMessages(socket);
-                qint32 uid = qAbs((qint32)qrand());
+                qint32 uid = 0;
+                do uid = qAbs((qint32)qrand());
+                while(_clientIds.keys().contains(uid));
+                emit ftpAddUsernameIdPair(username, uid);
+                emit ftpGenerateHomeDirectoryForUser(username);
+                _clientIds.insert(uid, _clients.client(username));
                 socket->write(QString("FTP_PORT "+QString::number(_ftpPort)+' '+QString::number(uid)+"\r\n").toUtf8());
                 socket->flush();
-                emit ftpAddUsernameIdPair(username, uid);
             }
             else
             {
@@ -563,6 +567,7 @@ void IrcManager::handleLogout(QTcpSocket *socket)
     {
         IrcClient* disconnectingClient = _clients.client(socket);
         _channels->clearUser(disconnectingClient->username());
+        emit ftpRemoveRecord(_clientIds.key(disconnectingClient));
         _clients.removeClient(disconnectingClient);
         broadcast("DISCONNECT "+disconnectingClient->username()+"\r\n");
         socket->close();
