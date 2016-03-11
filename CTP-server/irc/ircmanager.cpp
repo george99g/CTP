@@ -425,6 +425,10 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
             socket->write(output.toUtf8());
             socket->flush();
         }
+        else if(messageParameters.at(0) == "GET_FILE_LIST")
+        {
+            emit ftpRequestFileList(_clientIds.key(_clients.client(socket)), ".");
+        }
         else if(messageParameters.at(0) == "ADD_USER")
         {
             if(messageParameters.count() == 3)
@@ -599,6 +603,19 @@ void IrcManager::setFtpPort(qint16 ftpPort)
 qint16 IrcManager::ftpPort()
 {
     return _ftpPort;
+}
+
+void IrcManager::ftpReceiveFileList(qint32 id, const QStringList &list)
+{
+    IrcClient* client = _clientIds.value(id);
+    client->socket();
+    QString sendMessage = "FILE_LIST";
+    for(unsigned i = 0; i < (unsigned)list.count(); i++)
+        sendMessage += " " + list.at(i);
+    sendMessage += "\r\n";
+    client->socket()->write(sendMessage.toUtf8());
+    client->socket()->flush();
+    return;
 }
 
 void IrcManager::setClientModeInDatabase(const QString &username, IrcMode *mode)

@@ -195,6 +195,43 @@ void FtpManager::generateHomeDirectoryForUser(QString username)
     return;
 }
 
+void FtpManager::sendFileToId(qint32 id, QString file)
+{
+    file.replace("..", ".");
+    if(!file.startsWith('/'))
+        file.prepend('/');
+    file.prepend(QString("/" + getUserHomeDirectory(_usernameIdMap.value(id))));
+    file.prepend("/userfiles");
+    file.prepend(QApplication::applicationDirPath());
+    QFile fileObj(file);
+    if(!fileObj.open(QFile::ReadOnly))
+        return;
+    QTcpSocket* socket = getSocket(id);
+    while(!fileObj.atEnd())
+    {
+        socket->write(fileObj.read(2048*8));
+        socket->flush();
+    }
+    return;
+}
+
+void FtpManager::requestFileList(qint32 id, QString dir)
+{
+    dir.replace("..", ".");
+    if(!dir.startsWith('/'))
+        dir.prepend('/');
+    dir.prepend(QString("/" + getUserHomeDirectory(_usernameIdMap.value(id))));
+    dir.prepend("/userfiles");
+    dir.prepend(QApplication::applicationDirPath());
+    QFileInfo info(dir);
+    if(!info.isDir())
+        return;
+    QDir dirObj(dir);
+    QStringList list = dirObj.entryList(QDir::Files, QDir::Name);
+    emit sendFileList(id, list);
+    return;
+}
+
 QString FtpManager::getUserHomeDirectory(const QString &username)
 {
     if(!openDatabase())

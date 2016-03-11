@@ -31,10 +31,12 @@ public:
     void handleDisconnection(QTcpSocket* socket);
     void setFtpPort(qint16 ftpPort);
     qint16 ftpPort();
+    void ftpReceiveFileList(qint32 id, const QStringList &list);
 signals:
     void ftpAddUsernameIdPair(const QString &username, qint32 id);
     void ftpRemoveRecord(qint32 id);
     void ftpGenerateHomeDirectoryForUser(QString username);
+    void ftpRequestFileList(qint32 id, QString dir);
 private:
     void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);

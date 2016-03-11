@@ -34,6 +34,10 @@ public:
     void openFileForId(qint32 id, QString file);
     void closeFileForId(qint32 id);
     void generateHomeDirectoryForUser(QString username);
+    void sendFileToId(qint32 id, QString file);
+    void requestFileList(qint32 id, QString dir);
+signals:
+    void sendFileList(qint32 id, const QStringList &list);
 private:
     QString getUserHomeDirectory(const QString &username);
     bool openDatabase();
