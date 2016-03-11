@@ -15,6 +15,29 @@
     </message>
 </context>
 <context>
+    <name>FileWidget</name>
+    <message>
+        <location filename="filewidget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="filewidget.ui" line="22"/>
+        <source>fileWidget.upload</source>
+        <translation>Hochladen</translation>
+    </message>
+    <message>
+        <location filename="filewidget.ui" line="29"/>
+        <source>fileWidget.download</source>
+        <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <location filename="filewidget.ui" line="36"/>
+        <source>fileWidget.refresh</source>
+        <translation>Auffrischen</translation>
+    </message>
+</context>
+<context>
     <name>LoginDialog</name>
     <message>
         <location filename="logindialog.ui" line="14"/>
@@ -57,44 +80,44 @@
         <translation>Stornieren</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="108"/>
+        <location filename="logindialog.cpp" line="115"/>
         <source>login.loggingIn</source>
         <translation>Einloggen...</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="145"/>
+        <location filename="logindialog.cpp" line="152"/>
         <source>warning.invalidAuthentication</source>
         <translation>Ungültige Authentifizierung</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="145"/>
+        <location filename="logindialog.cpp" line="152"/>
         <source>warning.invalidAuthenticationText</source>
         <translation>Die mitgelieferte Authentifizierung ist nicht korrekt.</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="155"/>
+        <location filename="logindialog.cpp" line="162"/>
         <source>warning.connectionFailed</source>
         <translation>Verbindung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="155"/>
+        <location filename="logindialog.cpp" line="162"/>
         <source>warning.connectionFailedText:
 %1</source>
         <translation>Die Verbindung ist fehlgeschlagen für die folgende Saison:
 %1</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="173"/>
+        <location filename="logindialog.cpp" line="180"/>
         <source>login.hostLookup</source>
         <translation>Nachschlagen von Host ...</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="177"/>
+        <location filename="logindialog.cpp" line="184"/>
         <source>login.connecting</source>
         <translation>Verbinden...</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="181"/>
+        <location filename="logindialog.cpp" line="188"/>
         <source>login.connected</source>
         <translation>In Verbindung gebracht.</translation>
     </message>
@@ -123,196 +146,197 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="134"/>
-        <source>Tab 2</source>
-        <translation>WIP</translation>
+        <source>tab.files</source>
+        <oldsource>Tab 2</oldsource>
+        <translation>Dateien</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="152"/>
+        <location filename="mainwindow.ui" line="169"/>
         <source>menu.file</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="159"/>
+        <location filename="mainwindow.ui" line="176"/>
         <source>menu.conversation</source>
         <translation>Konversation</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="171"/>
+        <location filename="mainwindow.ui" line="188"/>
         <source>menu.administration</source>
         <translation>Verwaltung</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="178"/>
+        <location filename="mainwindow.ui" line="195"/>
         <source>menu.language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="200"/>
+        <location filename="mainwindow.ui" line="217"/>
         <source>action.exit</source>
         <translation>Ausgang</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="205"/>
+        <location filename="mainwindow.ui" line="222"/>
         <source>action.joinChannel</source>
         <translation>Registriert Kanal...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="210"/>
+        <location filename="mainwindow.ui" line="227"/>
         <source>action.partChannel</source>
         <translation>Part Kanal...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="215"/>
+        <location filename="mainwindow.ui" line="232"/>
         <source>action.logOut</source>
         <translation>Ausloggen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="220"/>
+        <location filename="mainwindow.ui" line="237"/>
         <source>action.refreshChannels</source>
-        <translation>auffrischen</translation>
+        <translation>Auffrischen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="228"/>
+        <location filename="mainwindow.ui" line="245"/>
         <source>action.sendQuery</source>
         <translation>Anfrage senden...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="233"/>
+        <location filename="mainwindow.ui" line="250"/>
         <source>action.showPrivateMessages</source>
         <translation>Privatnachrichten</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="238"/>
+        <location filename="mainwindow.ui" line="255"/>
         <source>action.registerUser</source>
         <translation>Benutzer registrieren...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="315"/>
+        <location filename="mainwindow.cpp" line="344"/>
         <source>message.join</source>
         <translation>BEITRETEN</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="328"/>
+        <location filename="mainwindow.cpp" line="357"/>
         <source>message.part</source>
         <translation>TEIL</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="408"/>
+        <location filename="mainwindow.cpp" line="444"/>
         <source>warning.channelDoesNotExist</source>
         <translation>Kanal existiert nicht</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="408"/>
+        <location filename="mainwindow.cpp" line="444"/>
         <source>warning.channelDoesNotExist.text</source>
         <translation>Die Anwendung hat versucht, mit einem Kanal zu verbinden, die nicht existiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="410"/>
+        <location filename="mainwindow.cpp" line="446"/>
         <source>warning.userDoesNotExist</source>
         <translation>Benutzer existiert nicht</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="410"/>
+        <location filename="mainwindow.cpp" line="446"/>
         <source>warning.userDoesNotExist.text</source>
         <translation>Die Anwendung hat versucht, mit einer Benutzer-Schnittstelle, die nicht existiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="412"/>
+        <location filename="mainwindow.cpp" line="448"/>
         <source>warning.wrongParameters</source>
         <translation>Falsche Parameter</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="412"/>
+        <location filename="mainwindow.cpp" line="448"/>
         <source>warning.wrongParameters.text</source>
         <translation>Die Anwendung hat einen Befehl mit falschen Parametern gesendet.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="414"/>
+        <location filename="mainwindow.cpp" line="450"/>
         <source>warning.userIsNotLoggedIn</source>
         <translation>Der Benutzer ist nicht angemeldet</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="414"/>
+        <location filename="mainwindow.cpp" line="450"/>
         <source>warning.userIsNotLoggedIn.text:%1</source>
         <translation>Der folgende Benutzer ist nicht angemeldet: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="416"/>
+        <location filename="mainwindow.cpp" line="452"/>
         <source>warning.notInChannel</source>
         <translation>Nicht im Kanal</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="416"/>
+        <location filename="mainwindow.cpp" line="452"/>
         <source>warning.notInChannel.text:%1</source>
         <translation>Sie sind nicht in der folgenden Kanal: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="418"/>
+        <location filename="mainwindow.cpp" line="454"/>
         <source>warning.notAdministrator</source>
         <translation>Nicht-Administrator</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="418"/>
+        <location filename="mainwindow.cpp" line="454"/>
         <source>warning.notAdministrator.text</source>
         <translation>Die Anwendung hat versucht, einen Befehl zu erteilen, die Administratorrechte erfordert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="420"/>
+        <location filename="mainwindow.cpp" line="456"/>
         <source>warning.alreadyInChannel</source>
         <translation>Bereits im Kanal</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="420"/>
+        <location filename="mainwindow.cpp" line="456"/>
         <source>warning.alreadyInChannel.text:%1</source>
         <translation>Sie sind bereits im folgenden Kanal: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="422"/>
+        <location filename="mainwindow.cpp" line="458"/>
         <source>warning.notAllowedInChannel</source>
         <translation>Nicht im Kanal erlaubt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="422"/>
+        <location filename="mainwindow.cpp" line="458"/>
         <source>warning.notAllowedInChannel.text</source>
         <translation>Sie haben versucht, einen Kanal zu betreten, für die Sie keine Berechtigung haben, einzugeben.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="424"/>
+        <location filename="mainwindow.cpp" line="460"/>
         <source>warning.queryError</source>
         <translation>Query-Fehler</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="424"/>
+        <location filename="mainwindow.cpp" line="460"/>
         <source>warning.queryError.text</source>
         <translation>Die Abfrage, die Sie gesendet haben, ist falsch.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="426"/>
+        <location filename="mainwindow.cpp" line="462"/>
         <source>warning.usersCannotChangeChannels</source>
         <translation>Der Benutzer kann nicht den Kanal wechseln</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="426"/>
+        <location filename="mainwindow.cpp" line="462"/>
         <source>warning.usersCannotChangeChannels.text</source>
         <translation>Der Systemadministrator hat Benutzer zum Wechseln der Kanäle nicht erlaubt.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="516"/>
+        <location filename="mainwindow.cpp" line="552"/>
         <source>dialog.getQuery.title</source>
         <translation>Abfrage</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="516"/>
+        <location filename="mainwindow.cpp" line="552"/>
         <source>dialog.getQuery.content</source>
         <translation>Geben Sie eine SQLite-Abfrage ausgeführt werden</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="555"/>
+        <location filename="mainwindow.cpp" line="591"/>
         <source>dialog.getJoinChannelName.title</source>
         <translation>Verbindungskanal</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="555"/>
+        <location filename="mainwindow.cpp" line="591"/>
         <source>dialog.getJoinChannelName.content</source>
         <translation>Geben Sie einen Kanal zu verbinden</translation>
     </message>
@@ -330,12 +354,12 @@
         <translation>Geben Sie einen Kanal zu gescheitelt</translation>
     </message>
     <message>
-        <location filename="partchanneldialog.ui" line="63"/>
+        <location filename="partchanneldialog.ui" line="67"/>
         <source>partChannelDialog.accept</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="partchanneldialog.ui" line="70"/>
+        <location filename="partchanneldialog.ui" line="74"/>
         <source>partChannelDialog.cancel</source>
         <translation>Stornieren</translation>
     </message>

@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _config.loadFromFile();
     _loginDialog = new LoginDialog(_socket, &_config);
     _pmWindow = (PrivateMessageWindow*)0;
+    _fileWidget = (FileWidget*)0;
     _ftpUid = 0;
     _hostname = "localhost";
     connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _isStudent = false;
     _isTeacher = false;
     _populatedUserlist = false;
+    _ftpConnected = false;
     _readQueue = QStringList();
     _currentLanguage = "";
     configureLanguages();
@@ -222,6 +224,11 @@ void MainWindow::clearEverything()
         disconnect(_pmWindow, &PrivateMessageWindow::switchUser, this, &MainWindow::handleUserChangeRequest);
         _pmWindow->deleteLater();
         _pmWindow = (PrivateMessageWindow*)0;
+    }
+    if(_fileWidget != (FileWidget*)0)
+    {
+        _fileWidget->deleteLater();
+        _fileWidget = (FileWidget*)0;
     }
     _config.setSplitterSizes(ui->splitter->sizes());
     _config.saveToFile();
@@ -425,6 +432,7 @@ void MainWindow::handleSocketReadyRead()
         {
             qint64 port = messageParameters.at(1).toLongLong();
             _ftpUid = messageParameters.at(2).toInt();
+            connect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
             _ftpSocket->connectToHost(_hostname, port);
         }
         else if(messageParameters.at(0) == "PING")
@@ -729,5 +737,12 @@ void MainWindow::handleUserChangeRequest(QString newUser)
 {
     _pmWindow->stackedWidget()->setCurrentWidget(_pmTextBoxWidgets.value(newUser));
     _pmWindow->listView()->setCurrentIndex(_pmWindow->listView()->model()->index(_usernames.indexOf(newUser), 0));
+    return;
+}
+
+void MainWindow::handleFtpConnected()
+{
+    disconnect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
+    _ftpConnected = true;
     return;
 }

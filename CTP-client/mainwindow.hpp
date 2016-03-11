@@ -6,6 +6,7 @@
 #include "chatboxwidget.hpp"
 #include "registrationdialog.hpp"
 #include "partchanneldialog.hpp"
+#include "filewidget.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QDir>
@@ -65,16 +66,19 @@ private:
     void clearPmChatBoxWidgets();
     void handleShowPmRequest();
     void handleUserChangeRequest(QString newUser);
+    void handleFtpConnected();
     Ui::MainWindow* ui;
     bool _isAdmin;
     bool _isStudent;
     bool _isTeacher;
     bool _populatedUserlist;
+    bool _ftpConnected;
     QTcpSocket* _socket;
     QTcpSocket* _ftpSocket;
     qint32 _ftpUid;
     QStringList _readQueue;
     LoginDialog* _loginDialog;
+    FileWidget* _fileWidget;
     PrivateMessageWindow* _pmWindow;
     QString _username;
     QStringListModel _channelsModel;
