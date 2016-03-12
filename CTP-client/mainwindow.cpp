@@ -117,6 +117,7 @@ void MainWindow::loginAccepted()
     _fileWidget = new FileWidget(this);
     connect(_fileWidget, &FileWidget::requestRefresh, this, &MainWindow::requestFileList);
     connect(_fileWidget, &FileWidget::downloadFile, this, &MainWindow::handleFtpDownloadFileRequest);
+    connect(_fileWidget, &FileWidget::sendFile, this, &MainWindow::handleFtpUploadRequest);
     ui->filesTab->layout()->addWidget(_fileWidget);
     ui->tabWidget->setCurrentIndex(0);
     requestChannelListPopulation();
@@ -260,6 +261,8 @@ void MainWindow::changeEvent(QEvent* event)
             _pmWindow->retranslateUi();
         if(_loginDialog != (LoginDialog*)0)
             _loginDialog->retranslateUi();
+        if(_fileWidget != (FileWidget*)0)
+            _fileWidget->retranslateUi();
     }
     else if(event->type() == QEvent::WindowStateChange)
     {
@@ -444,15 +447,17 @@ void MainWindow::handleSocketReadyRead()
             qint64 port = messageParameters.at(1).toLongLong();
             qint32 id = messageParameters.at(2).toInt();
             _ftpPort = port;
-            _ftpUid = messageParameters.at(2).toInt();
+            _ftpUid = id;
             connect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
             if(_ftpSocket == (QTcpSocket*)0)
                 _ftpSocket = new QTcpSocket(this);
             _ftpSocket->connectToHost(_hostname, port);
             _ftpSocket->waitForConnected(2000);
             QByteArray data;
-            data.append(QByteArray(static_cast<qint64>(0)));
-            data.append(id);
+            QDataStream dataStream(&data, QIODevice::ReadWrite);
+            dataStream << (qint64)0;
+            dataStream << id;
+            dataStream.device()->close();
             _ftpSocket->write(data);
             _ftpSocket->flush();
         }
@@ -609,7 +614,6 @@ void MainWindow::handleFtpSocketReadyRead()
 void MainWindow::handleFtpDownloadFileRequest(QString file)
 {
     QString saveFile = QFileDialog::getSaveFileName(this);
-    qDebug()<<"";
     if(saveFile == "")
         return;
     QFile saveFileObj(saveFile);
@@ -624,8 +628,10 @@ void MainWindow::handleFtpDownloadFileRequest(QString file)
         _ftpSocket->connectToHost(_hostname, _ftpPort);
         _ftpSocket->waitForConnected(2000);
         QByteArray data;
-        data.append(QByteArray(static_cast<qint64>(0)));
-        data.append(_ftpUid);
+        QDataStream dataStream(&data, QIODevice::ReadWrite);
+        dataStream << (qint64)0;
+        dataStream << _ftpUid;
+        dataStream.device()->close();
         _ftpSocket->write(data);
         _ftpSocket->flush();
     }
@@ -839,5 +845,11 @@ void MainWindow::handleFtpConnected()
 {
     disconnect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
     _ftpConnected = true;
+    return;
+}
+
+void MainWindow::handleFtpUploadRequest(QString file)
+{
+
     return;
 }

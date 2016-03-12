@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QStringListModel>
 #include <QModelIndex>
+#include <QFileDialog>
 
 namespace Ui
 {
@@ -21,11 +22,14 @@ public:
     explicit FileWidget(QWidget* parent = 0);
     ~FileWidget();
     QListView* listView();
+    void retranslateUi();
 signals:
     void requestRefresh();
     void downloadFile(QString file);
+    void sendFile(QString file);
 private:
     void handleDownloadFileRequest();
+    void handleSendFileRequest();
     Ui::FileWidget *ui;
 };
 

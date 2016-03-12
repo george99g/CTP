@@ -502,7 +502,7 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 if(hasMissedMessages(socket))
                     sendMissedMessages(socket);
                 qint32 uid = 0;
-                do uid = qAbs((qint32)qrand());
+                do uid = qAbs((qint32)qrand()%32000);
                 while(_clientIds.keys().contains(uid));
                 emit ftpAddUsernameIdPair(username, uid);
                 emit ftpGenerateHomeDirectoryForUser(username);

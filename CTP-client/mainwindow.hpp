@@ -14,6 +14,7 @@
 #include <QTranslator>
 #include <QString>
 #include <QStringList>
+#include <QDataStream>
 #include <QFileDialog>
 #include <QByteArray>
 
@@ -74,6 +75,7 @@ private:
     void handleShowPmRequest();
     void handleUserChangeRequest(QString newUser);
     void handleFtpConnected();
+    void handleFtpUploadRequest(QString file);
     Ui::MainWindow* ui;
     bool _isAdmin;
     bool _isStudent;

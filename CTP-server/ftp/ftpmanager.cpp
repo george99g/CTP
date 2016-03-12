@@ -117,11 +117,13 @@ void FtpManager::removeRecord(qint32 id)
 void FtpManager::handleSocketReadyRead(QTcpSocket* socket)
 {
     qint64 size = 0;
-    qint64 uid = -1;
-    QByteArray data = socket->readAll();
-    QDataStream dataStream(data);
+    qint32 uid = -1;
+    QByteArray data;
+    data = socket->readAll();
+    QDataStream dataStream(&data, QIODevice::ReadWrite);
     dataStream >> size;
     dataStream >> uid;
+    dataStream.device()->close();
     if(size == 0)
     {
         if(uid == -1)
@@ -234,6 +236,7 @@ void FtpManager::sendFileToId(qint32 id, QString file)
     {
         socket->write(fileObj.read(2048*8));
         socket->flush();
+        qDebug()<<"send";
     }
     return;
 }
@@ -251,9 +254,7 @@ void FtpManager::requestFileList(qint32 id, QString dir)
         return;
     QDir dirObj(dir);
     dirObj.setFilter(QDir::Files);
-    qDebug()<<dirObj;
     QStringList list = dirObj.entryList(QDir::NoFilter, QDir::NoSort);
-    qDebug()<<list;
     emit sendFileList(id, list);
     return;
 }
