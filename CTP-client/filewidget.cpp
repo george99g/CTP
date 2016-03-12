@@ -36,7 +36,7 @@ void FileWidget::handleDownloadFileRequest()
 void FileWidget::handleSendFileRequest()
 {
     QString file = "";
-    file = QFileDialog::getOpenFileName(this, QString(), QString(), QString("All files (*.*)"));
+    file = QFileDialog::getOpenFileName(this, QString(), QString(), QString("All files (*)"));
     if(file == "")
         return;
     emit sendFile(file);

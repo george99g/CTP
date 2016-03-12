@@ -211,132 +211,142 @@
         <translation>Benutzer registrieren...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="344"/>
+        <location filename="mainwindow.cpp" line="365"/>
         <source>message.join</source>
         <translation>BEITRETEN</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="357"/>
+        <location filename="mainwindow.cpp" line="378"/>
         <source>message.part</source>
         <translation>TEIL</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="444"/>
+        <location filename="mainwindow.cpp" line="487"/>
         <source>warning.channelDoesNotExist</source>
         <translation>Kanal existiert nicht</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="444"/>
+        <location filename="mainwindow.cpp" line="487"/>
         <source>warning.channelDoesNotExist.text</source>
         <translation>Die Anwendung hat versucht, mit einem Kanal zu verbinden, die nicht existiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="446"/>
+        <location filename="mainwindow.cpp" line="489"/>
         <source>warning.userDoesNotExist</source>
         <translation>Benutzer existiert nicht</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="446"/>
+        <location filename="mainwindow.cpp" line="489"/>
         <source>warning.userDoesNotExist.text</source>
         <translation>Die Anwendung hat versucht, mit einer Benutzer-Schnittstelle, die nicht existiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="448"/>
+        <location filename="mainwindow.cpp" line="491"/>
         <source>warning.wrongParameters</source>
         <translation>Falsche Parameter</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="448"/>
+        <location filename="mainwindow.cpp" line="491"/>
         <source>warning.wrongParameters.text</source>
         <translation>Die Anwendung hat einen Befehl mit falschen Parametern gesendet.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="450"/>
+        <location filename="mainwindow.cpp" line="493"/>
         <source>warning.userIsNotLoggedIn</source>
         <translation>Der Benutzer ist nicht angemeldet</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="450"/>
+        <location filename="mainwindow.cpp" line="493"/>
         <source>warning.userIsNotLoggedIn.text:%1</source>
         <translation>Der folgende Benutzer ist nicht angemeldet: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="452"/>
+        <location filename="mainwindow.cpp" line="495"/>
         <source>warning.notInChannel</source>
         <translation>Nicht im Kanal</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="452"/>
+        <location filename="mainwindow.cpp" line="495"/>
         <source>warning.notInChannel.text:%1</source>
         <translation>Sie sind nicht in der folgenden Kanal: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="454"/>
+        <location filename="mainwindow.cpp" line="497"/>
         <source>warning.notAdministrator</source>
         <translation>Nicht-Administrator</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="454"/>
+        <location filename="mainwindow.cpp" line="497"/>
         <source>warning.notAdministrator.text</source>
         <translation>Die Anwendung hat versucht, einen Befehl zu erteilen, die Administratorrechte erfordert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="456"/>
+        <location filename="mainwindow.cpp" line="499"/>
         <source>warning.alreadyInChannel</source>
         <translation>Bereits im Kanal</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="456"/>
+        <location filename="mainwindow.cpp" line="499"/>
         <source>warning.alreadyInChannel.text:%1</source>
         <translation>Sie sind bereits im folgenden Kanal: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="458"/>
+        <location filename="mainwindow.cpp" line="501"/>
         <source>warning.notAllowedInChannel</source>
         <translation>Nicht im Kanal erlaubt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="458"/>
+        <location filename="mainwindow.cpp" line="501"/>
         <source>warning.notAllowedInChannel.text</source>
         <translation>Sie haben versucht, einen Kanal zu betreten, für die Sie keine Berechtigung haben, einzugeben.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="460"/>
+        <location filename="mainwindow.cpp" line="503"/>
         <source>warning.queryError</source>
         <translation>Query-Fehler</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="460"/>
+        <location filename="mainwindow.cpp" line="503"/>
         <source>warning.queryError.text</source>
         <translation>Die Abfrage, die Sie gesendet haben, ist falsch.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="462"/>
+        <location filename="mainwindow.cpp" line="505"/>
         <source>warning.usersCannotChangeChannels</source>
         <translation>Der Benutzer kann nicht den Kanal wechseln</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="462"/>
+        <location filename="mainwindow.cpp" line="505"/>
         <source>warning.usersCannotChangeChannels.text</source>
         <translation>Der Systemadministrator hat Benutzer zum Wechseln der Kanäle nicht erlaubt.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="552"/>
+        <location filename="mainwindow.cpp" line="507"/>
+        <source>warning.ftp.fileError</source>
+        <translation>Dateifehler</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="507"/>
+        <source>warning.ftp.fileError.text</source>
+        <translation>Es gab ein Problem mit dem Dateioperation .</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="667"/>
         <source>dialog.getQuery.title</source>
         <translation>Abfrage</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="552"/>
+        <location filename="mainwindow.cpp" line="667"/>
         <source>dialog.getQuery.content</source>
         <translation>Geben Sie eine SQLite-Abfrage ausgeführt werden</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="591"/>
+        <location filename="mainwindow.cpp" line="706"/>
         <source>dialog.getJoinChannelName.title</source>
         <translation>Verbindungskanal</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="591"/>
+        <location filename="mainwindow.cpp" line="706"/>
         <source>dialog.getJoinChannelName.content</source>
         <translation>Geben Sie einen Kanal zu verbinden</translation>
     </message>

@@ -426,12 +426,22 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
             socket->flush();
         }
         else if(messageParameters.at(0) == "GET_FILE_LIST")
-        {
             emit ftpRequestFileList(_clientIds.key(_clients.client(socket)), ".");
-        }
         else if(messageParameters.at(0) == "DOWNLOAD_FILE" && messageParameters.count() == 2)
-        {
             emit sendFileToId(_clientIds.key(_clients.client(socket)), messageParameters.at(1));
+        else if(messageParameters.at(0) == "UPLOAD_FILE" && messageParameters.count() == 2)
+            emit openFileForId(_clientIds.key(_clients.client(socket)), messageParameters.at(1));
+        else if(messageParameters.at(0) == "STOP_UPLOAD_FILE")
+            emit closeFileForId(_clientIds.key(_clients.client(socket)));
+        else if(messageParameters.at(0) == "GET_FTP_PORT")
+        {
+            qint32 uid = 0;
+            do uid = qAbs((qint32)qrand()%32000);
+            while(_clientIds.keys().contains(uid));
+            emit ftpAddUsernameIdPair(getUsername(socket), uid);
+            emit ftpGenerateHomeDirectoryForUser(getUsername(socket));
+            _clientIds.insert(uid, _clients.client(socket));
+            socket->write(QString("FTP_PORT "+QString::number(_ftpPort)+' '+QString::number(uid)+"\r\n").toUtf8());
         }
         else if(messageParameters.at(0) == "ADD_USER")
         {
@@ -499,8 +509,6 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 IrcClient* client = _clients.addClient(username, socket);
                 client->mode()->fromString(getClientModeFromDatabase(username));
                 _channels->rejoinChannels(username, socket);
-                if(hasMissedMessages(socket))
-                    sendMissedMessages(socket);
                 qint32 uid = 0;
                 do uid = qAbs((qint32)qrand()%32000);
                 while(_clientIds.keys().contains(uid));
@@ -508,7 +516,8 @@ void IrcManager::handleLogin(QTcpSocket* socket, const QString &message)
                 emit ftpGenerateHomeDirectoryForUser(username);
                 _clientIds.insert(uid, _clients.client(username));
                 socket->write(QString("FTP_PORT "+QString::number(_ftpPort)+' '+QString::number(uid)+"\r\n").toUtf8());
-                socket->flush();
+                if(hasMissedMessages(socket))
+                    sendMissedMessages(socket);
             }
             else
             {
@@ -624,7 +633,10 @@ void IrcManager::ftpReceiveFileList(qint32 id, const QStringList &list)
 
 void IrcManager::ftpSendMessageToId(qint32 id, const QString &message)
 {
-    QTcpSocket* socket = _clientIds.value(id)->socket();
+    IrcClient* client = _clientIds.value(id);
+    if(client == (IrcClient*)0)
+        return;
+    QTcpSocket* socket = client->socket();
     socket->write(message.toUtf8());
     socket->flush();
     return;

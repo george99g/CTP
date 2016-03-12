@@ -242,6 +242,8 @@ void MainWindow::clearEverything()
     if(_fileWidget != (FileWidget*)0)
     {
         disconnect(_fileWidget, &FileWidget::requestRefresh, this, &MainWindow::requestFileList);
+        disconnect(_fileWidget, &FileWidget::downloadFile, this, &MainWindow::handleFtpDownloadFileRequest);
+        disconnect(_fileWidget, &FileWidget::sendFile, this, &MainWindow::handleFtpUploadRequest);
         _fileWidget->deleteLater();
         _fileWidget = (FileWidget*)0;
     }
@@ -287,12 +289,14 @@ void MainWindow::handleSocketReadyRead()
     {
         QString line = "";
         if(_socket->canReadLine())
-            line = _socket->readLine().trimmed();
-        else if(_readQueue.count() > 0)
+            line = QString(_socket->readLine()).trimmed();
+        else if(_readQueue.count() > 0 && _populatedUserlist)
         {
             line = _readQueue.at(0);
             _readQueue.removeAt(0);
         }
+        if(line == "")
+            return;
         qDebug()<<line;
         QStringList messageParameters = line.split(' ', QString::SkipEmptyParts);
         if(messageParameters.count() <= 0)
@@ -448,20 +452,25 @@ void MainWindow::handleSocketReadyRead()
             qint32 id = messageParameters.at(2).toInt();
             _ftpPort = port;
             _ftpUid = id;
-            connect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
             if(_ftpSocket == (QTcpSocket*)0)
+            {
                 _ftpSocket = new QTcpSocket(this);
-            _ftpSocket->connectToHost(_hostname, port);
-            _ftpSocket->waitForConnected(2000);
-            QByteArray data;
-            QDataStream dataStream(&data, QIODevice::ReadWrite);
-            dataStream << (qint64)0;
-            dataStream << id;
-            dataStream.device()->close();
-            _ftpSocket->write(data);
-            _ftpSocket->flush();
+                connect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
+            }
+            if(!_ftpSocket->isOpen())
+            {
+                _ftpSocket->connectToHost(_hostname, port);
+                _ftpSocket->waitForConnected(2000);
+                QByteArray data;
+                QDataStream dataStream(&data, QIODevice::ReadWrite);
+                dataStream << (qint64)0;
+                dataStream << id;
+                dataStream.device()->close();
+                _ftpSocket->write(data);
+                _ftpSocket->flush();
+            }
         }
-        else if(messageParameters.count() > 1 && messageParameters.at(0) == "FILE_LIST")
+        else if(messageParameters.at(0) == "FILE_LIST")
         {
             QStringList files;
             for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
@@ -507,9 +516,12 @@ void MainWindow::connectSocketSignals()
     connect(_socket, &QTcpSocket::readyRead, this, &MainWindow::handleSocketReadyRead);
     connect(_socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleSocketError);
     connect(_socket, &QTcpSocket::disconnected, this, &MainWindow::handleSocketDisconnected);
-    connect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
-    connect(_ftpSocket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleFtpSocketError);
-    connect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
+    if(_ftpSocket != (QTcpSocket*)0)
+    {
+        connect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
+        connect(_ftpSocket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleFtpSocketError);
+        connect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
+    }
     return;
 }
 
@@ -518,9 +530,12 @@ void MainWindow::disconnectSocketSignals()
     disconnect(_socket, &QTcpSocket::readyRead, this, &MainWindow::handleSocketReadyRead);
     disconnect(_socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleSocketError);
     disconnect(_socket, &QTcpSocket::disconnected, this, &MainWindow::handleSocketDisconnected);
-    disconnect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
-    disconnect(_ftpSocket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleFtpSocketError);
-    disconnect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
+    if(_ftpSocket != (QTcpSocket*)0)
+    {
+        disconnect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
+        disconnect(_ftpSocket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleFtpSocketError);
+        disconnect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
+    }
     return;
 }
 
@@ -590,6 +605,8 @@ void MainWindow::handleSocketDisconnected()
 
 void MainWindow::handleFtpSocketDisconnected()
 {
+    connect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
+    disconnect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
     _ftpSocket->connectToHost(_hostname, _ftpPort);
     return;
 }
@@ -622,18 +639,15 @@ void MainWindow::handleFtpDownloadFileRequest(QString file)
     _ftpSavingFile = saveFile;
     saveFileObj.close();
     if(_ftpSocket == (QTcpSocket*)0)
+    {
         _ftpSocket = new QTcpSocket(this);
+        connect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
+    }
     if(!_ftpSocket->isOpen())
     {
-        _ftpSocket->connectToHost(_hostname, _ftpPort);
-        _ftpSocket->waitForConnected(2000);
-        QByteArray data;
-        QDataStream dataStream(&data, QIODevice::ReadWrite);
-        dataStream << (qint64)0;
-        dataStream << _ftpUid;
-        dataStream.device()->close();
-        _ftpSocket->write(data);
-        _ftpSocket->flush();
+        _socket->write("GET_FTP_PORT\r\n");
+        _socket->flush();
+        return;
     }
     _socket->write(QString("DOWNLOAD_FILE "+file+"\r\n").toUtf8());
     _socket->flush();
@@ -844,12 +858,46 @@ void MainWindow::handleUserChangeRequest(QString newUser)
 void MainWindow::handleFtpConnected()
 {
     disconnect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
+    connect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
     _ftpConnected = true;
     return;
 }
 
 void MainWindow::handleFtpUploadRequest(QString file)
 {
-
+    QFile fileObj(file);
+    if(!fileObj.open(QFile::ReadOnly))
+        return;
+    QString savingFile = file.mid(file.lastIndexOf('/') + 1, -1).remove(' ');
+    if(_ftpSocket == (QTcpSocket*)0)
+    {
+        _ftpSocket = new QTcpSocket(this);
+        connect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
+    }
+    if(!_ftpSocket->isOpen())
+    {
+        _socket->write("GET_FTP_PORT\r\n");
+        _socket->flush();
+        return;
+    }
+    _socket->write(QString("UPLOAD_FILE "+savingFile+"\r\n").toUtf8());
+    _socket->flush();
+    _socket->waitForBytesWritten();
+    while(!fileObj.atEnd())
+    {
+        QByteArray data;
+        QDataStream ds(&data, QIODevice::ReadWrite);
+        ds << (qint64)(2048*8);
+        ds << (qint32)_ftpUid;
+        ds << fileObj.read(2048*8);
+        ds.device()->close();
+        _ftpSocket->write(data);
+        _ftpSocket->flush();
+        _ftpSocket->waitForBytesWritten();
+    }
+    _socket->write("STOP_UPLOAD_FILE\r\n");
+    _socket->flush();
+    fileObj.close();
+    requestFileList();
     return;
 }

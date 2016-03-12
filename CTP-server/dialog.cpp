@@ -40,11 +40,13 @@ void Dialog::tickBoxToggled(bool state)
 //Don't forget to connect the IrcManager signals to the FtpManager slots!
 void Dialog::connectServers()
 {
-    connect(_server.manager(), &IrcManager::ftpAddUsernameIdPair, _ftpServer.manager(), &FtpManager::addUsernameIdPair);
+    connect(_server.manager(), &IrcManager::ftpAddUsernameIdPair, _ftpServer.manager(), &FtpManager::addUsernameIdPair, Qt::BlockingQueuedConnection);
     connect(_server.manager(), &IrcManager::ftpRemoveRecord, _ftpServer.manager(), static_cast<void (FtpManager::*)(qint32)>(&FtpManager::removeRecord));
     connect(_server.manager(), &IrcManager::ftpGenerateHomeDirectoryForUser, _ftpServer.manager(), &FtpManager::generateHomeDirectoryForUser);
     connect(_server.manager(), &IrcManager::ftpRequestFileList, _ftpServer.manager(), &FtpManager::requestFileList);
     connect(_server.manager(), &IrcManager::sendFileToId, _ftpServer.manager(), &FtpManager::sendFileToId);
+    connect(_server.manager(), &IrcManager::openFileForId, _ftpServer.manager(), &FtpManager::openFileForId);
+    connect(_server.manager(), &IrcManager::closeFileForId, _ftpServer.manager(), &FtpManager::closeFileForId);
     connect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
     connect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
     return;
@@ -57,6 +59,8 @@ void Dialog::disconnectServers()
     disconnect(_server.manager(), &IrcManager::ftpGenerateHomeDirectoryForUser, _ftpServer.manager(), &FtpManager::generateHomeDirectoryForUser);
     disconnect(_server.manager(), &IrcManager::ftpRequestFileList, _ftpServer.manager(), &FtpManager::requestFileList);
     disconnect(_server.manager(), &IrcManager::sendFileToId, _ftpServer.manager(), &FtpManager::sendFileToId);
+    disconnect(_server.manager(), &IrcManager::openFileForId, _ftpServer.manager(), &FtpManager::openFileForId);
+    disconnect(_server.manager(), &IrcManager::closeFileForId, _ftpServer.manager(), &FtpManager::closeFileForId);
     disconnect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
     disconnect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
     return;

@@ -39,6 +39,8 @@ signals:
     void ftpGenerateHomeDirectoryForUser(QString username);
     void ftpRequestFileList(qint32 id, QString dir);
     void sendFileToId(qint32 id, QString file);
+    void openFileForId(qint32 id, QString file);
+    void closeFileForId(qint32 id);
 private:
     void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);
