@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _fileWidget = (FileWidget*)0;
     _ftpUid = 0;
     _hostname = "localhost";
+    _ftpPort = 0;
     connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
     connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
@@ -71,7 +72,10 @@ MainWindow::~MainWindow()
     if(_ftpSocket != (QTcpSocket*)0)
     {
         if(_ftpSocket->isOpen())
+        {
+            disconnectSocketSignals();
             _ftpSocket->close();
+        }
         _ftpSocket->deleteLater();
         _socket = (QTcpSocket*)0;
     }
@@ -107,9 +111,15 @@ void MainWindow::loginAccepted()
     _pmWindow = new PrivateMessageWindow(&_config);
     connect(_pmWindow, &PrivateMessageWindow::switchUser, this, &MainWindow::handleUserChangeRequest);
     _pmWindow->listView()->setModel(&_usernamesModel);
+    _fileWidget = new FileWidget(this);
+    connect(_fileWidget, &FileWidget::requestRefresh, this, &MainWindow::requestFileList);
+    connect(_fileWidget, &FileWidget::downloadFile, this, &MainWindow::handleFtpDownloadFileRequest);
+    ui->filesTab->layout()->addWidget(_fileWidget);
+    ui->tabWidget->setCurrentIndex(0);
     requestChannelListPopulation();
     requestUserlistPopulation();
     requestMode(_username);
+    requestFileList();
     return;
 }
 
@@ -227,6 +237,7 @@ void MainWindow::clearEverything()
     }
     if(_fileWidget != (FileWidget*)0)
     {
+        disconnect(_fileWidget, &FileWidget::requestRefresh, this, &MainWindow::requestFileList);
         _fileWidget->deleteLater();
         _fileWidget = (FileWidget*)0;
     }
@@ -431,9 +442,18 @@ void MainWindow::handleSocketReadyRead()
         else if(messageParameters.count() > 2 && messageParameters.at(0) == "FTP_PORT")
         {
             qint64 port = messageParameters.at(1).toLongLong();
+            _ftpPort = port;
             _ftpUid = messageParameters.at(2).toInt();
             connect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
             _ftpSocket->connectToHost(_hostname, port);
+        }
+        else if(messageParameters.count() > 1 && messageParameters.at(0) == "FILE_LIST")
+        {
+            QStringList files;
+            for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
+                files << messageParameters.at(i);
+            _fileList.setStringList(files);
+            _fileWidget->listView()->setModel(&_fileList);
         }
         else if(messageParameters.at(0) == "PING")
         {
@@ -460,6 +480,8 @@ void MainWindow::handleSocketReadyRead()
             QMessageBox::warning(this, tr("warning.queryError"), tr("warning.queryError.text"));
         else if(messageParameters.at(0) == "USERS_CANNOT_CHANGE_CHANNELS")
             QMessageBox::warning(this, tr("warning.usersCannotChangeChannels"), tr("warning.usersCannotChangeChannels.text"));
+        else if(messageParameters.at(0) == "FTP_OPEN_FILE_ERROR")
+            QMessageBox::warning(this, tr("warning.ftp.fileError"), tr("warning.ftp.fileError.text"));
         else if(messageParameters.at(0) == "NOT_LOGGED_IN")
             handleSocketDisconnected();
     }
@@ -471,6 +493,9 @@ void MainWindow::connectSocketSignals()
     connect(_socket, &QTcpSocket::readyRead, this, &MainWindow::handleSocketReadyRead);
     connect(_socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleSocketError);
     connect(_socket, &QTcpSocket::disconnected, this, &MainWindow::handleSocketDisconnected);
+    connect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
+    connect(_ftpSocket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleFtpSocketError);
+    connect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
     return;
 }
 
@@ -479,6 +504,9 @@ void MainWindow::disconnectSocketSignals()
     disconnect(_socket, &QTcpSocket::readyRead, this, &MainWindow::handleSocketReadyRead);
     disconnect(_socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleSocketError);
     disconnect(_socket, &QTcpSocket::disconnected, this, &MainWindow::handleSocketDisconnected);
+    disconnect(_ftpSocket, &QTcpSocket::readyRead, this, &MainWindow::handleFtpSocketReadyRead);
+    disconnect(_ftpSocket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &MainWindow::handleFtpSocketError);
+    disconnect(_ftpSocket, &QTcpSocket::disconnected, this, &MainWindow::handleFtpSocketDisconnected);
     return;
 }
 
@@ -543,6 +571,55 @@ void MainWindow::handleSocketDisconnected()
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
         _loginDialog->show();
     }
+    return;
+}
+
+void MainWindow::handleFtpSocketDisconnected()
+{
+    _ftpSocket->connectToHost(_hostname, _ftpPort);
+    return;
+}
+
+void MainWindow::handleFtpSocketError()
+{
+    handleFtpSocketDisconnected();
+    return;
+}
+
+void MainWindow::handleFtpSocketReadyRead()
+{
+    QFile file(_ftpSavingFile);
+    if(!file.open(QFile::WriteOnly|QFile::Append))
+        return;
+    while(!_ftpSocket->atEnd())
+        file.write(_ftpSocket->read(2048*8));
+    file.close();
+    return;
+}
+
+void MainWindow::handleFtpDownloadFileRequest(QString file)
+{
+    QFileDialog dialog;
+    QString saveFile;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setModal(true);
+    dialog.show();
+    qDebug()<<"";
+    if(dialog.exec() == QFileDialog::Accepted && dialog.selectedFiles().count() > 0)
+        saveFile = dialog.selectedFiles().at(0);
+    QFile saveFileObj(saveFile);
+    if(!saveFileObj.open(QFile::WriteOnly|QFile::Truncate))
+        return;
+    saveFileObj.close();
+    _socket->write(QString("DOWNLOAD_FILE "+file+"\r\n").toUtf8());
+    _socket->flush();
+    return;
+}
+
+void MainWindow::requestFileList()
+{
+    _socket->write("GET_FILE_LIST\r\n");
+    _socket->flush();
     return;
 }
 

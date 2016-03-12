@@ -4,8 +4,8 @@
 FileWidget::FileWidget(QWidget* parent) : QWidget(parent), ui(new Ui::FileWidget)
 {
     ui->setupUi(this);
-    _ircSocket = (QTcpSocket*)0;
-    _ftpSocket = (QTcpSocket*)0;
+    connect(ui->pushButtonRefresh, &QPushButton::pressed, this, &FileWidget::requestRefresh);
+    connect(ui->pushButtonDownload, &QPushButton::pressed, this, &FileWidget::handleDownloadFileRequest);
 }
 
 FileWidget::~FileWidget()
@@ -13,9 +13,15 @@ FileWidget::~FileWidget()
     delete ui;
 }
 
-void FileWidget::setSockets(QTcpSocket *ircSocket, QTcpSocket *ftpSocket)
+QListView *FileWidget::listView()
 {
-    _ircSocket = ircSocket;
-    _ftpSocket = ftpSocket;
+    return ui->listView;
+}
+
+void FileWidget::handleDownloadFileRequest()
+{
+    QString file = "";
+    file = ui->listView->currentIndex().data().toString();
+    emit downloadFile(file);
     return;
 }

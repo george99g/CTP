@@ -119,7 +119,10 @@ void FtpManager::handleSocketReadyRead(QTcpSocket* socket)
     QByteArray data = socket->readAll();
     QFile* file = _socketFileMap.value(getId(socket));
     if(!file->isOpen())
+    {
+        sendMessageToId(getId(socket), "FTP_OPEN_FILE_ERROR\r\n");
         return;
+    }
     file->write(data);
     return;
 }
@@ -141,6 +144,7 @@ void FtpManager::openFileForId(qint32 id, QString file)
     {
         fileObj->deleteLater();
         _socketFileMap.insert(id, new QFile());
+        sendMessageToId(id, "FTP_OPEN_FILE_ERROR\r\n");
     }
     return;
 }
@@ -205,7 +209,10 @@ void FtpManager::sendFileToId(qint32 id, QString file)
     file.prepend(QApplication::applicationDirPath());
     QFile fileObj(file);
     if(!fileObj.open(QFile::ReadOnly))
+    {
+        emit sendMessageToId(id, "FTP_OPEN_FILE_ERROR\r\n");
         return;
+    }
     QTcpSocket* socket = getSocket(id);
     while(!fileObj.atEnd())
     {
@@ -227,7 +234,10 @@ void FtpManager::requestFileList(qint32 id, QString dir)
     if(!info.isDir())
         return;
     QDir dirObj(dir);
-    QStringList list = dirObj.entryList(QDir::Files, QDir::Name);
+    dirObj.setFilter(QDir::Files);
+    qDebug()<<dirObj;
+    QStringList list = dirObj.entryList(QDir::NoFilter, QDir::NoSort);
+    qDebug()<<list;
     emit sendFileList(id, list);
     return;
 }
@@ -237,11 +247,12 @@ QString FtpManager::getUserHomeDirectory(const QString &username)
     if(!openDatabase())
         return "";
     QSqlQuery query(_db);
-    query.prepare("SELECT userfolders.folder WHERE username = :username LIMIT 1");
+    query.prepare("SELECT userfolders.folder FROM userfolders WHERE userfolders.username = :username LIMIT 1");
     query.bindValue(":username", username);
+    query.exec();
     if(query.first())
         return query.value(0).toString();
-    else return "";
+    return "";
 }
 
 bool FtpManager::openDatabase()

@@ -14,6 +14,7 @@
 #include <QTranslator>
 #include <QString>
 #include <QStringList>
+#include <QFileDialog>
 
 namespace Ui
 {
@@ -49,6 +50,11 @@ private:
     void requestMode(const QString &target);
     void handleSocketError();
     void handleSocketDisconnected();
+    void handleFtpSocketDisconnected();
+    void handleFtpSocketError();
+    void handleFtpSocketReadyRead();
+    void handleFtpDownloadFileRequest(QString file);
+    void requestFileList();
     void handleSendQueryRequest();
     void handleRegisterUserRequest();
     void handleJoinChannelRequest();
@@ -96,6 +102,9 @@ private:
     QTranslator _translator;
     QTranslator _translatorQt;
     QTranslator _translatorBaseQt;
+    QStringListModel _fileList;
+    QString _ftpSavingFile;
+    qint64 _ftpPort;
 };
 
 #endif // MAINWINDOW_HPP

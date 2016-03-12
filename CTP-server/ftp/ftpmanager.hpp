@@ -38,6 +38,7 @@ public:
     void requestFileList(qint32 id, QString dir);
 signals:
     void sendFileList(qint32 id, const QStringList &list);
+    void sendMessageToId(qint32 id, const QString &message);
 private:
     QString getUserHomeDirectory(const QString &username);
     bool openDatabase();

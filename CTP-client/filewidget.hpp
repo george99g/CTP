@@ -3,6 +3,10 @@
 
 #include <QWidget>
 #include <QTcpSocket>
+#include <QListView>
+#include <QStringList>
+#include <QStringListModel>
+#include <QModelIndex>
 
 namespace Ui
 {
@@ -16,10 +20,12 @@ class FileWidget : public QWidget
 public:
     explicit FileWidget(QWidget* parent = 0);
     ~FileWidget();
-    void setSockets(QTcpSocket* ircSocket, QTcpSocket* ftpSocket);
+    QListView* listView();
+signals:
+    void requestRefresh();
+    void downloadFile(QString file);
 private:
-    QTcpSocket* _ircSocket;
-    QTcpSocket* _ftpSocket;
+    void handleDownloadFileRequest();
     Ui::FileWidget *ui;
 };
 

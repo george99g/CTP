@@ -44,7 +44,9 @@ void Dialog::connectServers()
     connect(_server.manager(), &IrcManager::ftpRemoveRecord, _ftpServer.manager(), static_cast<void (FtpManager::*)(qint32)>(&FtpManager::removeRecord));
     connect(_server.manager(), &IrcManager::ftpGenerateHomeDirectoryForUser, _ftpServer.manager(), &FtpManager::generateHomeDirectoryForUser);
     connect(_server.manager(), &IrcManager::ftpRequestFileList, _ftpServer.manager(), &FtpManager::requestFileList);
+    connect(_server.manager(), &IrcManager::sendFileToId, _ftpServer.manager(), &FtpManager::sendFileToId);
     connect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
+    connect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
     return;
 }
 
@@ -54,6 +56,8 @@ void Dialog::disconnectServers()
     disconnect(_server.manager(), &IrcManager::ftpRemoveRecord, _ftpServer.manager(), static_cast<void (FtpManager::*)(qint32)>(&FtpManager::removeRecord));
     disconnect(_server.manager(), &IrcManager::ftpGenerateHomeDirectoryForUser, _ftpServer.manager(), &FtpManager::generateHomeDirectoryForUser);
     disconnect(_server.manager(), &IrcManager::ftpRequestFileList, _ftpServer.manager(), &FtpManager::requestFileList);
+    disconnect(_server.manager(), &IrcManager::sendFileToId, _ftpServer.manager(), &FtpManager::sendFileToId);
     disconnect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
+    disconnect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
     return;
 }
