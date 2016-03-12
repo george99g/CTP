@@ -116,8 +116,20 @@ void FtpManager::removeRecord(qint32 id)
 
 void FtpManager::handleSocketReadyRead(QTcpSocket* socket)
 {
+    qint64 size = 0;
+    qint64 uid = -1;
     QByteArray data = socket->readAll();
+    data >> static_cast<qint64>(size);
+    data >> uid;
+    if(size == 0)
+    {
+        if(uid = -1)
+            return;
+        addSocket(socket, uid);
+        return;
+    }
     QFile* file = _socketFileMap.value(getId(socket));
+    if()
     if(!file->isOpen())
     {
         sendMessageToId(getId(socket), "FTP_OPEN_FILE_ERROR\r\n");
@@ -214,6 +226,8 @@ void FtpManager::sendFileToId(qint32 id, QString file)
         return;
     }
     QTcpSocket* socket = getSocket(id);
+    if(socket == (QTcpSocket*)0)
+        return;
     while(!fileObj.atEnd())
     {
         socket->write(fileObj.read(2048*8));

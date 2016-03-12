@@ -423,9 +423,6 @@ void MainWindow::handleSocketReadyRead()
             pos = line.indexOf(' ', pos) + 1;
             pos = line.indexOf(' ', pos) + 1;
             QString message = line.mid(pos, -1);
-            qDebug()<<sender;
-            qDebug()<<time;
-            qDebug()<<message;
             _pmTextBoxWidgets.value(convertFromNoSpace(sender))->insertMessage(convertFromNoSpace(sender), message, time);
             if(_pmWindow->isHidden())
             {
@@ -436,16 +433,25 @@ void MainWindow::handleSocketReadyRead()
                     _pmWindow->resize(_config.pmWindowX(), _config.pmWindowY());
                     _pmWindow->show();
                 }
-                _pmWindow->setUser(sender);
+                _pmWindow->setUser(convertFromNoSpace(sender));
             }
         }
         else if(messageParameters.count() > 2 && messageParameters.at(0) == "FTP_PORT")
         {
             qint64 port = messageParameters.at(1).toLongLong();
+            qint32 id = messageParameters.at(2).toInt();
             _ftpPort = port;
             _ftpUid = messageParameters.at(2).toInt();
             connect(_ftpSocket, &QTcpSocket::connected, this, &MainWindow::handleFtpConnected);
+            if(_ftpSocket == (QTcpSocket*)0)
+                _ftpSocket = new QTcpSocket(this);
             _ftpSocket->connectToHost(_hostname, port);
+            _ftpSocket->waitForConnected(2000);
+            QByteArray data;
+            data.append(QByteArray(static_cast<qint64>(0)));
+            data.append(id);
+            _ftpSocket->write(data);
+            _ftpSocket->flush();
         }
         else if(messageParameters.count() > 1 && messageParameters.at(0) == "FILE_LIST")
         {
@@ -599,18 +605,27 @@ void MainWindow::handleFtpSocketReadyRead()
 
 void MainWindow::handleFtpDownloadFileRequest(QString file)
 {
-    QFileDialog dialog;
-    QString saveFile;
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setModal(true);
-    dialog.show();
+    QString saveFile = QFileDialog::getSaveFileName(this);
     qDebug()<<"";
-    if(dialog.exec() == QFileDialog::Accepted && dialog.selectedFiles().count() > 0)
-        saveFile = dialog.selectedFiles().at(0);
+    if(saveFile == "")
+        return;
     QFile saveFileObj(saveFile);
     if(!saveFileObj.open(QFile::WriteOnly|QFile::Truncate))
         return;
+    _ftpSavingFile = saveFile;
     saveFileObj.close();
+    if(_ftpSocket == (QTcpSocket*)0)
+        _ftpSocket = new QTcpSocket(this);
+    if(!_ftpSocket->isOpen())
+    {
+        _ftpSocket->connectToHost(_hostname, _ftpPort);
+        _ftpSocket->waitForConnected(2000);
+        QByteArray data;
+        data.append(QByteArray(static_cast<qint64>(0)));
+        data.append(_ftpUid);
+        _ftpSocket->write(data);
+        _ftpSocket->flush();
+    }
     _socket->write(QString("DOWNLOAD_FILE "+file+"\r\n").toUtf8());
     _socket->flush();
     return;

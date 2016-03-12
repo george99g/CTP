@@ -15,6 +15,7 @@
 #include <QString>
 #include <QStringList>
 #include <QFileDialog>
+#include <QByteArray>
 
 namespace Ui
 {

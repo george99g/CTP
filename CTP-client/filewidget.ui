@@ -17,14 +17,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="pushButtonDownload">
+      <widget class="QPushButton" name="pushButtonUpload">
        <property name="text">
         <string>fileWidget.upload</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonUpload">
+      <widget class="QPushButton" name="pushButtonDownload">
        <property name="text">
         <string>fileWidget.download</string>
        </property>
