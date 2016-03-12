@@ -14,8 +14,8 @@ Configuration::Configuration(QObject *parent) : QObject(parent)
     _port = 2000;
     _maximized = false;
     _pmMaximized = false;
-    _splitterSizes = QList<int>();
-    _pmSplitterSizes = QList<int>();
+    _splitterSizes = QList<int>()<<100<<800<<100;
+    _pmSplitterSizes = QList<int>()<<900<<100;
     _pmWindowX = 1000;
     _pmWindowY = 500;
     QString defaultLocale = QLocale::system().name();

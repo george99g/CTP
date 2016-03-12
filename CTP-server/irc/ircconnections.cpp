@@ -31,7 +31,7 @@ void IrcConnections::accept(qintptr handle, TcpConnection* connection)
     connect(socket, &QTcpSocket::disconnected, this, &IrcConnections::disconnected, Qt::QueuedConnection);
     connect(socket, &QTcpSocket::readyRead, this, &IrcConnections::readyRead, Qt::QueuedConnection);
     connect(socket, &QTcpSocket::connected, this, &IrcConnections::connected, Qt::QueuedConnection);
-    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &IrcConnections::error, Qt::QueuedConnection); //More magic. Don't touch.
+    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &IrcConnections::error, Qt::QueuedConnection);
     connection->moveToThread(QThread::currentThread());
     connection->setSocket(socket);
     _connections.insert(socket, connection);

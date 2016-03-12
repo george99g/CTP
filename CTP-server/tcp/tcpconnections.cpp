@@ -73,7 +73,7 @@ void TcpConnections::accept(qintptr handle, TcpConnection* connection)
         return;
     }
     connect(socket, &QTcpSocket::disconnected, this, &TcpConnections::disconnected, Qt::QueuedConnection);
-    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpConnections::error, Qt::QueuedConnection); //More magic. Don't touch.
+    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpConnections::error, Qt::QueuedConnection);
     connection->moveToThread(QThread::currentThread());
     connection->setSocket(socket);
     _connections.insert(socket, connection);

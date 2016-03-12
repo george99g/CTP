@@ -24,7 +24,7 @@ void FtpConnections::accept(qintptr handle, TcpConnection *connection)
     connect(socket, &QTcpSocket::disconnected, this, &FtpConnections::disconnected, Qt::QueuedConnection);
     connect(socket, &QTcpSocket::readyRead, this, &FtpConnections::readyRead, Qt::QueuedConnection);
     connect(socket, &QTcpSocket::connected, this, &FtpConnections::connected, Qt::QueuedConnection);
-    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &FtpConnections::error, Qt::QueuedConnection); //Even more magic. Don't touch.
+    connect(socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &FtpConnections::error, Qt::QueuedConnection);
     connection->moveToThread(QThread::currentThread());
     connection->setSocket(socket);
     _connections.insert(socket, connection);

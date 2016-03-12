@@ -710,7 +710,8 @@ void IrcManager::sendMissedMessages(QTcpSocket *socket)
     {
         do
         {
-            QString senderUsername = "?"; //Can't get the query to return the username instead of an ID, so I'll just use this hacky method for now
+            QString senderUsername = "?";
+            //I can't get the query to return the username instead of an ID, so I'll just use this hacky method for now
             {
                 QSqlQuery usernameQuery(_db);
                 usernameQuery.prepare("SELECT users.username FROM users WHERE users.id = :id LIMIT 1");
@@ -846,7 +847,8 @@ bool IrcManager::openDatabase()
     return true;
 }
 
-void IrcManager::handlePings() //This entire thing is incredibly hacky but the other method ended in segfaults
+void IrcManager::handlePings()
+//This entire thing is incredibly hacky but the other cleaner method I tried ended in segfaults
 {
     QTcpSocket* socket;
     IrcClient* client;

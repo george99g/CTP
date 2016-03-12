@@ -18,7 +18,7 @@ void TcpConnection::setSocket(QTcpSocket* socket)
     connect(_socket, &QTcpSocket::readyRead, this, &TcpConnection::readyRead, Qt::QueuedConnection);
     connect(_socket, &QTcpSocket::bytesWritten, this, &TcpConnection::bytesWritten, Qt::QueuedConnection);
     connect(_socket, &QTcpSocket::stateChanged, this, &TcpConnection::stateChanged, Qt::QueuedConnection);
-    connect(_socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpConnection::error, Qt::QueuedConnection); //Magic. Don't touch.
+    connect(_socket, static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpConnection::error, Qt::QueuedConnection);
     return;
 }
 
