@@ -119,17 +119,19 @@ void FtpManager::handleSocketReadyRead(QTcpSocket* socket)
     qint64 size = 0;
     qint64 uid = -1;
     QByteArray data = socket->readAll();
-    data >> static_cast<qint64>(size);
-    data >> uid;
+    QDataStream dataStream(data);
+    dataStream >> size;
+    dataStream >> uid;
     if(size == 0)
     {
-        if(uid = -1)
+        if(uid == -1)
             return;
         addSocket(socket, uid);
         return;
     }
     QFile* file = _socketFileMap.value(getId(socket));
-    if()
+    if(file == (QFile*)0)
+        return;
     if(!file->isOpen())
     {
         sendMessageToId(getId(socket), "FTP_OPEN_FILE_ERROR\r\n");
