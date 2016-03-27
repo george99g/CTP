@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _ftpConnected = false;
     _readQueue = QStringList();
     _currentLanguage = "";
+    _uploadingFile = "";
     configureLanguages();
 }
 
@@ -479,6 +480,48 @@ void MainWindow::handleSocketReadyRead()
             _fileList.setStringList(files);
             _fileWidget->listView()->setModel(&_fileList);
         }
+        else if(messageParameters.at(0) == "UPLOAD_FILE_ACK")
+        {
+            QFile fileObj(_uploadingFile);
+            if(!fileObj.open(QFile::ReadOnly))
+            {
+                _socket->write("STOP_UPLOAD_FILE\r\n");
+                _socket->flush();
+                _socket->waitForBytesWritten();
+                fileObj.close();
+                requestFileList();
+                return;
+            }
+            while(fileObj.bytesAvailable() > 0)
+            {
+                QByteArray data;
+                QDataStream ds(&data, QIODevice::ReadWrite);
+                ds << (qint64)1;
+                if(fileObj.bytesAvailable() > 1024)
+                    ds << fileObj.read(1024).toBase64().append("\r\n");
+                else
+                    ds << fileObj.readAll().toBase64().append("\r\n");
+                _ftpSocket->write(data);
+                _ftpSocket->flush();
+                _ftpSocket->waitForBytesWritten();
+            }
+            QByteArray data;
+            QDataStream dataStream(&data, QIODevice::ReadWrite);
+            dataStream << (qint64)2;
+            dataStream << QString("\r\n");
+            dataStream.device()->close();
+            _ftpSocket->write(data);
+            _ftpSocket->flush();
+            _ftpSocket->waitForBytesWritten();
+            fileObj.close();
+        }
+        else if(messageParameters.at(0) == "UPLOAD_FILE_RECV")
+        {
+            _socket->write("STOP_UPLOAD_FILE\r\n");
+            _socket->flush();
+            _socket->waitForBytesWritten();
+            requestFileList();
+        }
         else if(messageParameters.at(0) == "PING")
         {
             _socket->write("PONG\r\n");
@@ -884,24 +927,7 @@ void MainWindow::handleFtpUploadRequest(QString file)
     _socket->write(QString("UPLOAD_FILE "+savingFile+"\r\n").toUtf8());
     _socket->flush();
     _socket->waitForBytesWritten();
-    while(fileObj.bytesAvailable() > 0)
-    {
-        QByteArray data;
-        QDataStream ds(&data, QIODevice::ReadWrite);
-        ds << (qint64)1;
-        if(fileObj.bytesAvailable() > 1024)
-            ds << QString(fileObj.read(1024).toBase64()).append("\r\n");
-        else
-            ds << QString(fileObj.readAll().toBase64()).append("\r\n");
-        _ftpSocket->write(data);
-        _ftpSocket->flush();
-        _ftpSocket->waitForBytesWritten();
-    }
-    _ftpSocket->waitForBytesWritten();
-    _socket->write("STOP_UPLOAD_FILE\r\n");
-    _socket->flush();
-    _socket->waitForBytesWritten();
+    _uploadingFile = file;
     fileObj.close();
-    requestFileList();
     return;
 }

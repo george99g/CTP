@@ -12,6 +12,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDataStream>
+#include <QThread>
 
 class FtpManager : public QObject
 {

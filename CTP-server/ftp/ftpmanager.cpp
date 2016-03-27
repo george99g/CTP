@@ -136,11 +136,10 @@ void FtpManager::handleSocketReadyRead(QTcpSocket* socket)
         }
         else if(size == 1)
         {
-            QString data;
+            QByteArray data;
             dataStream >> data;
             data = data.trimmed();
-            fileData = QByteArray::fromBase64(data.toLocal8Bit());
-            qDebug()<<fileData;
+            fileData = QByteArray::fromBase64(data);
             QFile* file = _socketFileMap.value(getId(socket));
             if(file == (QFile*)0)
                 continue;
@@ -149,6 +148,13 @@ void FtpManager::handleSocketReadyRead(QTcpSocket* socket)
             file->write(fileData);
             file->flush();
             file->waitForBytesWritten(1000);
+        }
+        else if(size == 2)
+        {
+            QString temp;
+            dataStream >> temp;
+            sendMessageToId(_socketIdMap.key(socket), "UPLOAD_FILE_RECV\r\n");
+            continue;
         }
     }
     return;
@@ -178,6 +184,7 @@ void FtpManager::openFileForId(qint32 id, QString file)
         return;
     }
     _socketFileMap.insert(id, fileObj);
+    sendMessageToId(id, "UPLOAD_FILE_ACK\r\n");
     qDebug()<<this<<"successfully opened file"<<fileObj->fileName()<<"for "<<id;
     return;
 }

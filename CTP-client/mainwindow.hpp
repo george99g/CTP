@@ -106,6 +106,7 @@ private:
     QTranslator _translatorQt;
     QTranslator _translatorBaseQt;
     QStringListModel _fileList;
+    QString _uploadingFile;
     QString _ftpSavingFile;
     qint64 _ftpPort;
 };
