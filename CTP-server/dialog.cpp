@@ -45,8 +45,8 @@ void Dialog::connectServers()
     connect(_server.manager(), &IrcManager::ftpGenerateHomeDirectoryForUser, _ftpServer.manager(), &FtpManager::generateHomeDirectoryForUser);
     connect(_server.manager(), &IrcManager::ftpRequestFileList, _ftpServer.manager(), &FtpManager::requestFileList);
     connect(_server.manager(), &IrcManager::sendFileToId, _ftpServer.manager(), &FtpManager::sendFileToId);
-    connect(_server.manager(), &IrcManager::openFileForId, _ftpServer.manager(), &FtpManager::openFileForId);
-    connect(_server.manager(), &IrcManager::closeFileForId, _ftpServer.manager(), &FtpManager::closeFileForId);
+    connect(_server.manager(), &IrcManager::openFileForId, _ftpServer.manager(), &FtpManager::openFileForId, Qt::BlockingQueuedConnection);
+    connect(_server.manager(), &IrcManager::closeFileForId, _ftpServer.manager(), &FtpManager::closeFileForId, Qt::QueuedConnection);
     connect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
     connect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
     return;

@@ -79,6 +79,8 @@ void FtpConnections::readyRead()
     QTcpSocket* socket = (QTcpSocket*)sender();
     if(!socket) return;
     qDebug()<<this<<"is ready to read"<<socket;
+    qDebug()<<this<<socket->bytesAvailable()<<" bytes available to read";
+    if(socket->canReadLine()) qDebug()<<"Can read line";
     _manager.handleSocketReadyRead(socket);
     return;
 }

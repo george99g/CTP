@@ -116,35 +116,40 @@ void FtpManager::removeRecord(qint32 id)
 
 void FtpManager::handleSocketReadyRead(QTcpSocket* socket)
 {
-    while((unsigned)socket->bytesAvailable() >= sizeof(qint64)+sizeof(qint32))
+    while(socket->canReadLine())
     {
         qint64 size = 0;
         qint32 uid = -1;
         QByteArray fileData;
-        QByteArray data;
-        data = socket->read(2048*8+sizeof(qint64)+sizeof(qint32));
-        QDataStream dataStream(&data, QIODevice::ReadWrite);
+        QDataStream dataStream(socket);
         dataStream >> size;
-        dataStream >> uid;
-        fileData = dataStream.device()->readAll();
-        dataStream.device()->close();
         if(size == 0)
         {
+            qDebug()<<"id set";
+            dataStream >> uid;
+            QString temp;
+            dataStream >> temp;
             if(uid == -1)
-                return;
+                continue;
             addSocket(socket, uid);
-            return;
+            continue;
         }
-        QFile* file = _socketFileMap.value(getId(socket));
-        if(file == (QFile*)0)
-            return;
-        if(!file->isOpen())
+        else if(size == 1)
         {
-            if(file->open(QFile::Truncate|QFile::WriteOnly))
-                sendMessageToId(getId(socket), "FTP_OPEN_FILE_ERROR\r\n");
-            return;
+            QString data;
+            dataStream >> data;
+            data = data.trimmed();
+            fileData = QByteArray::fromBase64(data.toLocal8Bit());
+            qDebug()<<fileData;
+            QFile* file = _socketFileMap.value(getId(socket));
+            if(file == (QFile*)0)
+                continue;
+            if(!file->isOpen())
+                continue;
+            file->write(fileData);
+            file->flush();
+            file->waitForBytesWritten(1000);
         }
-        file->write(fileData);
     }
     return;
 }
@@ -160,31 +165,36 @@ void FtpManager::openFileForId(qint32 id, QString file)
     QFile* fileObj;
     fileObj = _socketFileMap.value(id);
     if(fileObj == (QFile*)0)
-    {
         fileObj = new QFile();
-        _socketFileMap.insert(id, fileObj);
-    }
     if(fileObj->isOpen())
         fileObj->close();
     fileObj->setFileName(file);
     if(!fileObj->open(QFile::Truncate|QFile::WriteOnly))
     {
-        qDebug()<<fileObj->fileName();
-        qDebug()<<fileObj->errorString();
+        qDebug()<<this<<"failed to open file"<<fileObj->fileName()<<"for "<<id<<" for the following reason: "<<fileObj->errorString();
         fileObj->deleteLater();
         _socketFileMap.insert(id, new QFile());
         sendMessageToId(id, "FTP_OPEN_FILE_ERROR\r\n");
+        return;
     }
+    _socketFileMap.insert(id, fileObj);
+    qDebug()<<this<<"successfully opened file"<<fileObj->fileName()<<"for "<<id;
     return;
 }
 
 void FtpManager::closeFileForId(qint32 id)
 {
     QFile* file = _socketFileMap.value(id);
+    if(file == (QFile*)0)
+    {
+        _socketFileMap.insert(id, new QFile());
+        qDebug()<<this<<"successfully created new file pointer for "<<id;
+    }
     if(file->isOpen())
         file->close();
     file->deleteLater();
     _socketFileMap.insert(id, new QFile());
+    qDebug()<<this<<"successfully closed file for "<<id;
     return;
 }
 

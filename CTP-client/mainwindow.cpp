@@ -465,6 +465,7 @@ void MainWindow::handleSocketReadyRead()
                 QDataStream dataStream(&data, QIODevice::ReadWrite);
                 dataStream << (qint64)0;
                 dataStream << id;
+                dataStream << QString("\r\n");
                 dataStream.device()->close();
                 _ftpSocket->write(data);
                 _ftpSocket->flush();
@@ -883,20 +884,23 @@ void MainWindow::handleFtpUploadRequest(QString file)
     _socket->write(QString("UPLOAD_FILE "+savingFile+"\r\n").toUtf8());
     _socket->flush();
     _socket->waitForBytesWritten();
-    while(!fileObj.atEnd())
+    while(fileObj.bytesAvailable() > 0)
     {
         QByteArray data;
         QDataStream ds(&data, QIODevice::ReadWrite);
-        ds << (qint64)(2048*8);
-        ds << (qint32)_ftpUid;
-        ds << fileObj.read(2048*8);
-        ds.device()->close();
+        ds << (qint64)1;
+        if(fileObj.bytesAvailable() > 1024)
+            ds << QString(fileObj.read(1024).toBase64()).append("\r\n");
+        else
+            ds << QString(fileObj.readAll().toBase64()).append("\r\n");
         _ftpSocket->write(data);
         _ftpSocket->flush();
         _ftpSocket->waitForBytesWritten();
     }
+    _ftpSocket->waitForBytesWritten();
     _socket->write("STOP_UPLOAD_FILE\r\n");
     _socket->flush();
+    _socket->waitForBytesWritten();
     fileObj.close();
     requestFileList();
     return;
