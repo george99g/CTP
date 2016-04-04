@@ -7,6 +7,7 @@ FileWidget::FileWidget(QWidget* parent) : QWidget(parent), ui(new Ui::FileWidget
     connect(ui->pushButtonRefresh, &QPushButton::pressed, this, &FileWidget::requestRefresh);
     connect(ui->pushButtonDownload, &QPushButton::pressed, this, &FileWidget::handleDownloadFileRequest);
     connect(ui->pushButtonUpload, &QPushButton::pressed, this, &FileWidget::handleSendFileRequest);
+    connect(ui->pushButtonDelete, &QPushButton::pressed, this, &FileWidget::handleDeleteFileRequest);
 }
 
 FileWidget::~FileWidget()
@@ -40,5 +41,13 @@ void FileWidget::handleSendFileRequest()
     if(file == "")
         return;
     emit sendFile(file);
+    return;
+}
+
+void FileWidget::handleDeleteFileRequest()
+{
+    QString file = "";
+    file = ui->listView->currentIndex().data().toString();
+    emit deleteFile(file);
     return;
 }

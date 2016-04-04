@@ -119,6 +119,7 @@ void MainWindow::loginAccepted()
     connect(_fileWidget, &FileWidget::requestRefresh, this, &MainWindow::requestFileList);
     connect(_fileWidget, &FileWidget::downloadFile, this, &MainWindow::handleFtpDownloadFileRequest);
     connect(_fileWidget, &FileWidget::sendFile, this, &MainWindow::handleFtpUploadRequest);
+    connect(_fileWidget, &FileWidget::deleteFile, this, &MainWindow::handleFtpDeleteRequest);
     ui->filesTab->layout()->addWidget(_fileWidget);
     ui->tabWidget->setCurrentIndex(0);
     requestChannelListPopulation();
@@ -245,6 +246,7 @@ void MainWindow::clearEverything()
         disconnect(_fileWidget, &FileWidget::requestRefresh, this, &MainWindow::requestFileList);
         disconnect(_fileWidget, &FileWidget::downloadFile, this, &MainWindow::handleFtpDownloadFileRequest);
         disconnect(_fileWidget, &FileWidget::sendFile, this, &MainWindow::handleFtpUploadRequest);
+        disconnect(_fileWidget, &FileWidget::deleteFile, this, &MainWindow::handleFtpDeleteRequest);
         _fileWidget->deleteLater();
         _fileWidget = (FileWidget*)0;
     }
@@ -476,7 +478,16 @@ void MainWindow::handleSocketReadyRead()
         {
             QStringList files;
             for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
-                files << messageParameters.at(i);
+                files << convertFromNoSpace(messageParameters.at(i));
+            _fileList.setStringList(files);
+            _fileWidget->listView()->setModel(&_fileList);
+        }
+        else if(messageParameters.at(0) == "FTP_DELETED_FILE" && messageParameters.count() == 2)
+        {
+            QString file = messageParameters.at(1);
+            file = convertFromNoSpace(file);
+            QStringList files = _fileList.stringList();
+            files.removeAll(file);
             _fileList.setStringList(files);
             _fileWidget->listView()->setModel(&_fileList);
         }
@@ -674,7 +685,7 @@ void MainWindow::handleFtpSocketReadyRead()
 
 void MainWindow::handleFtpDownloadFileRequest(QString file)
 {
-    QString saveFile = QFileDialog::getSaveFileName(this);
+    QString saveFile = QFileDialog::getSaveFileName(this, tr("saveFileDialog.saveFile"),  QDir::homePath()+'/'+file);
     if(saveFile == "")
         return;
     QFile saveFileObj(saveFile);
@@ -693,7 +704,17 @@ void MainWindow::handleFtpDownloadFileRequest(QString file)
         _socket->flush();
         return;
     }
-    _socket->write(QString("DOWNLOAD_FILE "+file+"\r\n").toUtf8());
+    _socket->write(QString("DOWNLOAD_FILE "+convertToNoSpace(file)+"\r\n").toUtf8());
+    _socket->flush();
+    return;
+}
+
+void MainWindow::handleFtpDeleteRequest(QString file)
+{
+    QString message = "DELETE_FILE ";
+    message += convertToNoSpace(file);
+    message += "\r\n";
+    _socket->write(message.toUtf8());
     _socket->flush();
     return;
 }
@@ -912,7 +933,7 @@ void MainWindow::handleFtpUploadRequest(QString file)
     QFile fileObj(file);
     if(!fileObj.open(QFile::ReadOnly))
         return;
-    QString savingFile = file.mid(file.lastIndexOf('/') + 1, -1).remove(' ');
+    QString savingFile = convertToNoSpace(file.mid(file.lastIndexOf('/') + 1, -1));
     if(_ftpSocket == (QTcpSocket*)0)
     {
         _ftpSocket = new QTcpSocket(this);

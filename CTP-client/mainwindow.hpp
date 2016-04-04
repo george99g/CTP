@@ -56,6 +56,7 @@ private:
     void handleFtpSocketError();
     void handleFtpSocketReadyRead();
     void handleFtpDownloadFileRequest(QString file);
+    void handleFtpDeleteRequest(QString file);
     void requestFileList();
     void handleSendQueryRequest();
     void handleRegisterUserRequest();

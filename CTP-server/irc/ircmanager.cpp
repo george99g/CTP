@@ -428,11 +428,13 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
         else if(messageParameters.at(0) == "GET_FILE_LIST")
             emit ftpRequestFileList(_clientIds.key(_clients.client(socket)), ".");
         else if(messageParameters.at(0) == "DOWNLOAD_FILE" && messageParameters.count() == 2)
-            emit sendFileToId(_clientIds.key(_clients.client(socket)), messageParameters.at(1));
+            emit sendFileToId(_clientIds.key(_clients.client(socket)), convertFromNoSpace(messageParameters.at(1)));
         else if(messageParameters.at(0) == "UPLOAD_FILE" && messageParameters.count() == 2)
-            emit openFileForId(_clientIds.key(_clients.client(socket)), messageParameters.at(1));
+            emit openFileForId(_clientIds.key(_clients.client(socket)), convertFromNoSpace(messageParameters.at(1)));
         else if(messageParameters.at(0) == "STOP_UPLOAD_FILE")
             emit closeFileForId(_clientIds.key(_clients.client(socket)));
+        else if(messageParameters.at(0) == "DELETE_FILE" && messageParameters.count() == 2)
+            emit deleteFileForId(_clientIds.key(_clients.client(socket)), convertFromNoSpace(messageParameters.at(1)));
         else if(messageParameters.at(0) == "GET_FTP_PORT")
         {
             qint32 uid = 0;
@@ -640,6 +642,20 @@ void IrcManager::ftpSendMessageToId(qint32 id, const QString &message)
     socket->write(message.toUtf8());
     socket->flush();
     return;
+}
+
+QString IrcManager::convertToNoSpace(QString string)
+{
+    string.replace("\\", "\\\\");
+    string.replace(" ", "\\s");
+    return string;
+}
+
+QString IrcManager::convertFromNoSpace(QString string)
+{
+    string.replace("\\\\", "\\");
+    string.replace("\\s", " ");
+    return string;
 }
 
 void IrcManager::setClientModeInDatabase(const QString &username, IrcMode *mode)

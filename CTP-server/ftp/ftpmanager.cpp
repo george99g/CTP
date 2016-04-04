@@ -268,6 +268,7 @@ void FtpManager::sendFileToId(qint32 id, QString file)
         socket->flush();
         qDebug()<<"send";
     }
+    fileObj.close();
     return;
 }
 
@@ -285,8 +286,38 @@ void FtpManager::requestFileList(qint32 id, QString dir)
     QDir dirObj(dir);
     dirObj.setFilter(QDir::Files);
     QStringList list = dirObj.entryList(QDir::NoFilter, QDir::NoSort);
+    for(unsigned i = 0; i < (unsigned)list.length(); i++)
+        list[i] = convertToNoSpace(list.at(i));
     emit sendFileList(id, list);
     return;
+}
+
+void FtpManager::deleteFileForId(qint32 id, QString file)
+{
+    QString userHomeDirectory = getUserHomeDirectory(_usernameIdMap.value(id));
+    file.replace("..", ".");
+    QDir fileDir(QApplication::applicationDirPath()+"/userfiles/"+userHomeDirectory+"/");
+    if(!fileDir.remove(file))
+    {
+        emit sendMessageToId(id, "FTP_OPEN_FILE_ERROR\r\n");
+        return;
+    }
+    emit sendMessageToId(id, "FTP_DELETED_FILE "+convertToNoSpace(file)+"\r\n");
+    return;
+}
+
+QString FtpManager::convertToNoSpace(QString string)
+{
+    string.replace("\\", "\\\\");
+    string.replace(" ", "\\s");
+    return string;
+}
+
+QString FtpManager::convertFromNoSpace(QString string)
+{
+    string.replace("\\\\", "\\");
+    string.replace("\\s", " ");
+    return string;
 }
 
 QString FtpManager::getUserHomeDirectory(const QString &username)

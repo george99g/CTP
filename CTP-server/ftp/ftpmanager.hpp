@@ -38,6 +38,9 @@ public:
     void generateHomeDirectoryForUser(QString username);
     void sendFileToId(qint32 id, QString file);
     void requestFileList(qint32 id, QString dir);
+    void deleteFileForId(qint32 id, QString file);
+    static QString convertToNoSpace(QString string);
+    static QString convertFromNoSpace(QString string);
 signals:
     void sendFileList(qint32 id, const QStringList &list);
     void sendMessageToId(qint32 id, const QString &message);

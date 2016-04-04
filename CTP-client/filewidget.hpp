@@ -27,9 +27,11 @@ signals:
     void requestRefresh();
     void downloadFile(QString file);
     void sendFile(QString file);
+    void deleteFile(QString file);
 private:
     void handleDownloadFileRequest();
     void handleSendFileRequest();
+    void handleDeleteFileRequest();
     Ui::FileWidget *ui;
 };
 

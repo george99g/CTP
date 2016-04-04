@@ -47,6 +47,7 @@ void Dialog::connectServers()
     connect(_server.manager(), &IrcManager::sendFileToId, _ftpServer.manager(), &FtpManager::sendFileToId);
     connect(_server.manager(), &IrcManager::openFileForId, _ftpServer.manager(), &FtpManager::openFileForId, Qt::BlockingQueuedConnection);
     connect(_server.manager(), &IrcManager::closeFileForId, _ftpServer.manager(), &FtpManager::closeFileForId, Qt::QueuedConnection);
+    connect(_server.manager(), &IrcManager::deleteFileForId, _ftpServer.manager(), &FtpManager::deleteFileForId);
     connect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
     connect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
     return;
@@ -61,6 +62,7 @@ void Dialog::disconnectServers()
     disconnect(_server.manager(), &IrcManager::sendFileToId, _ftpServer.manager(), &FtpManager::sendFileToId);
     disconnect(_server.manager(), &IrcManager::openFileForId, _ftpServer.manager(), &FtpManager::openFileForId);
     disconnect(_server.manager(), &IrcManager::closeFileForId, _ftpServer.manager(), &FtpManager::closeFileForId);
+    disconnect(_server.manager(), &IrcManager::deleteFileForId, _ftpServer.manager(), &FtpManager::deleteFileForId);
     disconnect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
     disconnect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
     return;

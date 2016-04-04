@@ -41,7 +41,10 @@ signals:
     void sendFileToId(qint32 id, QString file);
     void openFileForId(qint32 id, QString file);
     void closeFileForId(qint32 id);
+    void deleteFileForId(qint32 id, QString file);
 private:
+    static QString convertToNoSpace(QString string);
+    static QString convertFromNoSpace(QString string);
     void setClientModeInDatabase(const QString &username, IrcMode* mode);
     QString getClientModeFromDatabase(const QString &username);
     void sendMessageToUsername(const QString &username, const QString &message);
