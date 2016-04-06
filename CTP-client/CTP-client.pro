@@ -44,3 +44,6 @@ TRANSLATIONS += CTP_en.ts \
     CTP_bg.ts \
     CTP_ru.ts \
     CTP_de.ts
+
+RESOURCES += \
+    rsc.qrc

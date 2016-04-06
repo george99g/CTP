@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>dialog.getPartChannelName.title</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="rsc.qrc">
+    <normaloff>:/icons/icons/icon.png</normaloff>:/icons/icons/icon.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>6</number>
@@ -79,7 +83,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="rsc.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>pushButtonAccept</sender>
