@@ -38,6 +38,8 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
 {
     if(isLoggedIn(getUsername(socket)))
     {
+        if(CLIENT_MESSAGES_ARE_DEBUGGED)
+            qDebug()<<_clients.client(socket)->username()<<":"<<message;
         QStringList messageParameters = message.split(" ", QString::SkipEmptyParts);
         if(messageParameters.count() <= 0)
             return;
@@ -342,27 +344,37 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                                 targetMode.prepend('+');
                             if(targetMode.startsWith('+') && targetMode.length() == 2)
                             {
-                                IrcClient* client = _clients.client(targetUsername);
-                                client->mode()->addMode(targetMode.at(1));
-                                setClientModeInDatabase(client->username(), client->mode());
+                                QString modeStr = getClientModeFromDatabase(targetUsername);
+                                IrcMode* mode = new IrcMode(modeStr, this);
+                                mode->addMode(targetMode.at(1));
+                                setClientModeInDatabase(targetUsername, mode);
                                 QString sendMessage = "MODE ";
-                                sendMessage += client->username();
+                                sendMessage += targetUsername;
                                 sendMessage += ' ';
-                                sendMessage += client->mode()->toString();
+                                sendMessage += mode->toString();
                                 sendMessage += "\r\n";
+                                mode->deleteLater();
+                                IrcClient* client = _clients.client(targetUsername);
+                                if(client == (IrcClient*)0)
+                                    return;
                                 client->socket()->write(sendMessage.toUtf8());
                                 client->socket()->flush();
                             }
                             else if(targetMode.startsWith('-') && targetMode.length() == 2)
                             {
-                                IrcClient* client = _clients.client(targetUsername);
-                                client->mode()->removeMode(targetMode.at(1));
-                                setClientModeInDatabase(client->username(), client->mode());
+                                QString modeStr = getClientModeFromDatabase(targetUsername);
+                                IrcMode* mode = new IrcMode(modeStr, this);
+                                mode->removeMode(targetMode.at(1));
+                                setClientModeInDatabase(targetUsername, mode);
                                 QString sendMessage = "MODE ";
-                                sendMessage += client->username();
+                                sendMessage += targetUsername;
                                 sendMessage += ' ';
-                                sendMessage += client->mode()->toString();
+                                sendMessage += mode->toString();
                                 sendMessage += "\r\n";
+                                mode->deleteLater();
+                                IrcClient* client = _clients.client(targetUsername);
+                                if(client == (IrcClient*)0)
+                                    return;
                                 client->socket()->write(sendMessage.toUtf8());
                                 client->socket()->flush();
                             }

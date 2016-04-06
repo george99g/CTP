@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionRegisterUser, &QAction::triggered, this, &MainWindow::handleRegisterUserRequest);
     connect(ui->listViewChannels, &QListView::clicked, this, &MainWindow::handleChannelListChangeRequest);
     connect(ui->listViewUsers, &QListView::doubleClicked, this, &MainWindow::handlePmUserOpenRequest);
+    connect(ui->actionChangeUserMode, &QAction::triggered, this, &MainWindow::handleChangeUserModeRequest);
+    connect(ui->actionChangeChannelMode, &QAction::triggered, this, &MainWindow::handleChangeChannelModeRequest);
     _channelsModel.setStringList(_channelUsernames.keys());
     ui->listViewChannels->setModel(&_channelsModel);
     ui->listViewUsers->setModel(&_channelUsersModel.second);
@@ -841,6 +843,57 @@ void MainWindow::handleLogoutRequest()
     _socket->write("LOGOUT\r\n");
     _socket->flush();
     handleSocketDisconnected();
+    return;
+}
+
+void MainWindow::handleChangeUserModeRequest()
+{
+    UserModeDialog dialog;
+    dialog.listView()->setModel(&_usernamesModel);
+    dialog.setModal(true);
+    dialog.exec();
+    if(dialog.result() != QDialog::Accepted)
+        return;
+    bool teacher = dialog.teacher(), student = dialog.student(), administrator = dialog.administrator();
+    QString username = dialog.username();
+    if(username == "")
+        return;
+    if(teacher)
+    {
+        _socket->write(QString("MODE "+username+" +T\r\n").toUtf8());
+        _socket->flush();
+    }
+    else
+    {
+        _socket->write(QString("MODE "+username+" -T\r\n").toUtf8());
+        _socket->flush();
+    }
+    if(student)
+    {
+        _socket->write(QString("MODE "+username+" +S\r\n").toUtf8());
+        _socket->flush();
+    }
+    else
+    {
+        _socket->write(QString("MODE "+username+" -S\r\n").toUtf8());
+        _socket->flush();
+    }
+    if(administrator)
+    {
+        _socket->write(QString("MODE "+username+" +A\r\n").toUtf8());
+        _socket->flush();
+    }
+    else
+    {
+        _socket->write(QString("MODE "+username+" -A\r\n").toUtf8());
+        _socket->flush();
+    }
+    return;
+}
+
+void MainWindow::handleChangeChannelModeRequest()
+{
+
     return;
 }
 

@@ -193,6 +193,8 @@
     </property>
     <addaction name="actionSendQuery"/>
     <addaction name="actionRegisterUser"/>
+    <addaction name="actionChangeUserMode"/>
+    <addaction name="actionChangeChannelMode"/>
    </widget>
    <widget class="QMenu" name="languageMenu">
     <property name="title">
@@ -257,6 +259,16 @@
   <action name="actionRegisterUser">
    <property name="text">
     <string>action.registerUser</string>
+   </property>
+  </action>
+  <action name="actionChangeUserMode">
+   <property name="text">
+    <string>action.changeUserMode</string>
+   </property>
+  </action>
+  <action name="actionChangeChannelMode">
+   <property name="text">
+    <string>action.changeChannelMode</string>
    </property>
   </action>
  </widget>

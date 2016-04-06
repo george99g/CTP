@@ -7,6 +7,7 @@
 #include "registrationdialog.hpp"
 #include "partchanneldialog.hpp"
 #include "filewidget.hpp"
+#include "usermodedialog.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QDir>
@@ -66,6 +67,8 @@ private:
     void handleChannelListChangeRequest();
     void handlePmUserOpenRequest();
     void handleLogoutRequest();
+    void handleChangeUserModeRequest();
+    void handleChangeChannelModeRequest();
     void requestUsernamesForChannel(const QString& channel);
     void insertChatBoxWidget(const QString &target);
     void removeChatBoxWidget(const QString &target);
