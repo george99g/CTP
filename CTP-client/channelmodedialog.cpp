@@ -6,6 +6,7 @@ ChannelModeDialog::ChannelModeDialog(QWidget* parent) : QDialog(parent), ui(new 
     ui->setupUi(this);
     connect(ui->pushButtonSet, &QPushButton::pressed, this, &ChannelModeDialog::handleSetRequest);
     connect(ui->listView, &QListView::doubleClicked, this, &ChannelModeDialog::handleSetRequest);
+    connect(ui->pushButtonCancel, &QPushButton::pressed, this, &ChannelModeDialog::reject);
 }
 
 ChannelModeDialog::~ChannelModeDialog()

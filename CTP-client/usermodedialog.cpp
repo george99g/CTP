@@ -6,6 +6,7 @@ UserModeDialog::UserModeDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Us
     ui->setupUi(this);
     connect(ui->pushButtonSet, &QPushButton::pressed, this, &UserModeDialog::handleSetRequest);
     connect(ui->listView, &QListView::doubleClicked, this, &UserModeDialog::handleSetRequest);
+    connect(ui->pushButtonCancel, &QPushButton::pressed, this, &UserModeDialog::reject);
 }
 
 UserModeDialog::~UserModeDialog()

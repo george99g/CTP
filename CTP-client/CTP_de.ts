@@ -28,6 +28,11 @@
     </message>
     <message>
         <location filename="channelmodedialog.ui" line="88"/>
+        <source>registrationDialog.cancel</source>
+        <translation>Stornieren</translation>
+    </message>
+    <message>
+        <location filename="channelmodedialog.ui" line="95"/>
         <source>button.set</source>
         <translation>Set</translation>
     </message>
@@ -485,6 +490,11 @@
     </message>
     <message>
         <location filename="usermodedialog.ui" line="89"/>
+        <source>registrationDialog.cancel</source>
+        <translation>Stornieren</translation>
+    </message>
+    <message>
+        <location filename="usermodedialog.ui" line="96"/>
         <source>button.set</source>
         <translation>Set</translation>
     </message>
