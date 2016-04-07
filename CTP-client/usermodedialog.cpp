@@ -57,7 +57,7 @@ void UserModeDialog::setAdministrator(bool administrator)
     return;
 }
 
-QListView*UserModeDialog::listView()
+QListView* UserModeDialog::listView()
 {
     return ui->listView;
 }

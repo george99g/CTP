@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UserModeDialog</class>
- <widget class="QDialog" name="UserModeDialog">
+ <class>ChannelModeDialog</class>
+ <widget class="QDialog" name="ChannelModeDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>471</width>
+    <height>375</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>title.changeUserMode</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="rsc.qrc">
-    <normaloff>:/icons/icons/icon.png</normaloff>:/icons/icons/icon.png</iconset>
+   <string>title.changeChannelMode</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -49,6 +45,9 @@
       <widget class="QCheckBox" name="checkBoxTeacher">
        <property name="text">
         <string>mode.teacher</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -94,8 +93,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="rsc.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

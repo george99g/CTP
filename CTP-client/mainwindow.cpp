@@ -128,6 +128,7 @@ void MainWindow::loginAccepted()
     requestUserlistPopulation();
     requestMode(_username);
     requestFileList();
+    requestAllChannels();
     return;
 }
 
@@ -326,6 +327,14 @@ void MainWindow::handleSocketReadyRead()
                 _channelUsernames.remove(channelname);
                 _channelUsernames.insert(channelname, userlist);
             }
+        }
+        else if(messageParameters.at(0) == "CHANNELLIST" && messageParameters.count() > 1)
+        {
+            QStringList channellist;
+            for(unsigned i = 1; i < (unsigned)messageParameters.count(); i++)
+                channellist.push_back(convertFromNoSpace(messageParameters.at(i)));
+            _allChannels = channellist;
+            _allChannelsModel.setStringList(_allChannels);
         }
         else if(messageParameters.at(0) == "OFFLINE_USERLIST" && messageParameters.count() > 1)
         {
@@ -622,6 +631,13 @@ void MainWindow::requestMode(const QString &target)
     _socket->flush();
 }
 
+void MainWindow::requestAllChannels()
+{
+    _socket->write("GET_CHANNELLIST\r\n");
+    _socket->flush();
+    return;
+}
+
 void MainWindow::handleSocketError()
 {
     if(_loginDialog == (LoginDialog*)0)
@@ -858,6 +874,7 @@ void MainWindow::handleChangeUserModeRequest()
     QString username = dialog.username();
     if(username == "")
         return;
+    username = convertFromNoSpace(username);
     if(teacher)
     {
         _socket->write(QString("MODE "+username+" +T\r\n").toUtf8());
@@ -893,7 +910,47 @@ void MainWindow::handleChangeUserModeRequest()
 
 void MainWindow::handleChangeChannelModeRequest()
 {
-
+    ChannelModeDialog dialog;
+    dialog.listView()->setModel(&_allChannelsModel);
+    dialog.setModal(true);
+    dialog.exec();
+    if(dialog.result() != QDialog::Accepted)
+        return;
+    bool teacher = dialog.teacher(), student = dialog.student(), administrator = dialog.administrator();
+    QString channelname = dialog.channelname();
+    if(channelname == "")
+        return;
+    channelname = convertFromNoSpace(channelname);
+    if(teacher)
+    {
+        _socket->write(QString("MODE "+channelname+" +T\r\n").toUtf8());
+        _socket->flush();
+    }
+    else
+    {
+        _socket->write(QString("MODE "+channelname+" -T\r\n").toUtf8());
+        _socket->flush();
+    }
+    if(student)
+    {
+        _socket->write(QString("MODE "+channelname+" +S\r\n").toUtf8());
+        _socket->flush();
+    }
+    else
+    {
+        _socket->write(QString("MODE "+channelname+" -S\r\n").toUtf8());
+        _socket->flush();
+    }
+    if(administrator)
+    {
+        _socket->write(QString("MODE "+channelname+" +A\r\n").toUtf8());
+        _socket->flush();
+    }
+    else
+    {
+        _socket->write(QString("MODE "+channelname+" -A\r\n").toUtf8());
+        _socket->flush();
+    }
     return;
 }
 

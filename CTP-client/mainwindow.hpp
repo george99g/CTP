@@ -8,6 +8,7 @@
 #include "partchanneldialog.hpp"
 #include "filewidget.hpp"
 #include "usermodedialog.hpp"
+#include "channelmodedialog.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QDir>
@@ -51,6 +52,7 @@ private:
     void requestChannelListPopulation();
     void requestUserlistPopulation();
     void requestMode(const QString &target);
+    void requestAllChannels();
     void handleSocketError();
     void handleSocketDisconnected();
     void handleFtpSocketDisconnected();
@@ -99,6 +101,8 @@ private:
     QStringList _usernames;
     QMap<QString, ChatBoxWidget*> _pmTextBoxWidgets;
     QStringListModel _usernamesModel;
+    QStringList _allChannels;
+    QStringListModel _allChannelsModel;
     QMap<QString, QStringList> _channelUsernames;
     QMap<QString, ChatBoxWidget*> _textBoxWidgets;
     QStringListModel _channelnamesModel;

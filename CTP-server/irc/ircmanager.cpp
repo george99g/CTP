@@ -82,7 +82,7 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
         }
         else if(messageParameters.at(0) == "GET_CHANNELLIST" && messageParameters.count() == 1)
         {
-            QString output = "CHANELLIST";
+            QString output = "CHANNELLIST";
             output += " " + _channels->generateChannelList();
             output += "\r\n";
             socket->write(output.toUtf8());
