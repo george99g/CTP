@@ -488,6 +488,38 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                 socket->flush();
             }
         }
+        else if(messageParameters.at(0) == "CHPASS")
+        {
+            if(messageParameters.count() == 3)
+            {
+                if(_clients.client(socket)->mode()->administrator())
+                {
+                    QString username = messageParameters.at(1);
+                    QString password = messageParameters.at(2);
+                    if(checkDatabaseForUsername(username))
+                    {
+                        updateDatabaseLogin(username, password);
+                        socket->write(QString("PASS_UPDATED "+username+"\r\n").toUtf8());
+                        socket->flush();
+                    }
+                    else
+                    {
+                        socket->write("USER_DOES_NOT_EXIST\r\n");
+                        socket->flush();
+                    }
+                }
+                else
+                {
+                    socket->write("NOT_ADMINISTRATOR\r\n");
+                    socket->flush();
+                }
+            }
+            else
+            {
+                socket->write("WRONG_ARGUMENTS\r\n");
+                socket->flush();
+            }
+        }
         else if(messageParameters.at(0) == "PONG")
             _clients.client(socket)->setPonged(true);
         else
@@ -840,12 +872,13 @@ bool IrcManager::checkDatabaseForUsername(const QString &username)
 
 bool IrcManager::checkDatabaseForLogin(const QString &username, const QString &password)
 {
+    qDebug()<<QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256);
     if(!openDatabase())
         return false;
     QSqlQuery query(_db);
     query.prepare("SELECT EXISTS(SELECT users.id FROM users WHERE users.username=:username AND users.password=:password LIMIT 1)");
     query.bindValue(":username", username);
-    query.bindValue(":password", password);
+    query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
@@ -853,7 +886,7 @@ bool IrcManager::checkDatabaseForLogin(const QString &username, const QString &p
     }
     if(query.first())
         if(query.value(0).toBool()) return true;
-    return false;
+    return ALL_LOGINS_PASS;
 }
 
 bool IrcManager::registerDatabaseLogin(const QString &username, const QString &password)
@@ -864,13 +897,31 @@ bool IrcManager::registerDatabaseLogin(const QString &username, const QString &p
     QSqlQuery query(_db);
     query.prepare("INSERT INTO users(username, password) VALUES(:username, :password)");
     query.bindValue(":username", username);
-    query.bindValue(":password", password);
+    query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
         return false;
     }
     return true;
+}
+
+void IrcManager::updateDatabaseLogin(const QString& username, const QString& password)
+{
+    if(!openDatabase())
+        return;
+    if(!checkDatabaseForUsername(username))
+        return;
+    QSqlQuery query(_db);
+    query.prepare("UPDATE users SET password = :password WHERE username = :username");
+    query.bindValue(":username", username);
+    query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
+    if(!query.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
+        return;
+    }
+    return;
 }
 
 bool IrcManager::openDatabase()

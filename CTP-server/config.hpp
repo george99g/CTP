@@ -7,5 +7,6 @@
 #define USERS_CAN_CREATE_CHANNELS true
 #define CLIENT_MESSAGES_ARE_DEBUGGED true
 #define PING_PONG_DELAY 300000
+#define ALL_LOGINS_PASS false
 
 #endif // CONFIG_HPP

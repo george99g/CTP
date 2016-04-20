@@ -5,6 +5,7 @@ PartChannelDialog::PartChannelDialog(QWidget* parent) : QDialog(parent), ui(new 
 {
     ui->setupUi(this);
     connect(ui->listView, &QListView::doubleClicked, this, &PartChannelDialog::accept);
+    retranslateUi();
 }
 
 PartChannelDialog::~PartChannelDialog()

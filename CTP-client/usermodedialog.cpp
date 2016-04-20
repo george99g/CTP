@@ -7,6 +7,7 @@ UserModeDialog::UserModeDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Us
     connect(ui->pushButtonSet, &QPushButton::pressed, this, &UserModeDialog::handleSetRequest);
     connect(ui->listView, &QListView::doubleClicked, this, &UserModeDialog::handleSetRequest);
     connect(ui->pushButtonCancel, &QPushButton::pressed, this, &UserModeDialog::reject);
+    retranslateUi();
 }
 
 UserModeDialog::~UserModeDialog()
@@ -73,5 +74,11 @@ void UserModeDialog::handleSetRequest()
     _teacher = ui->checkBoxTeacher->isChecked();
     _student = ui->checkBoxStudent->isChecked();
     accept();
+    return;
+}
+
+void UserModeDialog::retranslateUi()
+{
+    ui->retranslateUi(this);
     return;
 }

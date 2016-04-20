@@ -195,6 +195,7 @@
     <addaction name="actionRegisterUser"/>
     <addaction name="actionChangeUserMode"/>
     <addaction name="actionChangeChannelMode"/>
+    <addaction name="actionChangePassword"/>
    </widget>
    <widget class="QMenu" name="languageMenu">
     <property name="title">
@@ -269,6 +270,11 @@
   <action name="actionChangeChannelMode">
    <property name="text">
     <string>action.changeChannelMode</string>
+   </property>
+  </action>
+  <action name="actionChangePassword">
+   <property name="text">
+    <string>action.changePassword</string>
    </property>
   </action>
  </widget>

@@ -7,6 +7,7 @@ ChannelModeDialog::ChannelModeDialog(QWidget* parent) : QDialog(parent), ui(new 
     connect(ui->pushButtonSet, &QPushButton::pressed, this, &ChannelModeDialog::handleSetRequest);
     connect(ui->listView, &QListView::doubleClicked, this, &ChannelModeDialog::handleSetRequest);
     connect(ui->pushButtonCancel, &QPushButton::pressed, this, &ChannelModeDialog::reject);
+    retranslateUi();
 }
 
 ChannelModeDialog::~ChannelModeDialog()
@@ -60,6 +61,12 @@ bool ChannelModeDialog::administrator()
 void ChannelModeDialog::setAdministrator(bool administrator)
 {
     _administrator = administrator;
+    return;
+}
+
+void ChannelModeDialog::retranslateUi()
+{
+    ui->retranslateUi(this);
     return;
 }
 

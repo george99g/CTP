@@ -9,6 +9,7 @@
 #include "filewidget.hpp"
 #include "usermodedialog.hpp"
 #include "channelmodedialog.hpp"
+#include "changepassworddialog.hpp"
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QDir>
@@ -63,6 +64,7 @@ private:
     void requestFileList();
     void handleSendQueryRequest();
     void handleRegisterUserRequest();
+    void handleChangeUserPasswordRequest();
     void handleJoinChannelRequest();
     void handlePartChannelRequest();
     void handleChannelRefreshRequest();

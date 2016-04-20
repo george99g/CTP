@@ -2,6 +2,34 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="en_US">
 <context>
+    <name>ChangePasswordDialog</name>
+    <message>
+        <location filename="changepassworddialog.ui" line="14"/>
+        <source>changePasswordDialog.title</source>
+        <translation>Change a user&apos;s password</translation>
+    </message>
+    <message>
+        <location filename="changepassworddialog.ui" line="22"/>
+        <source>registrationDialog.username</source>
+        <translation>Username:</translation>
+    </message>
+    <message>
+        <location filename="changepassworddialog.ui" line="32"/>
+        <source>registrationDialog.password</source>
+        <translation>Password:</translation>
+    </message>
+    <message>
+        <location filename="changepassworddialog.ui" line="63"/>
+        <source>registrationDialog.accept</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="changepassworddialog.ui" line="70"/>
+        <source>registrationDialog.cancel</source>
+        <translation>Cancel</translation>
+    </message>
+</context>
+<context>
     <name>ChannelModeDialog</name>
     <message>
         <location filename="channelmodedialog.ui" line="14"/>
@@ -207,202 +235,207 @@
         <translation>Administration</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="201"/>
+        <location filename="mainwindow.ui" line="202"/>
         <source>menu.language</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="223"/>
+        <location filename="mainwindow.ui" line="224"/>
         <source>action.exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="228"/>
+        <location filename="mainwindow.ui" line="229"/>
         <source>action.joinChannel</source>
         <translation>Join channel...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="233"/>
+        <location filename="mainwindow.ui" line="234"/>
         <source>action.partChannel</source>
         <translation>Part channel...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="238"/>
+        <location filename="mainwindow.ui" line="239"/>
         <source>action.logOut</source>
         <translation>Log out</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="243"/>
+        <location filename="mainwindow.ui" line="244"/>
         <source>action.refreshChannels</source>
         <translation>Refresh</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="251"/>
+        <location filename="mainwindow.ui" line="252"/>
         <source>action.sendQuery</source>
         <translation>Send query...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="256"/>
+        <location filename="mainwindow.ui" line="257"/>
         <source>action.showPrivateMessages</source>
         <translation>Show PMs</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="261"/>
+        <location filename="mainwindow.ui" line="262"/>
         <source>action.registerUser</source>
         <translation>Register user...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="266"/>
+        <location filename="mainwindow.ui" line="267"/>
         <source>action.changeUserMode</source>
         <translation>Change user mode...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="271"/>
+        <location filename="mainwindow.ui" line="272"/>
         <source>action.changeChannelMode</source>
         <translation>Change channel mode...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="379"/>
+        <location filename="mainwindow.ui" line="277"/>
+        <source>action.changePassword</source>
+        <translation>Change a user&apos;s password...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="380"/>
         <source>message.join</source>
         <translation>JOIN</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="392"/>
+        <location filename="mainwindow.cpp" line="393"/>
         <source>message.part</source>
         <translation>PART</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="553"/>
+        <location filename="mainwindow.cpp" line="554"/>
         <source>warning.channelDoesNotExist</source>
         <translation>Channel does not exist</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="553"/>
+        <location filename="mainwindow.cpp" line="554"/>
         <source>warning.channelDoesNotExist.text</source>
         <translation>The application has attempted to interface with a channel which does not exist.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="555"/>
+        <location filename="mainwindow.cpp" line="556"/>
         <source>warning.userDoesNotExist</source>
         <translation>User does not exist</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="555"/>
+        <location filename="mainwindow.cpp" line="556"/>
         <source>warning.userDoesNotExist.text</source>
         <translation>The application has attempted to interface with a user who does not exist.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="557"/>
+        <location filename="mainwindow.cpp" line="558"/>
         <source>warning.wrongParameters</source>
         <translation>Wrong parameters</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="557"/>
+        <location filename="mainwindow.cpp" line="558"/>
         <source>warning.wrongParameters.text</source>
         <translation>The application has sent a command with incorrect parameters.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="559"/>
+        <location filename="mainwindow.cpp" line="560"/>
         <source>warning.userIsNotLoggedIn</source>
         <translation>User is not logged in</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="559"/>
+        <location filename="mainwindow.cpp" line="560"/>
         <source>warning.userIsNotLoggedIn.text:%1</source>
         <translation>The following user is not logged in: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="561"/>
+        <location filename="mainwindow.cpp" line="562"/>
         <source>warning.notInChannel</source>
         <translation>Not in channel</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="561"/>
+        <location filename="mainwindow.cpp" line="562"/>
         <source>warning.notInChannel.text:%1</source>
         <translation>You are not in the following channel: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="563"/>
+        <location filename="mainwindow.cpp" line="564"/>
         <source>warning.notAdministrator</source>
         <translation>Not administrator</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="563"/>
+        <location filename="mainwindow.cpp" line="564"/>
         <source>warning.notAdministrator.text</source>
         <translation>The application has attempted to issue a command which requires administrator permissions.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="565"/>
+        <location filename="mainwindow.cpp" line="566"/>
         <source>warning.alreadyInChannel</source>
         <translation>Already in channel</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="565"/>
+        <location filename="mainwindow.cpp" line="566"/>
         <source>warning.alreadyInChannel.text:%1</source>
         <translation>You are already in the following channel: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="567"/>
+        <location filename="mainwindow.cpp" line="568"/>
         <source>warning.notAllowedInChannel</source>
         <translation>Not allowed in channel</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="567"/>
+        <location filename="mainwindow.cpp" line="568"/>
         <source>warning.notAllowedInChannel.text</source>
         <translation>You attempted to enter a channel for which you have no permission to enter.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="mainwindow.cpp" line="570"/>
         <source>warning.queryError</source>
         <translation>Query error</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="mainwindow.cpp" line="570"/>
         <source>warning.queryError.text</source>
         <translation>The query you have sent is incorrect.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="571"/>
+        <location filename="mainwindow.cpp" line="572"/>
         <source>warning.usersCannotChangeChannels</source>
         <translation>User cannot change channels</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="571"/>
+        <location filename="mainwindow.cpp" line="572"/>
         <source>warning.usersCannotChangeChannels.text</source>
         <translation>The system administrator has not allowed users to change channels.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="573"/>
+        <location filename="mainwindow.cpp" line="574"/>
         <source>warning.ftp.fileError</source>
         <translation>File error</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="573"/>
+        <location filename="mainwindow.cpp" line="574"/>
         <source>warning.ftp.fileError.text</source>
         <translation>There was a problem with the file operation.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="706"/>
+        <location filename="mainwindow.cpp" line="707"/>
         <source>saveFileDialog.saveFile</source>
         <translation>Save file</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="750"/>
+        <location filename="mainwindow.cpp" line="751"/>
         <source>dialog.getQuery.title</source>
         <translation>Query</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="750"/>
+        <location filename="mainwindow.cpp" line="751"/>
         <source>dialog.getQuery.content</source>
         <translation>Enter an SQLite query to be executed</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="789"/>
+        <location filename="mainwindow.cpp" line="815"/>
         <source>dialog.getJoinChannelName.title</source>
         <translation>Joining channel</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="789"/>
+        <location filename="mainwindow.cpp" line="815"/>
         <source>dialog.getJoinChannelName.content</source>
         <translation>Enter a channel to be joined</translation>
     </message>

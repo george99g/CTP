@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     linktextedit.cpp \
     filewidget.cpp \
     usermodedialog.cpp \
-    channelmodedialog.cpp
+    channelmodedialog.cpp \
+    changepassworddialog.cpp
 
 HEADERS  += mainwindow.hpp \
     logindialog.hpp \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.hpp \
     linktextedit.hpp \
     filewidget.hpp \
     usermodedialog.hpp \
-    channelmodedialog.hpp
+    channelmodedialog.hpp \
+    changepassworddialog.hpp
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
@@ -45,7 +47,8 @@ FORMS    += mainwindow.ui \
     partchanneldialog.ui \
     filewidget.ui \
     usermodedialog.ui \
-    channelmodedialog.ui
+    channelmodedialog.ui \
+    changepassworddialog.ui
 TRANSLATIONS += CTP_en.ts \
     CTP_bg.ts \
     CTP_ru.ts \

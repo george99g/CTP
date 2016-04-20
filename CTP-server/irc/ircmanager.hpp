@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QThread>
 #include <qmath.h>
+#include <QCryptographicHash>
 #include "../config.hpp"
 #include "ircclients.hpp"
 #include "ircchannels.hpp"
@@ -55,6 +56,7 @@ private:
     bool checkDatabaseForUsername(const QString &username);
     bool checkDatabaseForLogin(const QString &username, const QString &password);
     bool registerDatabaseLogin(const QString &username, const QString &password);
+    void updateDatabaseLogin(const QString &username, const QString &password);
     bool openDatabase();
     void handlePings();
     QTcpSocket* getSocket(const QString &username);

@@ -32,6 +32,7 @@ private:
     bool _teacher;
     bool _administrator;
     void handleSetRequest();
+    void retranslateUi();
     Ui::UserModeDialog* ui;
 };
 

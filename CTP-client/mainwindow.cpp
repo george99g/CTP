@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->listViewUsers, &QListView::doubleClicked, this, &MainWindow::handlePmUserOpenRequest);
     connect(ui->actionChangeUserMode, &QAction::triggered, this, &MainWindow::handleChangeUserModeRequest);
     connect(ui->actionChangeChannelMode, &QAction::triggered, this, &MainWindow::handleChangeChannelModeRequest);
+    connect(ui->actionChangePassword, &QAction::triggered, this, &MainWindow::handleChangeUserPasswordRequest);
     _channelsModel.setStringList(_channelUsernames.keys());
     ui->listViewChannels->setModel(&_channelsModel);
     ui->listViewUsers->setModel(&_channelUsersModel.second);
@@ -774,6 +775,31 @@ void MainWindow::handleRegisterUserRequest()
     if(password == "")
         return;
     QString sendMessage = "ADD_USER ";
+    sendMessage += convertToNoSpace(username);
+    sendMessage += ' ';
+    sendMessage += convertToNoSpace(password);
+    sendMessage += "\r\n";
+    _socket->write(sendMessage.toUtf8());
+    _socket->flush();
+    return;
+}
+
+void MainWindow::handleChangeUserPasswordRequest()
+{
+    QString username = "";
+    QString password = "";
+    ChangePasswordDialog chpassDialog(this);
+    chpassDialog.setModal(true);
+    chpassDialog.exec();
+    if(chpassDialog.result() != QDialog::Accepted)
+        return;
+    username = chpassDialog.username();
+    if(username == "")
+        return;
+    password = chpassDialog.password();
+    if(password == "")
+        return;
+    QString sendMessage = "CHPASS ";
     sendMessage += convertToNoSpace(username);
     sendMessage += ' ';
     sendMessage += convertToNoSpace(password);

@@ -26,6 +26,7 @@ public:
     bool administrator();
     void setAdministrator(bool administrator);
 private:
+    void retranslateUi();
     void handleSetRequest();
     QString _channelname;
     bool _teacher;

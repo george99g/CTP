@@ -8,6 +8,7 @@ FileWidget::FileWidget(QWidget* parent) : QWidget(parent), ui(new Ui::FileWidget
     connect(ui->pushButtonDownload, &QPushButton::pressed, this, &FileWidget::handleDownloadFileRequest);
     connect(ui->pushButtonUpload, &QPushButton::pressed, this, &FileWidget::handleSendFileRequest);
     connect(ui->pushButtonDelete, &QPushButton::pressed, this, &FileWidget::handleDeleteFileRequest);
+    retranslateUi();
 }
 
 FileWidget::~FileWidget()
