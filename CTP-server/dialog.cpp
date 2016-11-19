@@ -5,6 +5,7 @@ Dialog::Dialog(QWidget* parent) : QDialog(parent), ui(new Ui::Dialog)
 {
     ui->setupUi(this);
     connect(ui->checkBoxRun, &QCheckBox::toggled, this, &Dialog::tickBoxToggled);
+	connect(ui->pushButtonAddAdmin, &QPushButton::pressed, this, &Dialog::addAdmin);
 }
 
 Dialog::~Dialog()
@@ -65,5 +66,37 @@ void Dialog::disconnectServers()
     disconnect(_server.manager(), &IrcManager::deleteFileForId, _ftpServer.manager(), &FtpManager::deleteFileForId);
     disconnect(_ftpServer.manager(), &FtpManager::sendFileList, _server.manager(), &IrcManager::ftpReceiveFileList);
     disconnect(_ftpServer.manager(), &FtpManager::sendMessageToId, _server.manager(), &IrcManager::ftpSendMessageToId);
-    return;
+	return;
+}
+
+void Dialog::addAdmin()
+{
+	if(!_server.isListening())
+	{
+		QMessageBox::warning(this, "Error", "Server not running. Could not add user.", QMessageBox::Ok);
+		return;
+	}
+	IrcManager* manager = _server.manager();
+	if(!manager)
+	{
+		QMessageBox::warning(this, "Error", "Could not get IRC manager pointer. User not added.", QMessageBox::Ok);
+		return;
+	}
+	if(ui->lineEditUsername->text().isEmpty())
+	{
+		QMessageBox::warning(this, "Error", "You haven't specified a username.", QMessageBox::Ok);
+		return;
+	}
+	if(ui->lineEditPassword->text().isEmpty())
+	{
+		QMessageBox::warning(this, "Error", "You haven't specified a password.", QMessageBox::Ok);
+		return;
+	}
+	if(!manager->registerDatabaseLogin(ui->lineEditUsername->text(), ui->lineEditPassword->text(), IrcMode("A")))
+	{
+		QMessageBox::warning(this, "Error", "Registering the user failed.", QMessageBox::Ok);
+		return;
+	}
+	ui->lineEditUsername->setText("");
+	ui->lineEditPassword->setText("");
 }

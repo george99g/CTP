@@ -1,6 +1,6 @@
 #include "ircmode.hpp"
 
-IrcMode::IrcMode(QString mode, QObject* parent) : QObject(parent)
+IrcMode::IrcMode(QString mode)
 {
     _student = false;
     _teacher = false;

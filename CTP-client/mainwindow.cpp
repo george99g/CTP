@@ -346,7 +346,7 @@ void MainWindow::handleSocketReadyRead()
                 if(!_usernames.contains(convertFromNoSpace(messageParameters.at(i))))
                     insertPmChatBoxWidget(convertFromNoSpace(messageParameters.at(i)));
             }
-            if(!userlist.count() > _username.count())
+			if(!(userlist.count() > _username.count()))
                 for(unsigned i = 0; i < (unsigned)_usernames.count(); i++)
                     if(!userlist.contains(_usernames.at(i)))
                         removePmChatBoxWidget(_usernames.at(i));

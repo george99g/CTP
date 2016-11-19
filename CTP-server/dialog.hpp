@@ -2,6 +2,7 @@
 #define DIALOG_HPP
 
 #include <QDialog>
+#include <QMessageBox>
 #include "config.hpp"
 #include "irc/ircserver.hpp"
 #include "ftp/ftpserver.hpp"
@@ -23,6 +24,7 @@ private slots:
 private:
     void connectServers();
     void disconnectServers();
+	void addAdmin();
     Ui::Dialog* ui;
     IrcServer _server;
     FtpServer _ftpServer;

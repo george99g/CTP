@@ -1,13 +1,12 @@
 #ifndef IRCMODE_HPP
 #define IRCMODE_HPP
 
-#include <QObject>
+#include <QString>
 
-class IrcMode : public QObject
+class IrcMode
 {
-    Q_OBJECT
 public:
-    explicit IrcMode(QString mode = "", QObject* parent = 0);
+	IrcMode(QString mode = "");
     ~IrcMode();
     QString toString();
     void fromString(const QString &string);

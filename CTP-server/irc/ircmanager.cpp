@@ -345,7 +345,7 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                             if(targetMode.startsWith('+') && targetMode.length() == 2)
                             {
                                 QString modeStr = getClientModeFromDatabase(targetUsername);
-                                IrcMode* mode = new IrcMode(modeStr, this);
+								IrcMode* mode = new IrcMode(modeStr);
                                 mode->addMode(targetMode.at(1));
                                 setClientModeInDatabase(targetUsername, mode);
                                 QString sendMessage = "MODE ";
@@ -353,7 +353,7 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                                 sendMessage += ' ';
                                 sendMessage += mode->toString();
                                 sendMessage += "\r\n";
-                                mode->deleteLater();
+								delete mode;
                                 IrcClient* client = _clients.client(targetUsername);
                                 if(client == (IrcClient*)0)
                                     return;
@@ -363,7 +363,7 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                             else if(targetMode.startsWith('-') && targetMode.length() == 2)
                             {
                                 QString modeStr = getClientModeFromDatabase(targetUsername);
-                                IrcMode* mode = new IrcMode(modeStr, this);
+								IrcMode* mode = new IrcMode(modeStr);
                                 mode->removeMode(targetMode.at(1));
                                 setClientModeInDatabase(targetUsername, mode);
                                 QString sendMessage = "MODE ";
@@ -371,7 +371,7 @@ void IrcManager::handleMessage(QTcpSocket* socket, const QString &message)
                                 sendMessage += ' ';
                                 sendMessage += mode->toString();
                                 sendMessage += "\r\n";
-                                mode->deleteLater();
+								delete mode;
                                 IrcClient* client = _clients.client(targetUsername);
                                 if(client == (IrcClient*)0)
                                     return;
@@ -889,15 +889,16 @@ bool IrcManager::checkDatabaseForLogin(const QString &username, const QString &p
     return ALL_LOGINS_PASS;
 }
 
-bool IrcManager::registerDatabaseLogin(const QString &username, const QString &password)
+bool IrcManager::registerDatabaseLogin(const QString &username, const QString &password, IrcMode mode)
 {
     if(!openDatabase())
         return false;
     if(checkDatabaseForUsername(username)) return false;
     QSqlQuery query(_db);
-    query.prepare("INSERT INTO users(username, password) VALUES(:username, :password)");
+	query.prepare("INSERT INTO users(username, password, mode) VALUES(:username, :password, :mode)");
     query.bindValue(":username", username);
     query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
+	query.bindValue(":mode", mode.toString());
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();

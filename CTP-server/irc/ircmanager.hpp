@@ -34,6 +34,7 @@ public:
     qint16 ftpPort();
     void ftpReceiveFileList(qint32 id, const QStringList &list);
     void ftpSendMessageToId(qint32 id, const QString &message);
+	bool registerDatabaseLogin(const QString &username, const QString &password, IrcMode mode = IrcMode("S"));
 signals:
     void ftpAddUsernameIdPair(const QString &username, qint32 id);
     void ftpRemoveRecord(qint32 id);
@@ -55,7 +56,6 @@ private:
     QString generateOfflineClientList();
     bool checkDatabaseForUsername(const QString &username);
     bool checkDatabaseForLogin(const QString &username, const QString &password);
-    bool registerDatabaseLogin(const QString &username, const QString &password);
     void updateDatabaseLogin(const QString &username, const QString &password);
     bool openDatabase();
     void handlePings();
