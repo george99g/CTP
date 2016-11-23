@@ -8,7 +8,7 @@ IrcManager::IrcManager(QThread* thread, QObject* parent) : QObject(parent), _cli
     if(openDatabase())
     {
         QSqlQuery query(_db);
-        if(!query.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT, mode TEXT DEFAULT \"S\")"))
+		if(!query.exec("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username TEXT, password TEXT, salt TEXT, mode TEXT DEFAULT \"S\")"))
             qDebug()<<this<<"error with users table creation query: "<<query.lastError().text();
         if(!query.exec("CREATE TABLE IF NOT EXISTS offline_messages(id INTEGER PRIMARY KEY, receiver INTEGER, sender INTEGER, message TEXT, time TEXT)"))
             qDebug()<<this<<"error with offline messages table creation query: "<<query.lastError().text();
@@ -916,7 +916,7 @@ void IrcManager::updateDatabaseLogin(const QString& username, const QString& pas
     QSqlQuery query(_db);
     query.prepare("UPDATE users SET password = :password WHERE username = :username");
     query.bindValue(":username", username);
-    query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
+	query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
