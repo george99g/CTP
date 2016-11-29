@@ -50,9 +50,7 @@ FORMS    += mainwindow.ui \
     channelmodedialog.ui \
     changepassworddialog.ui
 TRANSLATIONS += CTP_en.ts \
-    CTP_bg.ts \
-    CTP_ru.ts \
-    CTP_de.ts
+    CTP_bg.ts
 
 RESOURCES += \
     rsc.qrc

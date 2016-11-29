@@ -1,17 +1,18 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
 
-LoginDialog::LoginDialog(QTcpSocket *socket, Configuration* config, QWidget *parent) : QDialog(parent), ui(new Ui::LoginDialog)
+LoginDialog::LoginDialog(QTcpSocket *socket, Configuration* config, const QStringList& supportedLanguages, QWidget *parent) : QDialog(parent), ui(new Ui::LoginDialog)
 {
     ui->setupUi(this);
     _socket = socket;
-    connect(ui->pushButtonCancel, &QPushButton::clicked, this, &LoginDialog::handleLoginCancel);
+	connect(ui->pushButtonCancel, &QPushButton::pressed, this, &LoginDialog::handleLoginCancel);
     connect(this, &LoginDialog::rejected, this, &LoginDialog::handleLoginCancel);
-    connect(ui->pushButtonLogin, &QPushButton::clicked, this, &LoginDialog::handleLoginRequest);
+	connect(ui->pushButtonLogin, &QPushButton::pressed, this, &LoginDialog::handleLoginRequest);
     connect(_socket, &QTcpSocket::connected, this, &LoginDialog::handleSocketConnection);
     connect(_socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &LoginDialog::handleSocketError);
     connect(_socket, &QTcpSocket::readyRead, this, &LoginDialog::handleSocketReadyRead);
     connect(_socket, &QTcpSocket::stateChanged, this, &LoginDialog::handleSocketStateChanged);
+	connect(ui->toolButtonLanguage, &QPushButton::pressed, this, &LoginDialog::handleLanguageChangeRequest);
     ui->progressBarConnection->setMinimum(0);
     ui->progressBarConnection->setValue(0);
     ui->progressBarConnection->setMaximum(5);
@@ -19,6 +20,7 @@ LoginDialog::LoginDialog(QTcpSocket *socket, Configuration* config, QWidget *par
     _username = "";
     _hostname = "";
     _config = config;
+	_supportedLanguages = supportedLanguages;
     retranslateUi();
     if(_config->autoLogin())
         handleAutoLogin();
@@ -189,5 +191,16 @@ void LoginDialog::handleSocketStateChanged(QAbstractSocket::SocketState socketSt
     default:
         break;
     }
-    return;
+	return;
+}
+
+void LoginDialog::handleLanguageChangeRequest()
+{
+	QStringList userLanguageNames;
+	for(QString item : _supportedLanguages)
+		userLanguageNames.push_back(QLocale::languageToString(QLocale(item).language()));
+	bool ok;
+	QString item = QInputDialog::getItem(this, tr("login.selectLanguage.title"), tr("login.selectLanguage.label"), userLanguageNames, 0, false, &ok, Qt::Dialog);
+	if(ok && !item.isEmpty())
+		emit languageChanged(_supportedLanguages[userLanguageNames.indexOf(item)]);
 }

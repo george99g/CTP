@@ -41,6 +41,7 @@ public slots:
     Configuration* config();
 private:
     void languageChanged(QAction* action);
+	void handleLoginDialogLanguageChanged(QString language);
     void configureLanguages();
     bool loadLanguage(const QString &language);
     bool switchTranslator(QTranslator &translator, const QString &filename);

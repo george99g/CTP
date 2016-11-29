@@ -6,6 +6,7 @@
 #include <QTcpSocket>
 #include <QMessageBox>
 #include <QHostAddress>
+#include <QInputDialog>
 
 namespace Ui
 {
@@ -17,7 +18,7 @@ class LoginDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit LoginDialog(QTcpSocket* socket, Configuration* config, QWidget *parent = 0);
+	explicit LoginDialog(QTcpSocket* socket, Configuration* config, const QStringList& supportedLanguages, QWidget *parent = 0);
     ~LoginDialog();
     QString getUsername();
     QString getHostname();
@@ -27,6 +28,7 @@ public:
 signals:
     void loginCancelled();
     void loginAccepted();
+	void languageChanged(QString language);
 private:
     Ui::LoginDialog *ui;
     QTcpSocket* _socket;
@@ -39,9 +41,11 @@ private:
     void handleInvalidAuthentication();
     void handleSocketError();
     void handleSocketStateChanged(QAbstractSocket::SocketState socketState);
+	void handleLanguageChangeRequest();
     QString _username;
     QString _hostname;
     Configuration* _config;
+	QStringList _supportedLanguages;
 };
 
 #endif // LOGINDIALOG_HPP

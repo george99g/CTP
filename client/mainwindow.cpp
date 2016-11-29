@@ -1,23 +1,17 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 
-//This file was written in a hurry, so it might be slightly hard to read
-//I suggest reading all other files, including the server ones, before reading this one
-
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     _socket = new QTcpSocket(this);
     _ftpSocket = new QTcpSocket(this);
     _config.loadFromFile();
-    _loginDialog = new LoginDialog(_socket, &_config);
-    _pmWindow = (PrivateMessageWindow*)0;
-    _fileWidget = (FileWidget*)0;
+	_pmWindow = nullptr;
+	_fileWidget = nullptr;
     _ftpUid = 0;
     _hostname = "localhost";
     _ftpPort = 0;
-    connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
-    connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
     connect(ui->actionPartChannel, &QAction::triggered, this, &MainWindow::handlePartChannelRequest);
     connect(ui->actionJoinChannel, &QAction::triggered, this, &MainWindow::handleJoinChannelRequest);
     connect(ui->actionRefreshChannels, &QAction::triggered, this, &MainWindow::handleChannelRefreshRequest);
@@ -34,7 +28,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _channelsModel.setStringList(_channelUsernames.keys());
     ui->listViewChannels->setModel(&_channelsModel);
     ui->listViewUsers->setModel(&_channelUsersModel.second);
-    _loginDialog->show();
     _isAdmin = false;
     _isStudent = false;
     _isTeacher = false;
@@ -42,31 +35,36 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     _ftpConnected = false;
     _readQueue = QStringList();
     _currentLanguage = "";
-    _uploadingFile = "";
-    configureLanguages();
+	_uploadingFile = "";
+	configureLanguages();
+	_loginDialog = new LoginDialog(_socket, &_config, _installedLanguages);
+	connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
+	connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
+	connect(_loginDialog, &LoginDialog::languageChanged, this, &MainWindow::handleLoginDialogLanguageChanged);
+	_loginDialog->show();
 }
 
 MainWindow::~MainWindow()
 {
     clearEverything();
-    if(_loginDialog != (LoginDialog*)0)
+	if(_loginDialog)
     {
         _loginDialog->deleteLater();
-        _loginDialog = (LoginDialog*)0;
+		_loginDialog = nullptr;
     }
-    if(_pmWindow != (PrivateMessageWindow*)0)
+	if(_pmWindow)
     {
         _config.setPmSplitterSizes(_pmWindow->splitterSizes());
         _config.saveToFile();
         _pmWindow->deleteLater();
-        _pmWindow = (PrivateMessageWindow*)0;
+		_pmWindow = nullptr;
     }
-    if(_loginDialog != (LoginDialog*)0)
+	if(_loginDialog)
     {
         _loginDialog->deleteLater();
-        _loginDialog = (LoginDialog*)0;
+		_loginDialog = nullptr;
     }
-    if(_socket != (QTcpSocket*)0)
+	if(_socket)
     {
         if(_socket->isOpen())
         {
@@ -74,9 +72,9 @@ MainWindow::~MainWindow()
             _socket->close();
         }
         _socket->deleteLater();
-        _socket = (QTcpSocket*)0;
+		_socket = nullptr;
     }
-    if(_ftpSocket != (QTcpSocket*)0)
+	if(_ftpSocket)
     {
         if(_ftpSocket->isOpen())
         {
@@ -84,7 +82,7 @@ MainWindow::~MainWindow()
             _ftpSocket->close();
         }
         _ftpSocket->deleteLater();
-        _socket = (QTcpSocket*)0;
+		_socket = nullptr;
     }
     _config.saveToFile();
     delete ui;
@@ -102,8 +100,9 @@ void MainWindow::loginAccepted()
     _loginDialog->hide();
     _hostname = _loginDialog->getHostname();
     _username = _loginDialog->getUsername();
-    disconnect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
-    disconnect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
+	disconnect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
+	disconnect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
+	disconnect(_loginDialog, &LoginDialog::languageChanged, this, &MainWindow::handleLoginDialogLanguageChanged);
     ui->splitter->setSizes(_config.splitterSizes());
     if(!_config.maximized())
     {
@@ -113,7 +112,7 @@ void MainWindow::loginAccepted()
     else
         showMaximized();
     _loginDialog->deleteLater();
-    _loginDialog = (LoginDialog*)0;
+	_loginDialog = nullptr;
     connectSocketSignals();
     _pmWindow = new PrivateMessageWindow(&_config);
     connect(_pmWindow, &PrivateMessageWindow::switchUser, this, &MainWindow::handleUserChangeRequest);
@@ -154,9 +153,14 @@ Configuration* MainWindow::config()
 
 void MainWindow::languageChanged(QAction* action)
 {
-    if(action != (QAction*)0)
+	if(action != nullptr)
         loadLanguage(action->data().toString());
-    return;
+	return;
+}
+
+void MainWindow::handleLoginDialogLanguageChanged(QString language)
+{
+	loadLanguage(language);
 }
 
 void MainWindow::configureLanguages()
@@ -171,10 +175,9 @@ void MainWindow::configureLanguages()
     if(filenames.count() <= 0)
         QMessageBox::critical(this, "Critical error", "No translation files found.\nPlease add translation files to /languages in order to properly use this application.");
     qDebug()<<_config.language();
-    for(unsigned i = 0; i < (unsigned)filenames.count(); i++)
+	for(int i = 0; i < filenames.count(); i++)
     {
-        QString locale;
-        locale = filenames.at(i);
+		QString locale = filenames.at(i);
         locale.truncate(locale.lastIndexOf('.'));
         locale.remove(0, locale.indexOf('_') + 1);
         _installedLanguages.push_back(locale);
@@ -187,6 +190,7 @@ void MainWindow::configureLanguages()
         languageGroup->addAction(action);
         if(_config.language() == locale)
             action->setChecked(true);
+
     }
     if(!loadLanguage(_config.language()))
         if(!loadLanguage("en"))
@@ -261,7 +265,7 @@ void MainWindow::clearEverything()
 
 void MainWindow::changeEvent(QEvent* event)
 {
-    if(event == (QEvent*)0)
+	if(!event)
         return;
     if(event->type() == QEvent::LanguageChange)
     {
@@ -276,9 +280,9 @@ void MainWindow::changeEvent(QEvent* event)
     else if(event->type() == QEvent::WindowStateChange)
     {
         QWindowStateChangeEvent* stateChangeEvent = static_cast<QWindowStateChangeEvent*>(event);
-        if(stateChangeEvent->oldState() == Qt::WindowNoState && this->windowState() == Qt::WindowMaximized )
+		if(stateChangeEvent->oldState() == Qt::WindowNoState && windowState() == Qt::WindowMaximized )
             _config.setMaximized(true);
-        else if(stateChangeEvent->oldState() == Qt::WindowMaximized && this->windowState() == Qt::WindowNoState)
+		else if(stateChangeEvent->oldState() == Qt::WindowMaximized && windowState() == Qt::WindowNoState)
             _config.setMaximized(false);
     }
     return;
@@ -641,7 +645,7 @@ void MainWindow::requestAllChannels()
 
 void MainWindow::handleSocketError()
 {
-    if(_loginDialog == (LoginDialog*)0)
+	if(!_loginDialog)
     {
         this->hide();
         disconnectSocketSignals();
@@ -650,9 +654,10 @@ void MainWindow::handleSocketError()
             _socket->close();
         _config.setAutoLogin(false);
         _config.saveToFile();
-        _loginDialog = new LoginDialog(_socket, &_config, this);
+		_loginDialog = new LoginDialog(_socket, &_config, _installedLanguages, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
+		connect(_loginDialog, &LoginDialog::languageChanged, this, &MainWindow::handleLoginDialogLanguageChanged);
         _loginDialog->show();
     }
     return;
@@ -660,7 +665,7 @@ void MainWindow::handleSocketError()
 
 void MainWindow::handleSocketDisconnected()
 {
-    if(_loginDialog == (LoginDialog*)0)
+	if(!_loginDialog)
     {
         this->hide();
         disconnectSocketSignals();
@@ -669,9 +674,10 @@ void MainWindow::handleSocketDisconnected()
             _socket->close();
         _config.setAutoLogin(false);
         _config.saveToFile();
-        _loginDialog = new LoginDialog(_socket, &_config, this);
+		_loginDialog = new LoginDialog(_socket, &_config, _installedLanguages, this);
         connect(_loginDialog, &LoginDialog::loginCancelled, this, &MainWindow::loginCancelled);
         connect(_loginDialog, &LoginDialog::loginAccepted, this, &MainWindow::loginAccepted);
+		connect(_loginDialog, &LoginDialog::languageChanged, this, &MainWindow::handleLoginDialogLanguageChanged);
         _loginDialog->show();
     }
     return;

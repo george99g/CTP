@@ -152,6 +152,17 @@
         </spacer>
        </item>
        <item>
+        <widget class="QToolButton" name="toolButtonLanguage">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="rsc.qrc">
+           <normaloff>:/icons/icons/lang.png</normaloff>:/icons/icons/lang.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButtonLogin">
          <property name="text">
           <string>login.login</string>

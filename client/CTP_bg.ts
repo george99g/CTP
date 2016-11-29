@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="bg_BG">
+<TS version="2.1" language="bg_BG">
 <context>
     <name>ChangePasswordDialog</name>
     <message>
@@ -139,56 +139,66 @@
         <translation>Запази сесията</translation>
     </message>
     <message>
-        <location filename="logindialog.ui" line="157"/>
+        <location filename="logindialog.ui" line="168"/>
         <source>login.login</source>
         <translation>Влез</translation>
     </message>
     <message>
-        <location filename="logindialog.ui" line="164"/>
+        <location filename="logindialog.ui" line="175"/>
         <source>login.cancel</source>
         <translation>Отказ</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="115"/>
+        <location filename="logindialog.cpp" line="117"/>
         <source>login.loggingIn</source>
         <translation>Влизане...</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="152"/>
+        <location filename="logindialog.cpp" line="154"/>
         <source>warning.invalidAuthentication</source>
         <translation>Неправилни данни за вход</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="152"/>
+        <location filename="logindialog.cpp" line="154"/>
         <source>warning.invalidAuthenticationText</source>
         <translation>Представените данни за вход са неправилни.</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="162"/>
+        <location filename="logindialog.cpp" line="164"/>
         <source>warning.connectionFailed</source>
         <translation>Неуспешна връзка</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="162"/>
+        <location filename="logindialog.cpp" line="164"/>
         <source>warning.connectionFailedText:
 %1</source>
         <translation>Връзката бе неуспешна за следната причина:
 %1</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="180"/>
+        <location filename="logindialog.cpp" line="182"/>
         <source>login.hostLookup</source>
         <translation>Търсене на хост...</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="184"/>
+        <location filename="logindialog.cpp" line="186"/>
         <source>login.connecting</source>
         <translation>Свързване...</translation>
     </message>
     <message>
-        <location filename="logindialog.cpp" line="188"/>
+        <location filename="logindialog.cpp" line="190"/>
         <source>login.connected</source>
         <translation>Успешна връзка.</translation>
+    </message>
+    <message>
+        <location filename="logindialog.cpp" line="203"/>
+        <source>login.selectLanguage.title</source>
+        <translation>Език</translation>
+    </message>
+    <message>
+        <location filename="logindialog.cpp" line="203"/>
+        <source>login.selectLanguage.label</source>
+        <translation>Моля изберете език.</translation>
     </message>
 </context>
 <context>
@@ -295,147 +305,147 @@
         <translation>Смени потребителска парола...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="380"/>
+        <location filename="mainwindow.cpp" line="384"/>
         <source>message.join</source>
         <translation>ВЛЕЗЕ</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="393"/>
+        <location filename="mainwindow.cpp" line="397"/>
         <source>message.part</source>
         <translation>ИЗЛЕЗЕ</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="554"/>
+        <location filename="mainwindow.cpp" line="558"/>
         <source>warning.channelDoesNotExist</source>
         <translation>Каналът не съществува</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="554"/>
+        <location filename="mainwindow.cpp" line="558"/>
         <source>warning.channelDoesNotExist.text</source>
         <translation>Програмата се опита да изпълни действие върху канал който не съществува.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="556"/>
+        <location filename="mainwindow.cpp" line="560"/>
         <source>warning.userDoesNotExist</source>
         <translation>Потребителя не съществува</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="556"/>
+        <location filename="mainwindow.cpp" line="560"/>
         <source>warning.userDoesNotExist.text</source>
         <translation>Програмата се опита да изпълни действие върху потребител който не съществува.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="558"/>
+        <location filename="mainwindow.cpp" line="562"/>
         <source>warning.wrongParameters</source>
         <translation>Грешни параметри</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="558"/>
+        <location filename="mainwindow.cpp" line="562"/>
         <source>warning.wrongParameters.text</source>
         <translation>Програмата изпрати команда с неправилни параметри.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="560"/>
+        <location filename="mainwindow.cpp" line="564"/>
         <source>warning.userIsNotLoggedIn</source>
         <translation>Потребителя не е влязъл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="560"/>
+        <location filename="mainwindow.cpp" line="564"/>
         <source>warning.userIsNotLoggedIn.text:%1</source>
         <translation>Следния потребител не е влязъл: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="562"/>
+        <location filename="mainwindow.cpp" line="566"/>
         <source>warning.notInChannel</source>
         <translation>Не сте в канал</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="562"/>
+        <location filename="mainwindow.cpp" line="566"/>
         <source>warning.notInChannel.text:%1</source>
         <translation>Вие не сте в следния канал: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="564"/>
+        <location filename="mainwindow.cpp" line="568"/>
         <source>warning.notAdministrator</source>
         <translation>Не сте администратор</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="564"/>
+        <location filename="mainwindow.cpp" line="568"/>
         <source>warning.notAdministrator.text</source>
         <translation>Програмата се опита да изпати команда, за която трябва да сте администратор.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="566"/>
+        <location filename="mainwindow.cpp" line="570"/>
         <source>warning.alreadyInChannel</source>
         <translation>Още в канала</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="566"/>
+        <location filename="mainwindow.cpp" line="570"/>
         <source>warning.alreadyInChannel.text:%1</source>
         <translation>Вие още сте в следния канал: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="568"/>
+        <location filename="mainwindow.cpp" line="572"/>
         <source>warning.notAllowedInChannel</source>
         <translation>Нямате достъп до канала</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="568"/>
+        <location filename="mainwindow.cpp" line="572"/>
         <source>warning.notAllowedInChannel.text</source>
         <translation>Вие се опитахте да влезете в канал за който нямате разрешение.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="570"/>
+        <location filename="mainwindow.cpp" line="574"/>
         <source>warning.queryError</source>
         <translation>Проблем със заявката</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="570"/>
+        <location filename="mainwindow.cpp" line="574"/>
         <source>warning.queryError.text</source>
         <translation>Заявката, която изпратихте, е неправилна.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="572"/>
+        <location filename="mainwindow.cpp" line="576"/>
         <source>warning.usersCannotChangeChannels</source>
         <translation>Потребителите не могат да си сменят канала</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="572"/>
+        <location filename="mainwindow.cpp" line="576"/>
         <source>warning.usersCannotChangeChannels.text</source>
         <translation>Системният администратор не е позволил на потребителите да си сменят канала.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="574"/>
+        <location filename="mainwindow.cpp" line="578"/>
         <source>warning.ftp.fileError</source>
         <translation>Проблем с файла</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="574"/>
+        <location filename="mainwindow.cpp" line="578"/>
         <source>warning.ftp.fileError.text</source>
         <translation>Имаше проблем с файловата операция.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="707"/>
+        <location filename="mainwindow.cpp" line="713"/>
         <source>saveFileDialog.saveFile</source>
         <translation>Запиши файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="751"/>
+        <location filename="mainwindow.cpp" line="757"/>
         <source>dialog.getQuery.title</source>
         <translation>Заявка</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="751"/>
+        <location filename="mainwindow.cpp" line="757"/>
         <source>dialog.getQuery.content</source>
         <translation>Въведете SQLite заявка, която ще бъде изпълнена</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="815"/>
+        <location filename="mainwindow.cpp" line="821"/>
         <source>dialog.getJoinChannelName.title</source>
         <translation>Влизане в канал</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="815"/>
+        <location filename="mainwindow.cpp" line="821"/>
         <source>dialog.getJoinChannelName.content</source>
         <translation>Въведете канал, в който да влезете</translation>
     </message>
