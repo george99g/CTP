@@ -49,8 +49,10 @@ FORMS    += mainwindow.ui \
     usermodedialog.ui \
     channelmodedialog.ui \
     changepassworddialog.ui
-TRANSLATIONS += CTP_en.ts \
-    CTP_bg.ts
+TRANSLATIONS_SUBDIR = langs
+
+TRANSLATIONS += $${TRANSLATIONS_SUBDIR}/CTP_en.ts \
+    $${TRANSLATIONS_SUBDIR}/CTP_bg.ts
 
 RESOURCES += \
     rsc.qrc
