@@ -872,13 +872,23 @@ bool IrcManager::checkDatabaseForUsername(const QString &username)
 
 bool IrcManager::checkDatabaseForLogin(const QString &username, const QString &password)
 {
-    qDebug()<<QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256);
     if(!openDatabase())
         return false;
+    QSqlQuery saltQuery(_db);
+    saltQuery.prepare("SELECT users.salt FROM users WHERE users.username=:username LIMIT 1");
+    saltQuery.bindValue(":username", username);
+    if(!saltQuery.exec())
+    {
+        qDebug()<<this<<"failed to execute query: "<<saltQuery.lastError().text();
+        return false;
+    }
+    if(!saltQuery.first())
+        return false;
+    QString salt = saltQuery.value(0).toString();
     QSqlQuery query(_db);
     query.prepare("SELECT EXISTS(SELECT users.id FROM users WHERE users.username=:username AND users.password=:password LIMIT 1)");
     query.bindValue(":username", username);
-    query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
+    query.bindValue(":password", QCryptographicHash::hash((password+salt).toUtf8(), QCryptographicHash::Sha256));
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();
@@ -895,9 +905,11 @@ bool IrcManager::registerDatabaseLogin(const QString &username, const QString &p
         return false;
     if(checkDatabaseForUsername(username)) return false;
     QSqlQuery query(_db);
-	query.prepare("INSERT INTO users(username, password, mode) VALUES(:username, :password, :mode)");
+    query.prepare("INSERT INTO users(username, password, mode, salt) VALUES(:username, :password, :mode, :salt)");
     query.bindValue(":username", username);
-    query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
+    QString salt = QUuid::createUuid().toString();
+    query.bindValue(":password", QCryptographicHash::hash((password+salt).toUtf8(), QCryptographicHash::Sha256));
+    query.bindValue(":salt", salt);
 	query.bindValue(":mode", mode.toString());
     if(!query.exec())
     {
@@ -914,9 +926,11 @@ void IrcManager::updateDatabaseLogin(const QString& username, const QString& pas
     if(!checkDatabaseForUsername(username))
         return;
     QSqlQuery query(_db);
-    query.prepare("UPDATE users SET password = :password WHERE username = :username");
+    query.prepare("UPDATE users SET password = :password, salt = :salt WHERE username = :username");
     query.bindValue(":username", username);
-	query.bindValue(":password", QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256));
+    QString salt = QUuid::createUuid().toString();
+    query.bindValue(":password", QCryptographicHash::hash((password+salt).toUtf8(), QCryptographicHash::Sha256));
+    query.bindValue(":salt", salt);
     if(!query.exec())
     {
         qDebug()<<this<<"failed to execute query: "<<query.lastError().text();

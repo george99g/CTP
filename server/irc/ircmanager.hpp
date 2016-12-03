@@ -13,6 +13,7 @@
 #include <QThread>
 #include <qmath.h>
 #include <QCryptographicHash>
+#include <QUuid>
 #include "../config.hpp"
 #include "ircclients.hpp"
 #include "ircchannels.hpp"
